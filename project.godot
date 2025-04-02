@@ -24,6 +24,5 @@ version_control/autoload_on_startup=true
 folder_colors={
 "res://map/": "red",
 "res://map/meshes/": "orange",
-"res://map/models/": "orange",
-"res://map/multimeshes/": "orange"
+"res://map/models/": "orange"
 }
