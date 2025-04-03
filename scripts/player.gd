@@ -10,6 +10,9 @@ const JUMP_VELOCITY = 4.5
 # camer's sensitivity
 const SENSITIVITY = 0.1
 
+@export var label_tip: Label
+@export var image_pointcatch: TextureRect
+
 # player's state
 enum playerstate {
 	IDLE,	# state idle
@@ -19,8 +22,13 @@ enum playerstate {
 
 # player's initial state
 var state = playerstate.IDLE
+# helping for user
+var tipson: bool = false
 
 func _ready() -> void:
+	var config = ConfigFile.new()
+	if config.load("res://settings.cfg") == OK:
+		tipson = config.get_value("common", "tip", 0)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:

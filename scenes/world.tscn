@@ -1,10 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=11 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="PackedScene" uid="uid://7x31eapr0tag" path="res://map/map_scene.tscn" id="1_nnsk1"]
 [ext_resource type="Script" uid="uid://c2p21m1p41ign" path="res://scripts/player.gd" id="1_rwgxs"]
 [ext_resource type="Script" uid="uid://c6mp17ybxyse8" path="res://scripts/camera_3d.gd" id="2_4wyf3"]
 [ext_resource type="AudioStream" uid="uid://cwuak50j07gy3" path="res://sounds/birds-isaiah658.ogg" id="5_71j4m"]
+[ext_resource type="LabelSettings" uid="uid://bdgea7p016j3g" path="res://fonts/LabelSettings.tres" id="6_qfnet"]
+[ext_resource type="Texture2D" uid="uid://dh7ectcwijvds" path="res://interface/target.png" id="7_i7141"]
+[ext_resource type="PackedScene" uid="uid://b5utyccqfe1x8" path="res://prefabs/fire.tscn" id="8_4mrxx"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_e5uuo"]
 
@@ -13,9 +16,11 @@
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")
 
-[node name="player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.18076, 0)
+[node name="player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("label_tip", "image_pointcatch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 16.892)
 script = ExtResource("1_rwgxs")
+label_tip = NodePath("../CanvasLayer/label_tip")
+image_pointcatch = NodePath("../CanvasLayer/image_pointcatch")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
 mesh = SubResource("CapsuleMesh_e5uuo")
@@ -24,10 +29,50 @@ mesh = SubResource("CapsuleMesh_e5uuo")
 shape = SubResource("CapsuleShape3D_nnsk1")
 
 [node name="Camera3D" type="Camera3D" parent="player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("2_4wyf3")
 
 [node name="map" parent="." instance=ExtResource("1_nnsk1")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
 
+[node name="fire" parent="map" instance=ExtResource("8_4mrxx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.733131, 0.0437964, 2.6)
+
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_71j4m")
+parameters/looping = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="label_tip" type="Label" parent="CanvasLayer"]
+visible = false
+anchors_preset = -1
+anchor_top = 0.89
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 22.2
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.435294, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+label_settings = ExtResource("6_qfnet")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="image_pointcatch" type="TextureRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -48.0
+offset_right = 48.0
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(48, 48)
+texture = ExtResource("7_i7141")
