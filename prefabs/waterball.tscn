@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://cfv0ltjj40es8"]
+
+[ext_resource type="Script" uid="uid://cmpc7vxs7ppqv" path="res://prefabs/waterball.gd" id="1_ad3cw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1txc5"]
+albedo_color = Color(1.63645e-06, 0.780359, 0.783115, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_ht1c8"]
+material = SubResource("StandardMaterial3D_1txc5")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_g2jcq"]
+
+[node name="waterball" type="Area3D"]
+script = ExtResource("1_ad3cw")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+layers = 513
+mesh = SubResource("SphereMesh_ht1c8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_g2jcq")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

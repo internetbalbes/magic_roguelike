@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://dpdnxixbp6ccs"]
+
+[ext_resource type="Script" uid="uid://c31op1sou7hw0" path="res://prefabs/trap.gd" id="1_6qpob"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_40d5p"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6qpob"]
+material = SubResource("StandardMaterial3D_40d5p")
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qscck"]
+
+[node name="trap" type="Area3D" groups=["trap"]]
+script = ExtResource("1_6qpob")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_6qpob")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_qscck")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

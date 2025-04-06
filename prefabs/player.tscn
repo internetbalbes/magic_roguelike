@@ -1,0 +1,28 @@
+[gd_scene load_steps=7 format=3 uid="uid://dorybr6ubqqee"]
+
+[ext_resource type="Script" uid="uid://c2p21m1p41ign" path="res://scripts/player.gd" id="1_4dohe"]
+[ext_resource type="PackedScene" uid="uid://cfv0ltjj40es8" path="res://prefabs/waterball.tscn" id="2_1txc5"]
+[ext_resource type="Script" uid="uid://c6mp17ybxyse8" path="res://scripts/camera_3d.gd" id="2_r66lb"]
+[ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="4_1txc5"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_e5uuo"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nnsk1"]
+
+[node name="player" type="CharacterBody3D"]
+script = ExtResource("1_4dohe")
+prefabwaterball = ExtResource("2_1txc5")
+prefabtrap = ExtResource("4_1txc5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_e5uuo")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_nnsk1")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("2_r66lb")
+
+[node name="camera_raycast" type="RayCast3D" parent="Camera3D"]
+target_position = Vector3(0, 0, -25)

@@ -1,54 +1,18 @@
-[gd_scene load_steps=12 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=7 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="PackedScene" uid="uid://7x31eapr0tag" path="res://map/map_scene.tscn" id="1_nnsk1"]
-[ext_resource type="Script" uid="uid://c2p21m1p41ign" path="res://scripts/player.gd" id="1_rwgxs"]
-[ext_resource type="Script" uid="uid://c6mp17ybxyse8" path="res://scripts/camera_3d.gd" id="2_4wyf3"]
+[ext_resource type="PackedScene" uid="uid://dorybr6ubqqee" path="res://prefabs/player.tscn" id="3_i7141"]
 [ext_resource type="AudioStream" uid="uid://cwuak50j07gy3" path="res://sounds/birds-isaiah658.ogg" id="5_71j4m"]
-[ext_resource type="LabelSettings" uid="uid://bdgea7p016j3g" path="res://fonts/LabelSettings.tres" id="6_qfnet"]
 [ext_resource type="Texture2D" uid="uid://dh7ectcwijvds" path="res://interface/target.png" id="7_i7141"]
 [ext_resource type="PackedScene" uid="uid://b5utyccqfe1x8" path="res://prefabs/fire.tscn" id="8_4mrxx"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_e5uuo"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nnsk1"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_4mrxx"]
-radius = 4.0
 
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")
 prefabfire = ExtResource("8_4mrxx")
 
-[node name="player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("label_tip", "image_pointcatch")]
-script = ExtResource("1_rwgxs")
-label_tip = NodePath("../CanvasLayer/label_tip")
+[node name="player" parent="." node_paths=PackedStringArray("image_pointcatch") instance=ExtResource("3_i7141")]
 image_pointcatch = NodePath("../CanvasLayer/image_pointcatch")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
-mesh = SubResource("CapsuleMesh_e5uuo")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
-shape = SubResource("CapsuleShape3D_nnsk1")
-
-[node name="Camera3D" type="Camera3D" parent="player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-script = ExtResource("2_4wyf3")
-
-[node name="waterball" type="RayCast3D" parent="player/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-enabled = false
-target_position = Vector3(0, 0, -5)
-
-[node name="area_tip" type="Area3D" parent="player"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="player/area_tip"]
-shape = SubResource("CylinderShape3D_4mrxx")
-
-[node name="map" parent="." instance=ExtResource("1_nnsk1")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
-
-[node name="fires" type="Node3D" parent="map"]
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_71j4m")
@@ -56,24 +20,7 @@ parameters/looping = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="label_tip" type="Label" parent="CanvasLayer"]
-visible = false
-anchors_preset = -1
-anchor_top = 0.89
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 22.2
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.435294, 0, 0, 1)
-theme_override_font_sizes/font_size = 25
-label_settings = ExtResource("6_qfnet")
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-
 [node name="image_pointcatch" type="TextureRect" parent="CanvasLayer"]
-visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -89,12 +36,7 @@ scale = Vector2(0.5, 0.5)
 pivot_offset = Vector2(48, 48)
 texture = ExtResource("7_i7141")
 
-[node name="moon" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.460251, 45.3243, 0)
-visible = false
-light_color = Color(0, 0.961302, 0.966781, 1)
-light_energy = 0.2
-shadow_enabled = true
+[node name="map" parent="." instance=ExtResource("1_nnsk1")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
 
-[connection signal="body_entered" from="player/area_tip" to="player" method="_on_area_tip_body_entered"]
-[connection signal="body_exited" from="player/area_tip" to="player" method="_on_area_tip_body_exited"]
+[node name="fires" type="Node3D" parent="map"]
