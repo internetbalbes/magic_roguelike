@@ -17,9 +17,9 @@ size = Vector3(0.2, 0.2, 0.2)
 [node name="fire" type="CharacterBody3D" groups=["fire"]]
 script = ExtResource("1_oq7w4")
 time_fire_life = 600
-enemy_count = 5
 
 [node name="label_time" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.160852, 0)
 no_depth_test = true
 font = ExtResource("5_7td2o")
 

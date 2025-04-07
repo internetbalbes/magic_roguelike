@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://cmpc7vxs7ppqv" path="res://prefabs/waterball.gd" id="1_ad3cw"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1txc5"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ad3cw"]
 albedo_color = Color(1.63645e-06, 0.780359, 0.783115, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_ht1c8"]
-material = SubResource("StandardMaterial3D_1txc5")
+material = SubResource("StandardMaterial3D_ad3cw")
 radius = 0.1
 height = 0.2
 

@@ -1,40 +1,21 @@
-[gd_scene load_steps=7 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=6 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="PackedScene" uid="uid://7x31eapr0tag" path="res://map/map_scene.tscn" id="1_nnsk1"]
 [ext_resource type="PackedScene" uid="uid://dorybr6ubqqee" path="res://prefabs/player.tscn" id="3_i7141"]
 [ext_resource type="AudioStream" uid="uid://cwuak50j07gy3" path="res://sounds/birds-isaiah658.ogg" id="5_71j4m"]
-[ext_resource type="Texture2D" uid="uid://dh7ectcwijvds" path="res://interface/target.png" id="7_i7141"]
 [ext_resource type="PackedScene" uid="uid://b5utyccqfe1x8" path="res://prefabs/fire.tscn" id="8_4mrxx"]
 
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")
 prefabfire = ExtResource("8_4mrxx")
+random_fire_count = 1
 
-[node name="player" parent="." node_paths=PackedStringArray("image_pointcatch") instance=ExtResource("3_i7141")]
-image_pointcatch = NodePath("../CanvasLayer/image_pointcatch")
+[node name="player" parent="." instance=ExtResource("3_i7141")]
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_71j4m")
 parameters/looping = true
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="image_pointcatch" type="TextureRect" parent="CanvasLayer"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -48.0
-offset_top = -48.0
-offset_right = 48.0
-offset_bottom = 48.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.5, 0.5)
-pivot_offset = Vector2(48, 48)
-texture = ExtResource("7_i7141")
 
 [node name="map" parent="." instance=ExtResource("1_nnsk1")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)

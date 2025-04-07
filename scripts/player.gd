@@ -13,9 +13,9 @@ const SENSITIVITY = 0.1
 
 @onready var camera = $Camera3D
 @onready var camera_raycast = $Camera3D/camera_raycast
-@export var image_pointcatch: TextureRect
+@onready var label_health = $CanvasLayer/label_health
+@onready var image_pointcatch = $CanvasLayer/image_pointcatch
 @export var prefabwaterball : PackedScene
-@export var prefabtrap : PackedScene
 
 # player's state
 enum playerstate {
@@ -26,29 +26,27 @@ enum playerstate {
 
 # player's initial state
 var state = playerstate.IDLE
+var max_health: int = 5
+var current_health: int = max_health
+
+# Sygnalizacja zmiany zdrowia
+signal health_changed(new_health)
 
 func _ready() -> void:
+	_on_health_changed(max_health)
+	connect("health_changed", _on_health_changed)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
-	if Input.is_action_pressed("trap"):
-		var trap = prefabtrap.instantiate()
-		trap.player = self	
-		get_tree().root.add_child(trap)
-		trap.global_transform.origin = global_transform.origin
-		trap.global_transform.basis = camera_raycast.global_transform.basis
-	elif event is InputEventMouseButton:
+	if event is InputEventMouseButton:
 		if  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 			var waterball = prefabwaterball.instantiate()
 			waterball.player = self
 			get_tree().root.add_child(waterball)
-			waterball.global_transform.origin = camera_raycast.global_transform.origin
+			waterball.global_transform.origin = camera_raycast.global_transform.origin + camera_raycast.global_transform.basis * Vector3.FORWARD
 			waterball.global_transform.basis = camera_raycast.global_transform.basis
 	else: if event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * SENSITIVITY))
-	else: if Input.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		get_tree().change_scene_to_file("res://scenes/mainmenu.tscn")  # Przejdź do menu opcji	
 
 func _process(delta):
 	if !is_on_floor():
@@ -74,3 +72,28 @@ func _process(delta):
 			velocity.z = move_toward(velocity.z, 0, speed)
 			state = playerstate.IDLE
 	move_and_slide()
+
+
+func _on_area_3d_body_entered(body: Node3D) -> void:
+	if body.get_groups().size() > 0:
+		if body.get_groups()[0] == "trap":
+			body.queue_free()
+			take_damage(1)  # Zadaj 10 obrażeń graczowi
+
+func take_damage(amount: int):
+	current_health -= amount
+	current_health = clamp(current_health, 0, max_health)  # Zapobiega przekroczeniu zakresu zdrowia
+	emit_signal("health_changed", current_health)
+	if current_health <= 0:
+		get_tree().reload_current_scene()		
+
+func heal(amount: int):
+	current_health += amount
+	current_health = clamp(current_health, 0, max_health)
+	emit_signal("health_changed", current_health)
+
+func is_alive() -> bool:
+	return current_health > 0
+
+func _on_health_changed(new_health: int):	
+	label_health.text = str(new_health)  # Skalowanie wartości na pasek zdrowia

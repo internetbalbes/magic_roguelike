@@ -16,13 +16,14 @@ func _physics_process(delta: float) -> void:
 	
 func _on_body_entered(body: Node3D) -> void:
 	if body.get_groups().size() > 0:
-		print(body.get_groups()[0])
 		if body.get_groups()[0] == "fire":
 			for obj in body.list_enemy:
 				obj.target = player
 			body.queue_free()
 		elif body.get_groups()[0] == "enemy":
-			if body.target != player:
-				body.target.list_enemy.erase(body)
-			body.queue_free()
+			body.take_damage(1)
+			if !body.is_alive():
+				if body.target != player:
+					body.target.list_enemy.erase(body)
+				body.queue_free()
 		queue_free()
