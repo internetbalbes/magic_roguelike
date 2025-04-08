@@ -19,13 +19,8 @@ func _ready() -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if !is_on_floor():
-		# Ruch w powietrzu (np. grawitacja, opadanie)
-		velocity += get_gravity() * delta
-		move_and_slide()	
 	var remaining_time = timer_danger.time_left
 	label_time.text = "00:" + "%02d" % remaining_time
-	label_time.rotate_y( label_rotate_speed * delta)
 
 func _on_timer_danger_timeout() -> void:
 	queue_free()

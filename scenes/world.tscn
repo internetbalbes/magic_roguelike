@@ -21,3 +21,13 @@ parameters/looping = true
 
 [node name="map" parent="." instance=ExtResource("5_qfnet")]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+
+[node name="height_scan" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+target_position = Vector3(0, -100, 0)
+
+[node name="timer_height_scan" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="timeout" from="timer_height_scan" to="." method="_on_timer_height_scan_timeout"]
