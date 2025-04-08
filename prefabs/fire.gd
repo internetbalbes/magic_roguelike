@@ -8,6 +8,7 @@ extends CharacterBody3D
 @export var prefabenemy : PackedScene
 @export var enemy_count = 1
 @export var player: CharacterBody3D
+@export var world: Node3D
 
 var list_enemy : Array
 	
@@ -34,5 +35,6 @@ func _add_child():
 		var enemy = prefabenemy.instantiate()
 		enemy.target = self
 		enemy.player = player
+		enemy.world = world
 		list_enemy.append(enemy)
-		get_tree().root.add_child(enemy)
+		world.add_child(enemy)

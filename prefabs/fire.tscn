@@ -8,8 +8,8 @@ albedo_color = Color(1, 0.533333, 0, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_fyhix"]
 material = SubResource("StandardMaterial3D_7td2o")
-radius = 0.1
-height = 0.2
+radius = 0.3
+height = 0.5
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7td2o"]
 size = Vector3(0.2, 0.2, 0.2)

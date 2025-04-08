@@ -11,6 +11,7 @@ extends CharacterBody3D
 @export var time_wait_to_shoot = 2  # Liczba segmentów w okręgu
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
+@export var world: Node3D
 
 # player's speed jump
 const JUMP_VELOCITY = 4.5
@@ -32,7 +33,7 @@ signal health_changed(new_health)
 func shoot_to_player():
 	 # Tworzymy pocisk
 	var fireball = prefabfireball.instantiate()
-	get_tree().root.add_child(fireball)
+	world.add_child(fireball)
 	fireball.player = player
 	fireball.global_transform.origin = global_transform.origin + Vector3.UP
 	# Obracanie wroga w stronę celu
@@ -67,7 +68,7 @@ func _process(delta: float) -> void:
 			if !is_set_trap:
 				if time_set_trap > time_wait_set_trap:
 					var trap = prefabtrap.instantiate()
-					get_tree().root.add_child(trap)
+					world.add_child(trap)
 					trap.global_transform.origin = global_transform.origin
 					time_set_trap = 0
 					is_set_trap = true

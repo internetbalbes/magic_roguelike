@@ -16,6 +16,7 @@ const SENSITIVITY = 0.1
 @onready var label_health = $CanvasLayer/label_health
 @onready var image_pointcatch = $CanvasLayer/image_pointcatch
 @export var prefabwaterball : PackedScene
+@export var world: Node3D
 
 # player's state
 enum playerstate {
@@ -42,7 +43,7 @@ func _input(event: InputEvent) -> void:
 		if  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 			var waterball = prefabwaterball.instantiate()
 			waterball.player = self
-			get_tree().root.add_child(waterball)
+			world.add_child(waterball)
 			waterball.global_transform.origin = camera_raycast.global_transform.origin + camera_raycast.global_transform.basis * Vector3.FORWARD
 			waterball.global_transform.basis = camera_raycast.global_transform.basis
 	else: if event is InputEventMouseMotion:
@@ -85,7 +86,7 @@ func take_damage(amount: int):
 	current_health = clamp(current_health, 0, max_health)  # Zapobiega przekroczeniu zakresu zdrowia
 	emit_signal("health_changed", current_health)
 	if current_health <= 0:
-		get_tree().reload_current_scene()		
+		get_tree().call_deferred("reload_current_scene")
 
 func heal(amount: int):
 	current_health += amount
