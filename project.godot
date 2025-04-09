@@ -28,7 +28,13 @@ folder_colors={
 "res://map/path/": "blue",
 "res://map/pumpkin/": "orange",
 "res://map/relief/": "orange",
-"res://map/scene/": "red",
 "res://map/stones/": "gray",
 "res://map/trees/": "green"
 }
+
+[rendering]
+
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=5
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=5
+textures/default_filters/anisotropic_filtering_level=4
+anti_aliasing/quality/screen_space_aa=1
