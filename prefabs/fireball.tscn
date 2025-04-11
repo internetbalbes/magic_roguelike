@@ -1,57 +1,72 @@
-[gd_scene load_steps=10 format=3 uid="uid://dex8weqw7t7ft"]
+[gd_scene load_steps=12 format=3 uid="uid://dex8weqw7t7ft"]
 
 [ext_resource type="Script" uid="uid://be881ceogk3a4" path="res://prefabs/fireball.gd" id="1_7t63y"]
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="2_n4ixc"]
-[ext_resource type="Gradient" uid="uid://bfv6617njxmgq" path="res://elements/fireball_gradient.tres" id="3_jlkf5"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_7t63y"]
 radius = 0.1
 
 [sub_resource type="SphereMesh" id="SphereMesh_q0r75"]
-radius = 0.3
-height = 0.6
+radius = 0.1
+height = 0.2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_n4ixc"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jlkf5"]
+noise = SubResource("FastNoiseLite_n4ixc")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_x5ema"]
 render_priority = 0
 shader = ExtResource("2_n4ixc")
-shader_parameter/time = 0.0
-shader_parameter/color_start = Color(1, 0, 0, 1)
-shader_parameter/color_end = Color(1, 1, 0, 1)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_jlkf5")
+shader_parameter/base_color = Color(1, 0.75, 0.3, 1)
+shader_parameter/edge_color = Color(1, 0.1, 0, 1)
+shader_parameter/fire_alpha = 1.0
+shader_parameter/fire_filter = 0.2
+shader_parameter/fire_power = 10.0
+shader_parameter/fire_speed = Vector2(0, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_86l2d"]
-vertex_color_use_as_albedo = true
+[sub_resource type="CylinderMesh" id="CylinderMesh_sx0kk"]
+top_radius = 0.05
+bottom_radius = 0.1
+height = 1.0
+cap_top = false
+cap_bottom = false
 
-[sub_resource type="SphereMesh" id="SphereMesh_goefv"]
-material = SubResource("StandardMaterial3D_86l2d")
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sx0kk"]
 
-[sub_resource type="Curve" id="Curve_vdsvx"]
-_data = [Vector2(0.461538, 0.0674158), 0.0, 0.0, 0, 0]
-point_count = 1
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_n4ixc"]
+noise = SubResource("FastNoiseLite_sx0kk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jlkf5"]
+render_priority = 0
+shader = ExtResource("2_n4ixc")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_n4ixc")
+shader_parameter/base_color = Color(1, 0.75, 0.3, 1)
+shader_parameter/edge_color = Color(1, 0.1, 0, 1)
+shader_parameter/fire_alpha = 1.0
+shader_parameter/fire_filter = 0.2
+shader_parameter/fire_power = 10.0
+shader_parameter/fire_speed = Vector2(0, 1)
 
 [node name="fireball" type="Area3D" groups=["fireball"]]
+collision_layer = 128
+collision_mask = 33
 script = ExtResource("1_7t63y")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_7t63y")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance_head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 layers = 513
 mesh = SubResource("SphereMesh_q0r75")
 surface_material_override/0 = SubResource("ShaderMaterial_x5ema")
 
-[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
-amount = 30
-mesh = SubResource("SphereMesh_goefv")
-direction = Vector3(0, 0, 1)
-spread = 15.0
-flatness = 0.25
-gravity = Vector3(0, 0, 0)
-initial_velocity_min = 2.0
-initial_velocity_max = 2.0
-scale_amount_curve = SubResource("Curve_vdsvx")
-color_ramp = ExtResource("3_jlkf5")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.568105, 0)
+[node name="MeshInstance_tail" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.5)
+mesh = SubResource("CylinderMesh_sx0kk")
+skeleton = NodePath("../MeshInstance_head")
+surface_material_override/0 = SubResource("ShaderMaterial_jlkf5")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

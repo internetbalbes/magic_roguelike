@@ -8,14 +8,6 @@ const VERTICAL_LIMIT = 90
 # camer's vertical angle
 var vertical_angle = 0.0
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		vertical_angle -= event.relative.y * SENSITIVITY

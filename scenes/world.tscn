@@ -1,18 +1,19 @@
 [gd_scene load_steps=6 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
+[ext_resource type="PackedScene" uid="uid://cc3rjb24c5g3x" path="res://prefabs/portal.tscn" id="2_71j4m"]
 [ext_resource type="PackedScene" uid="uid://dorybr6ubqqee" path="res://prefabs/player.tscn" id="3_i7141"]
 [ext_resource type="AudioStream" uid="uid://cwuak50j07gy3" path="res://sounds/birds-isaiah658.ogg" id="5_71j4m"]
-[ext_resource type="PackedScene" uid="uid://7x31eapr0tag" path="res://map/scene/map_scene.tscn" id="5_qfnet"]
-[ext_resource type="PackedScene" uid="uid://b5utyccqfe1x8" path="res://prefabs/fire.tscn" id="8_4mrxx"]
+[ext_resource type="PackedScene" uid="uid://7x31eapr0tag" path="res://map/map_scene.tscn" id="5_qfnet"]
 
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")
-prefabfire = ExtResource("8_4mrxx")
-random_fire_count = 1
+prefabportal = ExtResource("2_71j4m")
+random_portal_count = 1
 
 [node name="player" parent="." node_paths=PackedStringArray("world") instance=ExtResource("3_i7141")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.02615, 10.8968)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -4.79888, 1.3032, -6.78746)
+collision_mask = 1217
 world = NodePath("..")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]

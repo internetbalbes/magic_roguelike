@@ -1,0 +1,63 @@
+[gd_scene load_steps=10 format=3 uid="uid://cc3rjb24c5g3x"]
+
+[ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://prefabs/portal.gd" id="1_4ooq7"]
+[ext_resource type="FontFile" uid="uid://cb0eklkqhx0pw" path="res://fonts/impact.ttf" id="2_bqeyo"]
+[ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://map/models/portal_portal.res" id="3_fd87k"]
+[ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_7td2o"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fyhix"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_q81iy"]
+noise = SubResource("FastNoiseLite_fyhix")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_76t5s"]
+render_priority = 0
+shader = ExtResource("4_0jtqf")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_q81iy")
+shader_parameter/base_color = Color(1, 0.75, 0.3, 1)
+shader_parameter/edge_color = Color(1, 0.1, 0, 1)
+shader_parameter/fire_alpha = 1.0
+shader_parameter/fire_filter = 0.2
+shader_parameter/fire_power = 10.0
+shader_parameter/fire_speed = Vector2(0, 1)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_oq7w4"]
+height = 4.0
+radius = 1.5
+
+[node name="portal" type="StaticBody3D" groups=["portal"]]
+collision_layer = 512
+collision_mask = 256
+script = ExtResource("1_4ooq7")
+
+[node name="label_time" type="Label3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 5.08715, 0)
+billboard = 1
+no_depth_test = true
+font = ExtResource("2_bqeyo")
+
+[node name="timer_danger" type="Timer" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+mesh = ExtResource("3_fd87k")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.554557, 0)
+light_color = Color(1, 0.533333, 0, 1)
+shadow_enabled = true
+distance_fade_begin = 1338.73
+distance_fade_shadow = 449.61
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.40185, 0, 0, 0, 2.88751, 0, 0, 0, 1.40185, 0, 1.32082, 0)
+mesh = SubResource("SphereMesh_7td2o")
+surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73127, 0)
+shape = SubResource("CylinderShape3D_oq7w4")
+
+[connection signal="timeout" from="timer_danger" to="." method="_on_timer_danger_timeout"]
