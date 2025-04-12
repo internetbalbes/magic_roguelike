@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0i64u708osw1"
-path.s3tc="res://.godot/imported/Candy_Bowl.png-bad86e5f5ce107f227a61353bc724661.s3tc.ctex"
+path.s3tc="res://.godot/imported/Candy_Bowl.png-15707810d902f66cb7ddc7460e0c0a59.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Candy_Bowl.png"
-dest_files=["res://.godot/imported/Candy_Bowl.png-bad86e5f5ce107f227a61353bc724661.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Candy_Bowl.png"
+dest_files=["res://.godot/imported/Candy_Bowl.png-15707810d902f66cb7ddc7460e0c0a59.s3tc.ctex"]
 
 [params]
 

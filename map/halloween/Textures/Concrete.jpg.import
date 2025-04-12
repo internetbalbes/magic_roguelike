@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b33kho87bqde8"
-path.s3tc="res://.godot/imported/Concrete.jpg-129d11e649c4ba4c940ea6e7e37619c6.s3tc.ctex"
+path.s3tc="res://.godot/imported/Concrete.jpg-9b9ff68eee4547a58cde991a96c63355.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Concrete.jpg"
-dest_files=["res://.godot/imported/Concrete.jpg-129d11e649c4ba4c940ea6e7e37619c6.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Concrete.jpg"
+dest_files=["res://.godot/imported/Concrete.jpg-9b9ff68eee4547a58cde991a96c63355.s3tc.ctex"]
 
 [params]
 

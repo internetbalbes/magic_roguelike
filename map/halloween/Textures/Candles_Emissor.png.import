@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jfibf04rmgvr"
-path.s3tc="res://.godot/imported/Candles_Emissor.png-05f21959adf8cb92724e9eecc422363a.s3tc.ctex"
+path.s3tc="res://.godot/imported/Candles_Emissor.png-c1b4e9b82262421925ca6fed0d9cc05a.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Candles_Emissor.png"
-dest_files=["res://.godot/imported/Candles_Emissor.png-05f21959adf8cb92724e9eecc422363a.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Candles_Emissor.png"
+dest_files=["res://.godot/imported/Candles_Emissor.png-c1b4e9b82262421925ca6fed0d9cc05a.s3tc.ctex"]
 
 [params]
 

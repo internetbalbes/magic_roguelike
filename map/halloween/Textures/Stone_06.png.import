@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5lomcts5ppn7"
-path.s3tc="res://.godot/imported/Stone_06.png-d8c0662fe163077143830b33ad4c7740.s3tc.ctex"
+path.s3tc="res://.godot/imported/Stone_06.png-281d9654f0654bd6fe165ba8b9548f9a.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Stone_06.png"
-dest_files=["res://.godot/imported/Stone_06.png-d8c0662fe163077143830b33ad4c7740.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Stone_06.png"
+dest_files=["res://.godot/imported/Stone_06.png-281d9654f0654bd6fe165ba8b9548f9a.s3tc.ctex"]
 
 [params]
 

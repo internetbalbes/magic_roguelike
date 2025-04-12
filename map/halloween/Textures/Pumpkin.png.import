@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxarobprc6b2w"
-path.s3tc="res://.godot/imported/Pumpkin.png-71e59647d8236e942ae0e6a3ffe2cfcb.s3tc.ctex"
+path.s3tc="res://.godot/imported/Pumpkin.png-eb53a6d68e51d95d30566889107369a8.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Pumpkin.png"
-dest_files=["res://.godot/imported/Pumpkin.png-71e59647d8236e942ae0e6a3ffe2cfcb.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Pumpkin.png"
+dest_files=["res://.godot/imported/Pumpkin.png-eb53a6d68e51d95d30566889107369a8.s3tc.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2neuck41j1x3"
-path.s3tc="res://.godot/imported/Candles.png-de985c0e9c161d082592cf5e2f352a83.s3tc.ctex"
+path.s3tc="res://.godot/imported/Candles.png-b999c433b52335b66edfbb544f05ce1f.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Candles.png"
-dest_files=["res://.godot/imported/Candles.png-de985c0e9c161d082592cf5e2f352a83.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Candles.png"
+dest_files=["res://.godot/imported/Candles.png-b999c433b52335b66edfbb544f05ce1f.s3tc.ctex"]
 
 [params]
 

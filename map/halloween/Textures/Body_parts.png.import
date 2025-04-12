@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brk5j2itbkm7x"
-path.s3tc="res://.godot/imported/Body_parts.png-438fb997209264be6be4d3f4658eebba.s3tc.ctex"
+path.s3tc="res://.godot/imported/Body_parts.png-1df08a9ede8b31d5e844bbb31ce4baef.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Body_parts.png"
-dest_files=["res://.godot/imported/Body_parts.png-438fb997209264be6be4d3f4658eebba.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Body_parts.png"
+dest_files=["res://.godot/imported/Body_parts.png-1df08a9ede8b31d5e844bbb31ce4baef.s3tc.ctex"]
 
 [params]
 

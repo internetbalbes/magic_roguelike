@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqahatl6k4hp3"
-path.s3tc="res://.godot/imported/Shovel.png-bd4be5c3ff95616dc8534a60bfdddc72.s3tc.ctex"
+path.s3tc="res://.godot/imported/Shovel.png-72774b070e26452eca12da3e77d54df6.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Shovel.png"
-dest_files=["res://.godot/imported/Shovel.png-bd4be5c3ff95616dc8534a60bfdddc72.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Shovel.png"
+dest_files=["res://.godot/imported/Shovel.png-72774b070e26452eca12da3e77d54df6.s3tc.ctex"]
 
 [params]
 

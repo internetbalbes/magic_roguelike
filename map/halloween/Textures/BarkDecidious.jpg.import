@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://frt52yydsfbd"
-path.s3tc="res://.godot/imported/BarkDecidious.jpg-92d16163f66c4735dc55caf4ed6a3872.s3tc.ctex"
+path.s3tc="res://.godot/imported/BarkDecidious.jpg-51e3164416075cd808df6b71fc54fe7d.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/BarkDecidious.jpg"
-dest_files=["res://.godot/imported/BarkDecidious.jpg-92d16163f66c4735dc55caf4ed6a3872.s3tc.ctex"]
+source_file="res://map/halloween/Textures/BarkDecidious.jpg"
+dest_files=["res://.godot/imported/BarkDecidious.jpg-51e3164416075cd808df6b71fc54fe7d.s3tc.ctex"]
 
 [params]
 

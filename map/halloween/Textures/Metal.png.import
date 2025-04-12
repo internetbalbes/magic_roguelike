@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnsgtqcuh6ltt"
-path.s3tc="res://.godot/imported/Metal.png-15f6669359a1e1ed54bdf624a6d28554.s3tc.ctex"
+path.s3tc="res://.godot/imported/Metal.png-976c227855f1236862f4442fc403eafb.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Metal.png"
-dest_files=["res://.godot/imported/Metal.png-15f6669359a1e1ed54bdf624a6d28554.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Metal.png"
+dest_files=["res://.godot/imported/Metal.png-976c227855f1236862f4442fc403eafb.s3tc.ctex"]
 
 [params]
 

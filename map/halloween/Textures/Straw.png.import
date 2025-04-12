@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckkjm0jqyqvf4"
-path.s3tc="res://.godot/imported/Straw.png-06103f9944e47978f170bf1b04287d91.s3tc.ctex"
+path.s3tc="res://.godot/imported/Straw.png-616155e4a77169635724bd92f8b91906.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map/halloween/textures/Straw.png"
-dest_files=["res://.godot/imported/Straw.png-06103f9944e47978f170bf1b04287d91.s3tc.ctex"]
+source_file="res://map/halloween/Textures/Straw.png"
+dest_files=["res://.godot/imported/Straw.png-616155e4a77169635724bd92f8b91906.s3tc.ctex"]
 
 [params]
 
