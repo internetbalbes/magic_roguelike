@@ -24,10 +24,7 @@ version_control/autoload_on_startup=true
 
 folder_colors={
 "res://map/": "red",
-"res://map/fence/": "blue",
-"res://map/grass/": "green",
-"res://map/relief/": "orange",
-"res://map/trees/": "green"
+"res://map/relief/": "orange"
 }
 
 [rendering]
