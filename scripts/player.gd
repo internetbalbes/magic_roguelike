@@ -1,11 +1,11 @@
 extends CharacterBody3D
 
 # player's speed normal
-const SPEED_WALK = 5.0
+const SPEED_WALK = 3
 # player's speed jump
-const JUMP_VELOCITY = 4.5
+const JUMP_VELOCITY = 3
 # camer's sensitivity
-const SENSITIVITY = 0.1
+const SENSITIVITY = 0.085
 
 @onready var camera = $Camera3D
 @onready var camera_raycast = $Camera3D/camera_raycast

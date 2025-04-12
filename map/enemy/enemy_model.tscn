@@ -63,3 +63,6 @@ bones/110/rotation = Quaternion(0.229234, 0.0300687, 0.0147162, 0.972795)
 transform = Transform3D(0.577028, 0.0310085, 0.816135, 0.813353, -0.112523, -0.570785, 0.0741344, 0.993165, -0.0901497, -24.9255, 99.8555, 20.6748)
 bone_name = "mixamorigRightHand"
 bone_idx = 7
+
+[node name="AnimationPlayer" parent="." index="1"]
+playback_default_blend_time = 0.2

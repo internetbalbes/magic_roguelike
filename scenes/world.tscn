@@ -12,7 +12,7 @@ prefabportal = ExtResource("2_71j4m")
 random_portal_count = 1
 
 [node name="player" parent="." node_paths=PackedStringArray("world") instance=ExtResource("3_i7141")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -4.79888, 1.3032, -6.78746)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 16.2638, 4.89388, -8.96118)
 collision_mask = 1217
 world = NodePath("..")
 

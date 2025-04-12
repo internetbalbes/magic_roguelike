@@ -5,7 +5,7 @@ extends StaticBody3D
 @onready  var label_time = $label_time
 @export var time_portal_life = 60
 @export var prefabenemy : PackedScene
-@export var enemy_count = 1
+@export var enemy_count = 4
 @export var player: CharacterBody3D
 @export var world: Node3D
 

@@ -9,7 +9,7 @@ extends CharacterBody3D
 @onready var timer_wait_set_trap: Timer = $timer_wait_set_trap
 @onready var timer_set_trap: Timer = $timer_set_trap
 @onready var timer_throw: Timer = $timer_throw
-@export var speed = 2.0
+@export var speed = 0.55
 @export var radius = 10.0
 @export var target : Node3D
 @export var player : CharacterBody3D

@@ -1,6 +1,6 @@
 extends Area3D
 
-const SPEED = 0.3
+const SPEED = 0.6
 
 @export var player : CharacterBody3D
 # life fireball's time

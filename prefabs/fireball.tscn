@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://be881ceogk3a4" path="res://prefabs/fireball.gd" id="1_7t63y"]
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="2_n4ixc"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_7t63y"]
-radius = 0.1
+[sub_resource type="SphereShape3D" id="SphereShape3D_sx0kk"]
+radius = 0.05783
 
 [sub_resource type="SphereMesh" id="SphereMesh_q0r75"]
 radius = 0.1
@@ -55,7 +55,7 @@ collision_mask = 33
 script = ExtResource("1_7t63y")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_7t63y")
+shape = SubResource("SphereShape3D_sx0kk")
 
 [node name="MeshInstance_head" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
