@@ -1,17 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpdnxixbp6ccs"]
+[gd_scene load_steps=4 format=3 uid="uid://dpdnxixbp6ccs"]
 
+[ext_resource type="Script" uid="uid://dur52oiopbcug" path="res://prefabs/trap.gd" id="1_qscck"]
 [ext_resource type="ArrayMesh" uid="uid://cxmysv4ewm0ev" path="res://map/models/trap_trap.res" id="2_qscck"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qscck"]
 size = Vector3(1, 0.191406, 1)
 
-[node name="trap" type="StaticBody3D" groups=["trap"]]
+[node name="trap" type="Area3D" groups=["trap"]]
 collision_layer = 1024
+collision_mask = 32
+script = ExtResource("1_qscck")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.0677629, 0, 0, 0, 0.0677629, 0, 0, 0, 0.0677629, 0, 0, 0)
 mesh = ExtResource("2_qscck")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.614777, 0, 0, 0, 0.614777, 0, 0, 0, 0.614777, 0, -0.0873739, 0)
+transform = Transform3D(0.614777, 0, 0, 0, 0.614777, 0, 0, 0, 0.614777, 0, 0, 0)
 shape = SubResource("BoxShape3D_qscck")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

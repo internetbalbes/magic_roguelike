@@ -7,10 +7,9 @@ extends Node3D
 @onready var player = $player
 @onready var height_scan = $height_scan
 @onready var timer_height_scan = $timer_height_scan
-
 @export var prefabportal : PackedScene
-@export var random_portal_count = 5
 
+var create_portal_count = 5
 var currently_portal_count = 0
 
 # Called when the node enters the scene tree for the first time.
@@ -20,6 +19,9 @@ func _ready() -> void:
 		var volume = config.get_value("audio", "volume", 50)
 		var volume_db = volume * 80 / 100.0 - 80.0  # Konwersja do skali decybeli (-80 dB to cisza)
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), volume_db)
+		create_portal_count = config.get_value("world", "create_portal_count", create_portal_count)
+		#config.save("res://settings.cfg")
+	config = null
 	timer_height_scan.start()
 	audio_stream.play()	
 
@@ -39,7 +41,7 @@ func _on_timer_height_scan_timeout() -> void:
 			add_child(obj)
 			obj.global_position = height_scan.get_collision_point()
 			currently_portal_count += 1	
-	if currently_portal_count < random_portal_count:	
+	if currently_portal_count < create_portal_count:	
 		var aabb = map_relief.get_aabb().size / 4
 		height_scan.target_position.x = map.scale.x * randf_range(-aabb.x, aabb.x)
 		height_scan.target_position.z = map.scale.z * randf_range(-aabb.z, aabb.z)
