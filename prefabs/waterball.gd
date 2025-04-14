@@ -26,7 +26,7 @@ func _on_body_entered(body: Node3D) -> void:
 		if body.get_groups()[0] == "portal":
 			for obj in body.list_enemy:
 				obj.target = player
-			body.queue_free()
+			body.portal_free()
 		elif body.get_groups()[0] == "enemy":
 			body.take_damage(1)
 		queue_free()

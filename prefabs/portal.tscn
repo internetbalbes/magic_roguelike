@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_7td2o"]
+height = 1.5
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_fyhix"]
 
@@ -33,12 +34,16 @@ collision_mask = 256
 script = ExtResource("1_4ooq7")
 
 [node name="label_time" type="Label3D" parent="."]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 5.08715, 0)
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 5.49748, 0)
 billboard = 1
 no_depth_test = true
+fixed_size = true
+render_priority = 2
 font = ExtResource("2_bqeyo")
+font_size = 16
+outline_size = 6
 
-[node name="timer_danger" type="Timer" parent="."]
+[node name="timer_portal_time_life" type="Timer" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
@@ -52,7 +57,7 @@ distance_fade_begin = 1338.73
 distance_fade_shadow = 449.61
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.40185, 0, 0, 0, 2.88751, 0, 0, 0, 1.40185, 0, 1.32082, 0)
+transform = Transform3D(1.40185, 0, 0, 0, 2.88751, 0, 0, 0, 1.40185, 0, 1.88145, 0)
 mesh = SubResource("SphereMesh_7td2o")
 surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
 
@@ -60,4 +65,4 @@ surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73127, 0)
 shape = SubResource("CylinderShape3D_oq7w4")
 
-[connection signal="timeout" from="timer_danger" to="." method="_on_timer_danger_timeout"]
+[connection signal="timeout" from="timer_portal_time_life" to="." method="_on_timer_portal_time_life_timeout"]
