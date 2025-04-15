@@ -3,7 +3,9 @@ extends CharacterBody3D
 @onready var camera = $Camera3D
 @onready var label_health = $CanvasLayer/label_health
 @onready var image_pointcatch = $CanvasLayer/image_pointcatch
+@onready var progressbar_world_slowing = $CanvasLayer/progressbar_world_slowing
 @onready var timer_find_enemy = $timer_find_enemy
+@onready var texturerect_vignette = $CanvasLayer/texturerect_vignette
 @export var prefabwaterball : PackedScene
 @export var world: Node3D
 
@@ -25,6 +27,9 @@ var player_jump_velocity = 3
 # camer's sensitivity
 var player_rotate_sensitivity = 0.085
 var current_health: int = player_max_health
+var world_scale_slowing = 2
+# common time slowing world
+var world_common_time_slowing = 60
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -36,8 +41,12 @@ func _ready() -> void:
 		player_max_health = config.get_value("player", "player_max_health", player_max_health)
 		player_jump_velocity = config.get_value("player", "player_jump_velocity", player_jump_velocity)
 		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
+		world_scale_slowing = config.get_value("player", "world_scale_slowing", world_scale_slowing)
+		progressbar_world_slowing.max_value = config.get_value("player", "world_common_time_slowing", 60)
 		#config.save("res://settings.cfg")
 	config = null
+	texturerect_vignette.visible = false
+	progressbar_world_slowing.value = progressbar_world_slowing.max_value
 	var rect = image_pointcatch.get_global_rect()
 	screen_pos = rect.position + rect.size * 0.5
 	camera_ray_params = PhysicsRayQueryParameters3D.new()
@@ -56,10 +65,23 @@ func _input(event: InputEvent) -> void:
 			world.add_child(waterball)
 			waterball.global_transform.origin = camera_ray_params.from
 			waterball.global_transform.basis = camera.global_transform.basis
+		elif event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+			if Engine.time_scale < 1:
+				Engine.time_scale = 1.0
+				texturerect_vignette.visible = false
+			elif progressbar_world_slowing.value > 0:
+				Engine.time_scale /= world_scale_slowing
+				texturerect_vignette.visible = true			
+				
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 
-func _process(delta):		
+func _process(delta):
+	if Engine.time_scale < 1.0:
+		progressbar_world_slowing.value -= delta / Engine.time_scale
+		if progressbar_world_slowing.value < 0.001:
+			Engine.time_scale = 1.0
+			texturerect_vignette.visible = false
 	if !is_on_floor():
 		# Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta
