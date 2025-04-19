@@ -4,7 +4,7 @@ extends CharacterBody3D
 @onready var timer_remove_object = $timer_remove_object
 @export var player : CharacterBody3D
 
-var player_thunderbolt_speed = 0.6
+var player_thunderbolt_speed = 20.0
 var spell: SpellClass
 var collider : Node3D
 var collider_position : Vector3 = Vector3.ZERO
@@ -22,19 +22,19 @@ func _ready()->void:
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
 	timer_remove_object.start()
 	
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if min_distance_to_object > 0 && global_position.distance_to(collider_position) < min_distance_to_object:
 		if collider.get_groups().size() > 0:
 			if collider.get_groups()[0] == "portal":
 				for obj in collider.list_enemy:
-					obj.target = player
+					obj._set_target(player)
 				collider.portal_free()
 			elif collider.get_groups()[0] == "enemy":
 				collider.take_damage(spell.damage)
 		call_deferred("queue_free")
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
-		global_position += direction * player_thunderbolt_speed
+		global_position += direction * player_thunderbolt_speed *  delta
 
 func set_collider(node: Node3D, pos: Vector3):
 	collider = node

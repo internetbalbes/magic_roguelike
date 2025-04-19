@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="2_n4ixc"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_sx0kk"]
-radius = 0.05783
+radius = 0.05
 
 [sub_resource type="SphereMesh" id="SphereMesh_q0r75"]
 radius = 0.1
@@ -70,4 +70,8 @@ mesh = SubResource("CylinderMesh_sx0kk")
 skeleton = NodePath("../MeshInstance_head")
 surface_material_override/0 = SubResource("ShaderMaterial_jlkf5")
 
+[node name="timer_remove_object" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="timer_remove_object" to="." method="_on_timer_remove_object_timeout"]

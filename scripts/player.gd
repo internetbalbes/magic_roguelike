@@ -37,7 +37,7 @@ var world_common_time_slowing = 60
 # time reload spell
 var time_reload_spell = 1
 # speed scroll_container spells
-var spell_currently_index = 2
+var spell_currently_index = 1
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
 
@@ -71,6 +71,7 @@ func _ready() -> void:
 		spells.append(spell)			
 		#config.save("res://settings.cfg")
 	config = null
+	Engine.time_scale = 1.0
 	current_health = player_max_health
 	label_spell.text = spells[spell_currently_index].spell_name.to_upper()
 	progressbar_reload_spell.step = 0.1
@@ -107,8 +108,7 @@ func _input(event: InputEvent) -> void:
 				texturerect_vignette.visible = false
 			elif progressbar_world_slowing.value > 0:
 				Engine.time_scale /= world_scale_slowing
-				texturerect_vignette.visible = true			
-				
+				texturerect_vignette.visible = true	
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 

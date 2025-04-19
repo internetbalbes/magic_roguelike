@@ -4,6 +4,8 @@ extends StaticBody3D
 @onready var timer_portal_time_life = $timer_portal_time_life
 @onready var label_time = $label_time
 @onready var collision : CollisionShape3D = $CollisionShape3D
+@onready var mesh_body : MeshInstance3D = $MeshInstance3D
+@onready var mesh_fire : MeshInstance3D = $MeshInstance3D2
 @onready var collision_shape : Shape3D = collision.shape
 @export var prefabenemy : PackedScene
 @export var player: CharacterBody3D
@@ -31,7 +33,7 @@ func _add_child():
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
 		var enemy = prefabenemy.instantiate()
-		enemy.target = self
+		enemy._set_target(self)
 		enemy.player = player
 		enemy.world = world
 		enemy.enemy_angle_start = angle
@@ -40,16 +42,18 @@ func _add_child():
 		angle += angle_shift
 
 func portal_process_stop() -> void:
-	set_process(false)
+	#set_process(false)
 	set_physics_process(false)
-	visible = false
+	mesh_body.visible = false
+	mesh_fire.visible = false
 	collision.set_deferred("disabled", true)
 	timer_portal_time_life.stop()
 	
 func portal_process_start() -> void:
-	visible = true
+	mesh_body.visible = true
+	mesh_fire.visible = true	
 	collision.set_deferred("disabled", false)
-	set_process(true)
+	#set_process(true)
 	set_physics_process(true)
 	timer_portal_time_life.wait_time = portal_time_life
 	timer_portal_time_life.start()
@@ -64,7 +68,7 @@ func portal_free() -> void:
 	timer_portal_time_life.start()
 	
 func _on_timer_portal_time_life_timeout() -> void:
-	if visible:
+	if mesh_body.visible:
 		# game over
 		get_tree().call_deferred("reload_current_scene")
 	else:

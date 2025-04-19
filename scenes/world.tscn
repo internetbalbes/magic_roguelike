@@ -121,10 +121,11 @@ texture = ExtResource("9_e3hyu")
 wait_time = 0.1
 
 [node name="Camera3D" type="Camera3D" parent="player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("7_4mrxx")
 
 [node name="RayCast3D" type="RayCast3D" parent="player/Camera3D"]
-target_position = Vector3(0, 0, -1000)
+target_position = Vector3(0, 0, -50)
 collision_mask = 577
 
 [connection signal="timeout" from="timer_height_scan" to="." method="_on_timer_height_scan_timeout"]

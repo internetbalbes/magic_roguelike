@@ -9,7 +9,7 @@ extends CharacterBody3D
 @onready var timer_find_enemy_in_area = $timer_find_enemy_in_area
 @export var player : CharacterBody3D
 
-var player_waterball_speed = 0.6
+var player_waterball_speed = 20.0
 var spell: SpellClass
 var collider : Node3D
 var collider_position : Vector3 = Vector3.ZERO
@@ -30,7 +30,7 @@ func _ready()->void:
 	area3d_waterball_circle.monitoring = false
 	timer_remove_object.start()
 	
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if min_distance_to_object > 0 && global_position.distance_to(collider_position) < min_distance_to_object:
 		mesh.visible = false
 		set_physics_process(false)
@@ -39,14 +39,14 @@ func _physics_process(_delta: float) -> void:
 		timer_remove_object.stop()
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
-		global_position += direction * player_waterball_speed
+		global_position += direction * player_waterball_speed * delta
 
 func set_collider(node: Node3D, pos: Vector3):
 	collider = node
 	collider_position = pos
 	
 func _on_timer_remove_object_timeout() -> void:
-	queue_free()
+	call_deferred("queue_free")
 
 func _on_timer_find_enemy_in_area_timeout() -> void:
 	var enemies_in_waterball = area3d_waterball_circle.get_overlapping_bodies()	
@@ -55,7 +55,7 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 			if obj.get_groups().size() > 0:
 				if obj.get_groups()[0] == "portal":
 					for obj_enemy in obj.list_enemy:
-						obj_enemy.target = player
+						obj_enemy._set_target(player)
 					obj.portal_free()
 				elif obj.get_groups()[0] == "enemy":
 					obj.take_damage(spell.damage)

@@ -14,7 +14,6 @@ extends CharacterBody3D
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
 @export var world: Node3D
-@export var target : Node3D
 @export var player : CharacterBody3D
 
 var enemy_speed_walk = 0.55
@@ -27,8 +26,8 @@ var time_to_set_trap: float = 2
 var time_after_exit_portal: float = 1
 var point_target = Vector3.ZERO
 var player_in_area: bool = false
-var max_health: int = 5
-var current_health: int = max_health
+var enemy_max_health: int = 5
+var current_health: int = enemy_max_health
 var fireball: Area3D
 var trap : Node3D
 var timer_after_exit_portal: Timer = Timer.new()
@@ -37,6 +36,7 @@ var timer_set_trap: Timer = Timer.new()
 var enemy_speed = enemy_speed_walk
 var enemy_angle_start: float = 0
 var skeleton_standart_material: StandardMaterial3D = StandardMaterial3D.new()
+var target : Node3D
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -53,15 +53,17 @@ func _ready() -> void:
 		time_to_set_trap = config.get_value("enemy", "time_to_set_trap", time_to_set_trap)		
 		time_after_exit_portal = config.get_value("enemy", "time_after_exit_portal", time_after_exit_portal)
 		timer_damage.wait_time = config.get_value("enemy", "enemy_time_is_damaged", timer_damage.wait_time)
+		collision_area_shape.radius = config.get_value("enemy", "enemy_area_scan_player", enemy_radius_around_portal)
+		enemy_max_health =  config.get_value("enemy", "enemy_max_health", enemy_max_health)
 		#config.save("res://settings.cfg")
 	config = null
+	current_health = enemy_max_health
 	area.monitoring = false
 	skeleton_standart_material.albedo_color = Color(1.0, 1.0, 1.0)
 	timer_throw.wait_time = time_to_throw
 	animation_player.animation_finished.connect(_on_animation_finished)
-	_on_health_changed(max_health)
-	connect("health_changed", _on_health_changed)
-	collision_area_shape.radius = enemy_radius_around_portal	
+	_on_health_changed(current_health)
+	connect("health_changed", _on_health_changed)	
 	global_transform.origin = target.global_transform.origin + Vector3(0, collision_shape.height / 2, 0)
 	#set timer set trap
 	timer_set_trap.wait_time = time_to_set_trap
@@ -106,9 +108,7 @@ func _physics_process(delta: float) -> void:
 			global_transform.origin = global_transform.origin + move_vector
 		else:
 			if target == player:
-				var x = randf_range(-1, 1)
-				var z = randf_range(-1, 1)
-				point_target = player.global_transform.origin + Vector3(x, 0, z)
+				point_target = player.global_position
 			else:
 				_set_point_on_circle(randf_range(1, count_segments_around_portal) * (2.0 * PI / count_segments_around_portal))	
 	elif !animation_player.active:
@@ -122,28 +122,30 @@ func _set_point_on_circle(angle) -> void:
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == player:
 		player_in_area = true
-		fireball_create()
 		
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body == player:
 		player_in_area = false
 
 func take_damage(amount: int):
-	current_health -= amount
-	current_health = clamp(current_health, 0, max_health)  # Zapobiega przekroczeniu zakresu zdrowia
-	emit_signal("health_changed", current_health)
-	if !is_alive():
-		if target != player:
-			target.list_enemy.erase(self)
-		label_health.visible = false	
-		animation_player.play("Death")
-	timer_damage.start()
-	skeleton_surface.set_surface_override_material(0, skeleton_standart_material)
-	skeleton_joints.set_surface_override_material(0, skeleton_standart_material)
+	if animation_player.current_animation != "Death":
+		current_health -= amount
+		current_health = clamp(current_health, 0, enemy_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
+		emit_signal("health_changed", current_health)	
+		if !is_alive():
+			area.monitoring = false
+			if target != player:
+				target.list_enemy.erase(self)
+			label_health.visible = false	
+			animation_player.play("Death")
+			_timers_delete()
+		timer_damage.start()
+		skeleton_surface.set_surface_override_material(0, skeleton_standart_material)
+		skeleton_joints.set_surface_override_material(0, skeleton_standart_material)
 
 func heal(amount: int):
 	current_health += amount
-	current_health = clamp(current_health, 0, max_health)
+	current_health = clamp(current_health, 0, enemy_max_health)
 	emit_signal("health_changed", current_health)
 
 func is_alive() -> bool:
@@ -153,32 +155,24 @@ func _on_health_changed(new_health: int):
 	label_health.text = str(new_health)  # Skalowanie wartości na pasek zdrowia
 
 func fireball_create() -> void:
-	if !fireball || fireball.get_parent() == world:
-		fireball = prefabfireball.instantiate()
-		skeleton_bone_hand.add_child(fireball)	
-		fireball.global_position = skeleton_bone_hand.global_position
-		fireball.scale *= 100
-		fireball.player = player
-		timer_throw.start()
-		animation_player.play("Throw")
+	fireball = prefabfireball.instantiate()
+	skeleton_bone_hand.add_child(fireball)	
+	fireball.global_position = skeleton_bone_hand.global_position
+	fireball.scale *= 100
+	fireball.player = player
+	timer_throw.start()
+	animation_player.play("Throw")
 
 func _on_animation_finished(_anim_name: String) -> void:
 	if !is_alive():
-		if timer_set_trap:
-			timer_set_trap.stop()
-		timer_throw.stop()
-		if timer_wait_set_trap:
-			timer_wait_set_trap.stop()
 		call_deferred("queue_free")
 	elif animation_player.active:	
 		if player_in_area:
 			fireball_create()
 		else:
 			if target == player:
-				enemy_speed = enemy_speed_run
 				animation_player.play("Run")
 			else:
-				enemy_speed = enemy_speed_walk
 				animation_player.play("Walk")
 
 func _on_timer_set_trap_timeout() -> void:
@@ -253,3 +247,20 @@ func _get_object_size() -> float:
 	
 func _get_object_height() -> float:
 	return collision_shape.height	
+	
+func _set_target(object: Node3D) ->void:
+	target = object
+	if target == player:
+		enemy_speed = enemy_speed_run
+		area.monitoring = true
+		_timers_delete()		
+	else:
+		enemy_speed = enemy_speed_walk
+
+func _timers_delete()->void:
+	if is_instance_valid(timer_after_exit_portal):
+		timer_after_exit_portal.call_deferred("queue_free")
+	if is_instance_valid(timer_wait_set_trap):
+		timer_wait_set_trap.call_deferred("queue_free")
+	if is_instance_valid(timer_set_trap):
+		timer_set_trap.call_deferred("queue_free")
