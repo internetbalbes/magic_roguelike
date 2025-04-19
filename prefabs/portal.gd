@@ -3,6 +3,8 @@ extends StaticBody3D
 @onready var omnolight = $OmniLight3D
 @onready var timer_portal_time_life = $timer_portal_time_life
 @onready var label_time = $label_time
+@onready var collision : CollisionShape3D = $CollisionShape3D
+@onready var collision_shape : Shape3D = collision.shape
 @export var prefabenemy : PackedScene
 @export var player: CharacterBody3D
 @export var world: Node3D
@@ -25,7 +27,7 @@ func _process(_delta: float) -> void:
 	label_time.text = "%02d" % remaining_time
 	
 func _add_child():
-	var angle_shift = 300.0 / portal_create_enemy_count
+	var angle_shift = 330.0 / portal_create_enemy_count
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
 		var enemy = prefabenemy.instantiate()
@@ -40,20 +42,23 @@ func _add_child():
 func portal_process_stop() -> void:
 	set_process(false)
 	set_physics_process(false)
+	visible = false
+	collision.set_deferred("disabled", true)
 	timer_portal_time_life.stop()
 	
 func portal_process_start() -> void:
 	visible = true
+	collision.set_deferred("disabled", false)
 	set_process(true)
 	set_physics_process(true)
 	timer_portal_time_life.wait_time = portal_time_life
 	timer_portal_time_life.start()
 	call_deferred("_add_child")	
 	
-func portal_free() -> void:
-	visible = false
+func portal_free() -> void:	
 	for obj in list_enemy:
 		obj.target = player
+	list_enemy.clear()	
 	timer_portal_time_life.wait_time = portal_time_life + timer_portal_time_life.time_left	
 	portal_process_stop()	
 	timer_portal_time_life.start()
@@ -66,3 +71,6 @@ func _on_timer_portal_time_life_timeout() -> void:
 		# reinit portal
 		world.list_portal_set_position.append(self)
 		world.timer_height_scan_start()
+
+func _get_object_size() -> float:
+	return collision_shape.radius

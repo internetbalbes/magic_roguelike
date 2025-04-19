@@ -2,14 +2,15 @@ extends CharacterBody3D
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var area: Area3D = $Area3D
-@onready var collision_shape: Shape3D = $Area3D/CollisionShape3D.shape
-@onready var collision_enemy: Shape3D = $CollisionShape3D.shape
+@onready var collision_area_shape: Shape3D = $Area3D/CollisionShape3D.shape
+@onready var collision_shape: Shape3D = $CollisionShape3D.shape
 @onready var label_health: Label3D = $label_health
 @onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
 @onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/AuxScene/Node/Skeleton3D/BoneAttachment3D
-@onready var timer_wait_set_trap: Timer = $timer_wait_set_trap
-@onready var timer_set_trap: Timer = $timer_set_trap
+@onready var skeleton_surface: MeshInstance3D = $enemy_model/AuxScene/Node/Skeleton3D/Alpha_Surface
+@onready var skeleton_joints: MeshInstance3D = $enemy_model/AuxScene/Node/Skeleton3D/Alpha_Joints
 @onready var timer_throw: Timer = $timer_throw
+@onready var timer_damage: Timer = $timer_damage
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
 @export var world: Node3D
@@ -31,8 +32,11 @@ var current_health: int = max_health
 var fireball: Area3D
 var trap : Node3D
 var timer_after_exit_portal: Timer = Timer.new()
+var timer_wait_set_trap: Timer = Timer.new()
+var timer_set_trap: Timer = Timer.new()
 var enemy_speed = enemy_speed_walk
 var enemy_angle_start: float = 0
+var skeleton_standart_material: StandardMaterial3D = StandardMaterial3D.new()
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -48,28 +52,41 @@ func _ready() -> void:
 		time_to_throw = config.get_value("enemy", "time_to_throw", time_to_throw)
 		time_to_set_trap = config.get_value("enemy", "time_to_set_trap", time_to_set_trap)		
 		time_after_exit_portal = config.get_value("enemy", "time_after_exit_portal", time_after_exit_portal)
+		timer_damage.wait_time = config.get_value("enemy", "enemy_time_is_damaged", timer_damage.wait_time)
 		#config.save("res://settings.cfg")
 	config = null
+	area.monitoring = false
+	skeleton_standart_material.albedo_color = Color(1.0, 1.0, 1.0)
 	timer_throw.wait_time = time_to_throw
 	animation_player.animation_finished.connect(_on_animation_finished)
 	_on_health_changed(max_health)
 	connect("health_changed", _on_health_changed)
-	collision_shape.radius = enemy_radius_around_portal	
-	global_transform.origin = target.global_transform.origin + Vector3(0, collision_enemy.height / 2, 0)
+	collision_area_shape.radius = enemy_radius_around_portal	
+	global_transform.origin = target.global_transform.origin + Vector3(0, collision_shape.height / 2, 0)
+	#set timer set trap
+	timer_set_trap.wait_time = time_to_set_trap
+	timer_set_trap.one_shot = true
+	timer_set_trap.timeout.connect(_on_timer_set_trap_timeout)
+	add_child(timer_set_trap)
+	#set timer wait trap	
 	timer_wait_set_trap.wait_time = randf_range(5, 10)
-	timer_wait_set_trap.start()
-	_set_point_on_circle((enemy_angle_start * count_segments_around_portal / 360) * (2.0 * PI / count_segments_around_portal))
-	animation_player.play("Walk")
+	timer_wait_set_trap.one_shot = true
+	timer_wait_set_trap.timeout.connect(_on_timer_wait_set_trap_timeout)
+	add_child(timer_wait_set_trap)
+	#set timer wait trap	
 	timer_after_exit_portal.wait_time = time_after_exit_portal
 	timer_after_exit_portal.one_shot = true
-	timer_after_exit_portal.timeout.connect(_on_timer_guard_timeout)
+	timer_after_exit_portal.timeout.connect(_on_timer_after_exit_portal_timeout)
 	add_child(timer_after_exit_portal)
 	timer_after_exit_portal.start()
+	#set start enemy's coordinate
+	_set_point_on_circle((enemy_angle_start * count_segments_around_portal / 360) * (2.0 * PI / count_segments_around_portal))
+	animation_player.play("Walk")
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
 		## Ruch w powietrzu (np. grawitacja, opadanie)
-		velocity += get_gravity() * delta
+		velocity += get_gravity() * delta		
 		move_and_slide()
 	elif animation_player.current_animation == "Throw":
 		# Obracanie wroga w stronę celu	
@@ -89,9 +106,13 @@ func _process(delta: float) -> void:
 			global_transform.origin = global_transform.origin + move_vector
 		else:
 			if target == player:
-				point_target = player.global_transform.origin
+				var x = randf_range(-1, 1)
+				var z = randf_range(-1, 1)
+				point_target = player.global_transform.origin + Vector3(x, 0, z)
 			else:
 				_set_point_on_circle(randf_range(1, count_segments_around_portal) * (2.0 * PI / count_segments_around_portal))	
+	elif !animation_player.active:
+		move_and_slide()
 		
 func _set_point_on_circle(angle) -> void:
 	var x = enemy_radius_around_portal * cos(angle)
@@ -100,9 +121,9 @@ func _set_point_on_circle(angle) -> void:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == player:
-		fireball_create()
 		player_in_area = true
-
+		fireball_create()
+		
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body == player:
 		player_in_area = false
@@ -110,12 +131,15 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 func take_damage(amount: int):
 	current_health -= amount
 	current_health = clamp(current_health, 0, max_health)  # Zapobiega przekroczeniu zakresu zdrowia
-	emit_signal("health_changed", current_health)	
+	emit_signal("health_changed", current_health)
 	if !is_alive():
 		if target != player:
 			target.list_enemy.erase(self)
 		label_health.visible = false	
 		animation_player.play("Death")
+	timer_damage.start()
+	skeleton_surface.set_surface_override_material(0, skeleton_standart_material)
+	skeleton_joints.set_surface_override_material(0, skeleton_standart_material)
 
 func heal(amount: int):
 	current_health += amount
@@ -140,25 +164,29 @@ func fireball_create() -> void:
 
 func _on_animation_finished(_anim_name: String) -> void:
 	if !is_alive():
-		timer_set_trap.stop()
+		if timer_set_trap:
+			timer_set_trap.stop()
 		timer_throw.stop()
-		timer_wait_set_trap.stop()		
-		queue_free()
-	elif player_in_area:
-		fireball_create()
-	else:
-		if target == player:
-			enemy_speed = enemy_speed_run
-			animation_player.play("Run")
+		if timer_wait_set_trap:
+			timer_wait_set_trap.stop()
+		call_deferred("queue_free")
+	elif animation_player.active:	
+		if player_in_area:
+			fireball_create()
 		else:
-			enemy_speed = enemy_speed_walk
-			animation_player.play("Walk")
+			if target == player:
+				enemy_speed = enemy_speed_run
+				animation_player.play("Run")
+			else:
+				enemy_speed = enemy_speed_walk
+				animation_player.play("Walk")
 
 func _on_timer_set_trap_timeout() -> void:
+	timer_set_trap.call_deferred("queue_free")	
 	trap = prefabtrap.instantiate()
 	trap.player = player
 	world.add_child(trap)
-	var direction = Vector3(0, collision_enemy.height / 2, 0.5).normalized()
+	var direction = Vector3(0, collision_shape.height / 2, 0.5).normalized()
 	trap.global_transform.origin = global_transform.origin - direction
 
 func _on_timer_throw_timeout() -> void:
@@ -169,7 +197,7 @@ func _on_timer_throw_timeout() -> void:
 
 func _on_timer_wait_set_trap_timeout() -> void:
 	if animation_player.current_animation in ["Walk", "Run"]:
-		timer_set_trap.wait_time = time_to_set_trap
+		timer_wait_set_trap.call_deferred("queue_free")	
 		timer_set_trap.start()
 		animation_player.play("Putdown")
 	else:
@@ -183,6 +211,45 @@ func rotate_towards_target(target_pos, delta):
 	current.y = lerp_angle(current.y, target_yaw, delta * 5.0)
 	global_transform.basis = Basis().rotated(Vector3.UP, current.y)
 
-func _on_timer_guard_timeout():
-	timer_after_exit_portal.queue_free()
-	area.connect("body_entered", _on_area_3d_body_entered)
+func _on_timer_after_exit_portal_timeout():
+	timer_after_exit_portal.call_deferred("queue_free")
+	area.monitoring = true
+	timer_wait_set_trap.start()
+
+func _on_timer_damage_timeout() -> void:
+	if is_alive():
+		skeleton_surface.set_surface_override_material(0, null)
+		skeleton_joints.set_surface_override_material(0, null)
+
+func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
+	animation_player.active = !freeze
+	if freeze:
+		if is_instance_valid(timer_after_exit_portal):
+			timer_after_exit_portal.stop()
+		else:
+			area.monitoring = false
+			if is_instance_valid(fireball):
+				fireball.call_deferred("queue_free")
+			timer_throw.stop()
+			if is_instance_valid(timer_wait_set_trap):
+				timer_wait_set_trap.stop()
+			elif is_instance_valid(timer_set_trap):
+				timer_set_trap.stop()
+		global_transform.origin = pos
+		animation_player.stop()
+	else:		
+		animation_player.play("Walk")
+		if is_instance_valid(timer_after_exit_portal):
+			timer_after_exit_portal.start()
+		else:
+			area.monitoring = true
+			if timer_wait_set_trap:
+				timer_wait_set_trap.start()		
+			elif timer_set_trap:		
+				timer_set_trap.start()
+	
+func _get_object_size() -> float:
+	return collision_shape.radius
+	
+func _get_object_height() -> float:
+	return collision_shape.height	
