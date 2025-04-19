@@ -1,5 +1,0 @@
-# Godot 4+ specific ignores
-.gitignore
-.godot/
-addons/
-map/
