@@ -112,7 +112,7 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 
-func _process(delta):
+func _physics_process(delta: float) -> void:
 	# find collide with object
 	if raycast.is_colliding():
 		var collider = raycast.get_collider()
