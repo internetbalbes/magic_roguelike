@@ -1,18 +1,22 @@
 extends CharacterBody3D
 
-@onready var camera = $Camera3D
+@onready var raycast = $Camera3D/RayCast3D
 @onready var label_health = $CanvasLayer/label_health
 @onready var image_pointcatch = $CanvasLayer/image_pointcatch
 @onready var progressbar_world_slowing = $CanvasLayer/progressbar_world_slowing
-@onready var timer_find_enemy = $timer_find_enemy
+@onready var timer_reload_spell = $timer_reload_spell
 @onready var texturerect_vignette = $CanvasLayer/texturerect_vignette
+@onready var progressbar_reload_spell = $CanvasLayer/progressbar_reload_spell
+@onready var label_spell = $CanvasLayer/label_spell
+@export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
+@export var prefabtornado : PackedScene
 @export var world: Node3D
 
+# List spell
+var spells : Array
 # player's initial state
 var state = playerstate.IDLE
-var screen_pos = Vector2.ZERO
-var camera_ray_params : PhysicsRayQueryParameters3D
 # player's state
 enum playerstate {
 	IDLE,	# state idle
@@ -30,7 +34,10 @@ var current_health: int = player_max_health
 var world_scale_slowing = 2
 # common time slowing world
 var world_common_time_slowing = 60
-
+# time reload spell
+var time_reload_spell = 1
+# speed scroll_container spells
+var spell_currently_index = 2
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
 
@@ -43,28 +50,57 @@ func _ready() -> void:
 		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
 		world_scale_slowing = config.get_value("player", "world_scale_slowing", world_scale_slowing)
 		progressbar_world_slowing.max_value = config.get_value("player", "world_common_time_slowing", 60)
+		time_reload_spell = config.get_value("player", "time_reload_spell", 1)
+		# spell waterball
+		var mana_cost = config.get_value("player", "waterball_spell_mana_cost", 1)
+		var damage = config.get_value("player", "waterball_spell_damage", 1)
+		var type = config.get_value("player", "waterball_spell_type", "sphere")
+		var spell = SpellClass.new("waterball", mana_cost, damage, type)
+		spells.append(spell)
+		# spell thunderbolt
+		mana_cost = config.get_value("player", "thunderbolt_spell_mana_cost", 1)
+		damage = config.get_value("player", "thunderbolt_spell_damage", 1)
+		type = config.get_value("player", "thunderbolt_spell_type", "single")
+		spell = SpellClass.new("thunderbolt", mana_cost, damage, type)
+		spells.append(spell)
+		# spell tornado
+		mana_cost = config.get_value("player", "tornado_spell_mana_cost", 1)
+		damage = config.get_value("player", "tornado_spell_damage", 1)
+		type = config.get_value("player", "tornado_spell_type", "sphere")
+		spell = SpellClass.new("tornado", mana_cost, damage, type)
+		spells.append(spell)			
 		#config.save("res://settings.cfg")
 	config = null
+	current_health = player_max_health
+	label_spell.text = spells[spell_currently_index].spell_name.to_upper()
+	progressbar_reload_spell.step = 0.1
+	progressbar_reload_spell.value = 1
+	progressbar_reload_spell.max_value = 1
 	texturerect_vignette.visible = false
-	progressbar_world_slowing.value = progressbar_world_slowing.max_value
-	var rect = image_pointcatch.get_global_rect()
-	screen_pos = rect.position + rect.size * 0.5
-	camera_ray_params = PhysicsRayQueryParameters3D.new()
-	camera_ray_params.exclude = []
-	camera_ray_params.collision_mask = 64
+	progressbar_world_slowing.value = progressbar_world_slowing.max_value	
 	_on_health_changed(player_max_health)
 	connect("health_changed", _on_health_changed)
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	timer_find_enemy.start()
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)	
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
-			var waterball = prefabwaterball.instantiate()
-			waterball.player = self
-			world.add_child(waterball)
-			waterball.global_transform.origin = camera_ray_params.from
-			waterball.global_transform.basis = camera.global_transform.basis
+	if event is InputEventMouseButton and event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP:
+		spell_currently_index -=1
+		if spell_currently_index < 0:
+			spell_currently_index = spells.size() - 1
+		label_spell.text = spells[spell_currently_index].spell_name.to_upper()
+	elif event is InputEventMouseButton and event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN:
+		spell_currently_index +=1
+		if spell_currently_index == spells.size():
+			spell_currently_index = 0
+		label_spell.text = spells[spell_currently_index].spell_name.to_upper()
+	if event is InputEventMouseButton:		
+		if  event.button_index == MOUSE_BUTTON_LEFT && event.pressed && timer_reload_spell.is_stopped():
+			if spells[spell_currently_index].spell_name.to_lower() == "thunderbolt":
+				create_spell(prefathunderbolt.instantiate())				
+			elif spells[spell_currently_index].spell_name.to_lower() == "waterball":
+				create_spell(prefabwaterball.instantiate())				
+			elif spells[spell_currently_index].spell_name.to_lower() == "tornado":
+				create_spell(prefabtornado.instantiate())				
 		elif event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
 			if Engine.time_scale < 1:
 				Engine.time_scale = 1.0
@@ -77,6 +113,15 @@ func _input(event: InputEvent) -> void:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 
 func _process(delta):
+	# find collide with object
+	if raycast.is_colliding():
+		var collider = raycast.get_collider()
+		if collider.get_groups().size() > 0 && collider.get_groups()[0] in ["portal", "enemy"]:
+			image_pointcatch.modulate = Color(1, 0, 0)  # RGB (czerwony)
+		else:
+			image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)
+	else:
+		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)			
 	if Engine.time_scale < 1.0:
 		progressbar_world_slowing.value -= delta / Engine.time_scale
 		if progressbar_world_slowing.value < 0.001:
@@ -101,6 +146,16 @@ func _process(delta):
 			state = playerstate.IDLE
 	move_and_slide()
 
+func create_spell(prefab: Node3D):
+	prefab.spell = spells[spell_currently_index]
+	prefab.player = self	
+	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point())
+	world.add_child(prefab)
+	prefab.global_transform.origin = raycast.global_transform.origin
+	prefab.global_transform.basis = raycast.global_transform.basis
+	timer_reload_spell.start()
+	progressbar_reload_spell.value = 0
+	
 func take_damage(amount: int):
 	current_health -= amount
 	current_health = clamp(current_health, 0, player_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
@@ -119,14 +174,7 @@ func is_alive() -> bool:
 func _on_health_changed(new_health: int):	
 	label_health.text = str(new_health)  # Skalowanie wartości na pasek zdrowia
 
-func _on_timer_find_enemy_timeout() -> void:
-	var ray_origin = camera.project_ray_origin(screen_pos)
-	var ray_dir = camera.project_ray_normal(screen_pos)
-	var space = get_world_3d().direct_space_state
-	camera_ray_params.from = ray_origin
-	camera_ray_params.to = ray_origin + ray_dir * 1000.0	
-	var result = space.intersect_ray(camera_ray_params)
-	if result:
-		image_pointcatch.modulate = Color(1, 0, 0)  # RGB (czerwony)
-	else:
-		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (czerwony)
+func _on_timer_reload_spell_timeout() -> void:
+	progressbar_reload_spell.value += timer_reload_spell.wait_time
+	if progressbar_reload_spell.value > 0.99:
+		timer_reload_spell.stop()

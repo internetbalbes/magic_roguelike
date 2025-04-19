@@ -54,7 +54,8 @@ func _on_timer_height_scan_timeout() -> void:
 	timer_height_scan_start()
 
 func timer_height_scan_start():
-	var aabb = map_relief.get_aabb().size / 4
+	#var aabb = map_relief.get_aabb().size / 4
+	var aabb = map_relief.get_aabb().size / 20
 	height_scan.target_position.x = map.scale.x * randf_range(-aabb.x, aabb.x)
 	height_scan.target_position.z = map.scale.z * randf_range(-aabb.z, aabb.z)
 	timer_height_scan.start()

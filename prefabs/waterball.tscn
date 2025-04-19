@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://cfv0ltjj40es8"]
+[gd_scene load_steps=11 format=3 uid="uid://cfv0ltjj40es8"]
 
 [ext_resource type="Script" uid="uid://cmpc7vxs7ppqv" path="res://prefabs/waterball.gd" id="1_ad3cw"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ad3cw"]
-albedo_color = Color(1.63645e-06, 0.780359, 0.783115, 1)
+transparency = 1
+albedo_color = Color(0, 0.780392, 0.784314, 0.423529)
+emission_enabled = true
+emission = Color(0.255269, 0.367046, 0.832127, 1)
+emission_energy_multiplier = 6.52
 
 [sub_resource type="SphereMesh" id="SphereMesh_ht1c8"]
 material = SubResource("StandardMaterial3D_ad3cw")
@@ -13,7 +17,36 @@ height = 0.2
 [sub_resource type="SphereShape3D" id="SphereShape3D_g2jcq"]
 radius = 0.1
 
-[node name="waterball" type="Area3D"]
+[sub_resource type="Curve" id="Curve_ad3cw"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_psxt3"]
+curve = SubResource("Curve_ad3cw")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6rvgu"]
+particle_flag_align_y = true
+spread = 180.0
+initial_velocity_min = 12.0
+initial_velocity_max = 14.0
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_psxt3")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yp45b"]
+albedo_color = Color(0, 1, 1, 1)
+emission_enabled = true
+emission = Color(0, 1, 1, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5dhe1"]
+material = SubResource("StandardMaterial3D_yp45b")
+top_radius = 0.1
+bottom_radius = 0.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ad3cw"]
+
+[node name="waterball" type="CharacterBody3D"]
 collision_layer = 256
 collision_mask = 705
 script = ExtResource("1_ad3cw")
@@ -25,4 +58,27 @@ mesh = SubResource("SphereMesh_ht1c8")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_g2jcq")
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 24
+lifetime = 0.5
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_6rvgu")
+draw_pass_1 = SubResource("CylinderMesh_5dhe1")
+
+[node name="timer_remove_object" type="Timer" parent="."]
+one_shot = true
+
+[node name="area3d_waterball_circle" type="Area3D" parent="."]
+collision_layer = 256
+collision_mask = 576
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area3d_waterball_circle"]
+shape = SubResource("CylinderShape3D_ad3cw")
+
+[node name="timer_find_enemy_in_area" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="timeout" from="timer_remove_object" to="." method="_on_timer_remove_object_timeout"]
+[connection signal="timeout" from="timer_find_enemy_in_area" to="." method="_on_timer_find_enemy_in_area_timeout"]

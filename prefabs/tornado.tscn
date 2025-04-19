@@ -1,0 +1,78 @@
+[gd_scene load_steps=12 format=3 uid="uid://clwkngxgw3ryf"]
+
+[ext_resource type="Script" uid="uid://dri0rh0kx53d0" path="res://prefabs/tornado.gd" id="1_yit2p"]
+[ext_resource type="Shader" uid="uid://bhy6ld1gkjrn8" path="res://shaders/tornado.gdshader" id="2_pffwp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ad3cw"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.666667)
+
+[sub_resource type="SphereMesh" id="SphereMesh_okwvi"]
+material = SubResource("StandardMaterial3D_ad3cw")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ch331"]
+radius = 0.1
+
+[sub_resource type="Curve" id="Curve_erea1"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.140845, 0.213483), -1.59551, -1.59551, 0, 0, Vector2(0.492958, 0.348315), 0.0, 0.0, 0, 0, Vector2(0.753521, 0.202247), 0.0, 0.0, 0, 0, Vector2(0.915493, 0.516854), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_n6idy"]
+texture_mode = 1
+curve = SubResource("Curve_erea1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ok6uc"]
+shader = ExtResource("2_pffwp")
+shader_parameter/tangent_velocity = 2.0
+shader_parameter/upward_speed = 3.0
+shader_parameter/base_radius = 5.0
+shader_parameter/profile = SubResource("CurveTexture_n6idy")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_isfe7"]
+albedo_color = Color(0.462745, 1, 0.462745, 0.454902)
+emission = Color(0, 0.145098, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_almi2"]
+material = SubResource("StandardMaterial3D_isfe7")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pffwp"]
+
+[node name="tornado" type="CharacterBody3D"]
+collision_layer = 256
+collision_mask = 65
+script = ExtResource("1_yit2p")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+layers = 513
+mesh = SubResource("SphereMesh_okwvi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_ch331")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 100
+lifetime = 2.0
+fixed_fps = 60
+process_material = SubResource("ShaderMaterial_ok6uc")
+draw_pass_1 = SubResource("SphereMesh_almi2")
+
+[node name="timer_remove_object" type="Timer" parent="."]
+one_shot = true
+
+[node name="timer_find_enemy_in_area" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="area3d_tornado_circle" type="Area3D" parent="."]
+collision_layer = 256
+collision_mask = 64
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area3d_tornado_circle"]
+shape = SubResource("CylinderShape3D_pffwp")
+
+[connection signal="timeout" from="timer_remove_object" to="." method="_on_timer_remove_object_timeout"]
+[connection signal="timeout" from="timer_find_enemy_in_area" to="." method="_on_timer_find_enemy_in_area_timeout"]
