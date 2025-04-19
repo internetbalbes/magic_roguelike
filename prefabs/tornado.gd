@@ -60,12 +60,19 @@ func _on_timer_remove_object_timeout() -> void:
 		timer_remove_object.start()
 	else:
 		call_deferred("queue_free")
-
+	
 func _on_timer_find_enemy_in_area_timeout() -> void:
 	enemies_in_tornado = area3d_tornado_circle.get_overlapping_bodies()	
-	for obj in enemies_in_tornado:
-		if is_instance_valid(obj):
-			obj._set_position_freeze(global_transform.origin, true)
+	var count_enemies = enemies_in_tornado.size()
+	if count_enemies > 0:
+		var angle_shift = 330.0 / count_enemies
+		var angle = 0
+		for obj in enemies_in_tornado:
+			var x = cos(deg_to_rad(angle))
+			var z = sin(deg_to_rad(angle))		
+			if is_instance_valid(obj):				
+				obj._set_position_freeze(collider.global_position + Vector3(x, 2, z), true)
+			angle += angle_shift	
 	var time = player_tornado_time_life - body_tornado.lifetime
 	if time < 0.001:
 		timer_remove_object.wait_time = body_tornado.lifetime

@@ -83,10 +83,10 @@ func _ready() -> void:
 	_set_point_on_circle((enemy_angle_start * count_segments_around_portal / 360) * (2.0 * PI / count_segments_around_portal))
 	animation_player.play("Walk")
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
 		## Ruch w powietrzu (np. grawitacja, opadanie)
-		velocity += get_gravity() * delta
+		velocity += get_gravity() * delta		
 		move_and_slide()
 	elif animation_player.current_animation == "Throw":
 		# Obracanie wroga w stronę celu	
@@ -111,6 +111,8 @@ func _process(delta: float) -> void:
 				point_target = player.global_transform.origin + Vector3(x, 0, z)
 			else:
 				_set_point_on_circle(randf_range(1, count_segments_around_portal) * (2.0 * PI / count_segments_around_portal))	
+	elif !animation_player.active:
+		move_and_slide()
 		
 func _set_point_on_circle(angle) -> void:
 	var x = enemy_radius_around_portal * cos(angle)
@@ -119,9 +121,9 @@ func _set_point_on_circle(angle) -> void:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == player:
-		fireball_create()
 		player_in_area = true
-
+		fireball_create()
+		
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body == player:
 		player_in_area = false
@@ -168,15 +170,16 @@ func _on_animation_finished(_anim_name: String) -> void:
 		if timer_wait_set_trap:
 			timer_wait_set_trap.stop()
 		call_deferred("queue_free")
-	elif player_in_area:
-		fireball_create()
-	else:
-		if target == player:
-			enemy_speed = enemy_speed_run
-			animation_player.play("Run")
+	elif animation_player.active:	
+		if player_in_area:
+			fireball_create()
 		else:
-			enemy_speed = enemy_speed_walk
-			animation_player.play("Walk")
+			if target == player:
+				enemy_speed = enemy_speed_run
+				animation_player.play("Run")
+			else:
+				enemy_speed = enemy_speed_walk
+				animation_player.play("Walk")
 
 func _on_timer_set_trap_timeout() -> void:
 	timer_set_trap.call_deferred("queue_free")	
@@ -221,19 +224,29 @@ func _on_timer_damage_timeout() -> void:
 func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 	animation_player.active = !freeze
 	if freeze:
-		if timer_wait_set_trap:
-			timer_wait_set_trap.stop()
-		elif timer_set_trap:
-			timer_set_trap.stop()		
+		if is_instance_valid(timer_after_exit_portal):
+			timer_after_exit_portal.stop()
+		else:
+			area.monitoring = false
+			if is_instance_valid(fireball):
+				fireball.call_deferred("queue_free")
+			timer_throw.stop()
+			if is_instance_valid(timer_wait_set_trap):
+				timer_wait_set_trap.stop()
+			elif is_instance_valid(timer_set_trap):
+				timer_set_trap.stop()
 		global_transform.origin = pos
 		animation_player.stop()
 	else:		
 		animation_player.play("Walk")
-		if timer_wait_set_trap:
-			timer_wait_set_trap.start()		
-		elif timer_set_trap:		
-			timer_set_trap.start()
-		move_and_slide()
+		if is_instance_valid(timer_after_exit_portal):
+			timer_after_exit_portal.start()
+		else:
+			area.monitoring = true
+			if timer_wait_set_trap:
+				timer_wait_set_trap.start()		
+			elif timer_set_trap:		
+				timer_set_trap.start()
 	
 func _get_object_size() -> float:
 	return collision_shape.radius

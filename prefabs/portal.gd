@@ -27,7 +27,7 @@ func _process(_delta: float) -> void:
 	label_time.text = "%02d" % remaining_time
 	
 func _add_child():
-	var angle_shift = 300.0 / portal_create_enemy_count
+	var angle_shift = 330.0 / portal_create_enemy_count
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
 		var enemy = prefabenemy.instantiate()

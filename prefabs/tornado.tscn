@@ -40,10 +40,11 @@ radius = 0.1
 height = 0.2
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_pffwp"]
+height = 5.0
 
 [node name="tornado" type="CharacterBody3D"]
 collision_layer = 256
-collision_mask = 65
+collision_mask = 64
 script = ExtResource("1_yit2p")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

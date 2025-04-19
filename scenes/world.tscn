@@ -125,7 +125,7 @@ script = ExtResource("7_4mrxx")
 
 [node name="RayCast3D" type="RayCast3D" parent="player/Camera3D"]
 target_position = Vector3(0, 0, -1000)
-collision_mask = 576
+collision_mask = 577
 
 [connection signal="timeout" from="timer_height_scan" to="." method="_on_timer_height_scan_timeout"]
 [connection signal="timeout" from="player/timer_reload_spell" to="player" method="_on_timer_reload_spell_timeout"]
