@@ -116,7 +116,7 @@ func _physics_process(delta: float) -> void:
 	# find collide with object
 	if raycast.is_colliding():
 		var collider = raycast.get_collider()
-		if collider.get_groups().size() > 0 && collider.get_groups()[0] in ["portal", "enemy"]:
+		if collider && collider.get_groups().size() > 0 && collider.get_groups()[0] in ["portal", "enemy"]:
 			image_pointcatch.modulate = Color(1, 0, 0)  # RGB (czerwony)
 		else:
 			image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)

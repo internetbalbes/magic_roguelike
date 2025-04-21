@@ -16,29 +16,52 @@ extends CharacterBody3D
 @export var world: Node3D
 @export var player : CharacterBody3D
 
+# enemy's run
 var enemy_speed_walk = 0.55
+ # enemy's walk
 var enemy_speed_run = 2.5
+ # cirkle's radius where patrol enemy
 var enemy_radius_around_portal = 10.0
-var count_segments_around_portal = 36  # Liczba segmentów w okręgu
-var time_wait_to_shoot = 2
+ # count segmentów in cirkle where patrol enemy
+var count_segments_around_portal = 36 
+# time in animation when enemy throw fireball
 var time_to_throw: float = 1
+# time in animation when enemy needs to set trap
 var time_to_set_trap: float = 2
+# time walk enemy from portal
 var time_after_exit_portal: float = 1
+# ppoint navigation where to walk enemy
 var point_target = Vector3.ZERO
+# flag whith set that player in enemy's area
 var player_in_area: bool = false
+# enemy's maxhealth
 var enemy_max_health: int = 5
+# enemy's current health
 var current_health: int = enemy_max_health
+# Node fireball
 var fireball: Area3D
+# Node tram
 var trap : Node3D
+# object timer walk enemy from portal
 var timer_after_exit_portal: Timer = Timer.new()
+# object timeer after walk from portal when enemy needs to set trap
 var timer_wait_set_trap: Timer = Timer.new()
+# object timeer in animation when enemy needs to set trap
 var timer_set_trap: Timer = Timer.new()
+# enemy's speed walk or run
 var enemy_speed = enemy_speed_walk
+# angle enemy's start
 var enemy_angle_start: float = 0
+# node enemy's hand
 var skeleton_standart_material: StandardMaterial3D = StandardMaterial3D.new()
+# Place on which enemy orientation 
 var target : Node3D
+# array of Buf
+var list_buf: Array
+# plater's camera
+var camera : Camera3D
 
-# Sygnalizacja zmiany zdrowia
+# procedure change enemy's health
 signal health_changed(new_health)
 
 func _ready() -> void:	
@@ -48,15 +71,15 @@ func _ready() -> void:
 		enemy_speed_run = config.get_value("enemy", "enemy_speed_run", enemy_speed_run)
 		enemy_radius_around_portal = config.get_value("enemy", "enemy_radius_around_portal", enemy_radius_around_portal)
 		count_segments_around_portal = config.get_value("enemy", "count_segments_around_portal", count_segments_around_portal)
-		time_wait_to_shoot = config.get_value("enemy", "time_wait_to_shoot", time_wait_to_shoot)
 		time_to_throw = config.get_value("enemy", "time_to_throw", time_to_throw)
 		time_to_set_trap = config.get_value("enemy", "time_to_set_trap", time_to_set_trap)		
 		time_after_exit_portal = config.get_value("enemy", "time_after_exit_portal", time_after_exit_portal)
 		timer_damage.wait_time = config.get_value("enemy", "enemy_time_is_damaged", timer_damage.wait_time)
 		collision_area_shape.radius = config.get_value("enemy", "enemy_area_scan_player", enemy_radius_around_portal)
-		enemy_max_health =  config.get_value("enemy", "enemy_max_health", enemy_max_health)
+		enemy_max_health =  randi_range(1, config.get_value("enemy", "enemy_max_health", enemy_max_health))
 		#config.save("res://settings.cfg")
 	config = null
+	camera = player.get_node("Camera3D")
 	current_health = enemy_max_health
 	area.monitoring = false
 	skeleton_standart_material.albedo_color = Color(1.0, 1.0, 1.0)
@@ -127,8 +150,10 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body == player:
 		player_in_area = false
 
-func take_damage(amount: int):
+func take_damage(buf, amount: int):
 	if animation_player.current_animation != "Death":
+		if buf:
+			_add_buf_to_list(buf)
 		current_health -= amount
 		current_health = clamp(current_health, 0, enemy_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
 		emit_signal("health_changed", current_health)	
@@ -264,3 +289,15 @@ func _timers_delete()->void:
 		timer_wait_set_trap.call_deferred("queue_free")
 	if is_instance_valid(timer_set_trap):
 		timer_set_trap.call_deferred("queue_free")
+		
+func _add_buf_to_list(name_buf):
+	if !list_buf.has(name_buf):
+		var icon = TextureRect.new()		
+		if name_buf == "wet":  
+			icon.texture = load("res://textures/icon_drop.png") as Texture2D
+		icon.stretch_mode = TextureRect.STRETCH_KEEP	
+		$status_icons/SubViewport/HBoxContainer.add_child(icon)
+		list_buf.append(name_buf)	
+	
+func find_buf(name_buf)->bool:
+	return list_buf.has(name_buf)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cgosusbqw7ioc"]
+[gd_scene load_steps=8 format=3 uid="uid://cgosusbqw7ioc"]
 
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://scripts/enemy.gd" id="1_yfjof"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="2_cypye"]
@@ -10,6 +10,9 @@ radius = 0.3
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_yfjof"]
 height = 10.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_a7d0n"]
+viewport_path = NodePath("status_icons/SubViewport")
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
@@ -48,6 +51,35 @@ one_shot = true
 [node name="timer_damage" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
+
+[node name="status_icons" type="SubViewportContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1278.0
+offset_bottom = -718.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="status_icons"]
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(64, 45)
+render_target_update_mode = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="status_icons/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73572, 0)
+billboard = 1
+texture = SubResource("ViewportTexture_a7d0n")
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

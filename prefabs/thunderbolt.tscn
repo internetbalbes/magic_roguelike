@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bhbr6l1et4nqh"]
+[gd_scene load_steps=6 format=3 uid="uid://bhbr6l1et4nqh"]
 
 [ext_resource type="Script" uid="uid://dygxb2gsojykb" path="res://prefabs/thunderbolt.gd" id="1_ch331"]
 
@@ -16,6 +16,8 @@ height = 0.2
 [sub_resource type="SphereShape3D" id="SphereShape3D_ch331"]
 radius = 0.1
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ch331"]
+
 [node name="thunderbolt" type="CharacterBody3D"]
 collision_layer = 256
 collision_mask = 705
@@ -31,4 +33,16 @@ shape = SubResource("SphereShape3D_ch331")
 [node name="timer_remove_object" type="Timer" parent="."]
 one_shot = true
 
+[node name="area3d_thunderbolt_circle" type="Area3D" parent="."]
+collision_layer = 256
+collision_mask = 64
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area3d_thunderbolt_circle"]
+shape = SubResource("CylinderShape3D_ch331")
+
+[node name="timer_find_enemy_in_area" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
 [connection signal="timeout" from="timer_remove_object" to="." method="_on_timer_remove_object_timeout"]
+[connection signal="timeout" from="timer_find_enemy_in_area" to="." method="_on_timer_find_enemy_in_area_timeout"]

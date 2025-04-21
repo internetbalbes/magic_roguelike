@@ -43,19 +43,21 @@ func _input(_event: InputEvent) -> void:
 		
 func _on_timer_height_scan_timeout() -> void:
 	if height_scan.is_colliding():
-		var shape = height_scan.get_collider().get_parent()
-		if shape == map_relief:
-			var portal = list_portal_set_position[0]
-			portal.global_position = height_scan.get_collision_point()
-			portal.portal_process_start()
-			list_portal_set_position.remove_at(0)
-			if list_portal_set_position.size() == 0:
-				return
+		var obj = height_scan.get_collider()
+		if obj:
+			var shape = obj.get_parent()
+			if shape == map_relief:
+				var portal = list_portal_set_position[0]
+				portal.global_position = height_scan.get_collision_point()
+				portal.portal_process_start()
+				list_portal_set_position.remove_at(0)
+				if list_portal_set_position.size() == 0:
+					return
 	timer_height_scan_start()
 
 func timer_height_scan_start():
-	var aabb = map_relief.get_aabb().size / 4
-	#var aabb = map_relief.get_aabb().size / 20
+	#var aabb = map_relief.get_aabb().size / 4
+	var aabb = map_relief.get_aabb().size / 20
 	height_scan.target_position.x = map.scale.x * randf_range(-aabb.x, aabb.x)
 	height_scan.target_position.z = map.scale.z * randf_range(-aabb.z, aabb.z)
 	timer_height_scan.start()
