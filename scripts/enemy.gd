@@ -58,8 +58,6 @@ var skeleton_standart_material: StandardMaterial3D = StandardMaterial3D.new()
 var target : Node3D
 # array of Buf
 var list_buf: Array
-# plater's camera
-var camera : Camera3D
 
 # procedure change enemy's health
 signal health_changed(new_health)
@@ -79,7 +77,6 @@ func _ready() -> void:
 		enemy_max_health =  randi_range(1, config.get_value("enemy", "enemy_max_health", enemy_max_health))
 		#config.save("res://settings.cfg")
 	config = null
-	camera = player.get_node("Camera3D")
 	current_health = enemy_max_health
 	area.monitoring = false
 	skeleton_standart_material.albedo_color = Color(1.0, 1.0, 1.0)

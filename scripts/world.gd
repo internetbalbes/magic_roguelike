@@ -1,7 +1,5 @@
 extends Node3D
 
-const INT32_MAX = 2147483647
-
 @onready var audiostream = $AudioStreamPlayer3D
 @onready var map = $map
 @onready var map_relief =$map/relief
@@ -11,9 +9,12 @@ const INT32_MAX = 2147483647
 @onready var player = $player
 @export var prefabportal : PackedScene
 
-var portal_time_life = 60
+#generation count portals on a map
 var create_portal_count = 5
+#list portals for set on a map
 var list_portal_set_position : Array
+#scale map's size to set portal
+var scale_size_map_to_set_portal = 4
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -22,7 +23,8 @@ func _ready() -> void:
 		var volume = config.get_value("audio", "volume", 50)
 		var volume_db = volume * 80 / 100.0 - 80.0  # Konwersja do skali decybeli (-80 dB to cisza)
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), volume_db)
-		create_portal_count = config.get_value("world", "create_portal_count", create_portal_count)		
+		create_portal_count = config.get_value("world", "create_portal_count", create_portal_count)
+		scale_size_map_to_set_portal = config.get_value("world", "scale_size_map_to_set_portal", 4)
 		#config.save("res://settings.cfg")
 	config = null
 	while  list_portal_set_position.size() < create_portal_count:
@@ -56,8 +58,7 @@ func _on_timer_height_scan_timeout() -> void:
 	timer_height_scan_start()
 
 func timer_height_scan_start():
-	#var aabb = map_relief.get_aabb().size / 4
-	var aabb = map_relief.get_aabb().size / 20
+	var aabb = map_relief.get_aabb().size / scale_size_map_to_set_portal
 	height_scan.target_position.x = map.scale.x * randf_range(-aabb.x, aabb.x)
 	height_scan.target_position.z = map.scale.z * randf_range(-aabb.z, aabb.z)
 	timer_height_scan.start()

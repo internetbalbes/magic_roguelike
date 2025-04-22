@@ -8,10 +8,15 @@ extends CharacterBody3D
 @onready var timer_find_enemy_in_area = $timer_find_enemy_in_area
 @export var player : CharacterBody3D
 
+#thunderbolt's speed
 var player_thunderbolt_speed = 20.0
+#thunderbolt's class name
 var spell: SpellClass
+#thunderbolt's collider
 var collider : Node3D
+#thunderbolt's collider position
 var collider_position : Vector3 = Vector3.ZERO
+#min distance to collider
 var min_distance_to_object = 0
 
 func _ready()->void:

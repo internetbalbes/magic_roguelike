@@ -1,9 +1,13 @@
 class_name SpellClass
 
 # Define the properties of the Player structure
+#spel's name
 var spell_name: String
+#spel's mana cost
 var mana_cost: int
+#spel's damege
 var damage: int
+#spel's type
 var type: String
 
 # You can also add methods if needed

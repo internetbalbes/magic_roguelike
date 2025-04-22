@@ -11,8 +11,11 @@ extends StaticBody3D
 @export var player: CharacterBody3D
 @export var world: Node3D
 
+#portal's time life
 var portal_time_life = 60
+#generation count enemies on a map
 var portal_create_enemy_count = 4
+#generation list enemies on a map
 var list_enemy : Array
 	
 func _ready() -> void:
