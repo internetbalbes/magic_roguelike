@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://cc3rjb24c5g3x"]
+[gd_scene load_steps=9 format=3 uid="uid://cc3rjb24c5g3x"]
 
 [ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://prefabs/portal.gd" id="1_4ooq7"]
-[ext_resource type="FontFile" uid="uid://cb0eklkqhx0pw" path="res://fonts/impact.ttf" id="2_bqeyo"]
 [ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://map/models/portal_portal.res" id="3_fd87k"]
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
 
@@ -33,18 +32,6 @@ collision_layer = 512
 collision_mask = 256
 script = ExtResource("1_4ooq7")
 
-[node name="label_time" type="Label3D" parent="."]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 5.49748, 0)
-billboard = 1
-no_depth_test = true
-fixed_size = true
-render_priority = 2
-font = ExtResource("2_bqeyo")
-font_size = 16
-outline_size = 6
-
-[node name="timer_portal_time_life" type="Timer" parent="."]
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 mesh = ExtResource("3_fd87k")
@@ -64,5 +51,3 @@ surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73127, 0)
 shape = SubResource("CylinderShape3D_oq7w4")
-
-[connection signal="timeout" from="timer_portal_time_life" to="." method="_on_timer_portal_time_life_timeout"]

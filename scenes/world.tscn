@@ -54,6 +54,14 @@ shape = SubResource("CapsuleShape3D_e3hyu")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="player"]
 
+[node name="label_health" type="Label" parent="player/CanvasLayer"]
+z_index = 1
+offset_left = 20.0
+offset_top = 447.0
+offset_right = 312.0
+offset_bottom = 526.0
+label_settings = ExtResource("8_w7kh3")
+
 [node name="image_pointcatch" type="TextureRect" parent="player/CanvasLayer"]
 z_index = 1
 anchors_preset = -1
@@ -73,14 +81,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("7_7r4gi")
 
-[node name="label_health" type="Label" parent="player/CanvasLayer"]
-z_index = 1
-offset_left = 33.0
-offset_top = 508.0
-offset_right = 325.0
-offset_bottom = 587.0
-label_settings = ExtResource("8_w7kh3")
-
 [node name="progressbar_world_slowing" type="ProgressBar" parent="player/CanvasLayer"]
 z_index = 1
 offset_left = 1079.0
@@ -89,29 +89,47 @@ offset_right = 1256.0
 offset_bottom = 701.0
 show_percentage = false
 
+[node name="progressbar_mana" type="ProgressBar" parent="player/CanvasLayer"]
+z_index = 1
+offset_left = 20.0
+offset_top = 533.0
+offset_right = 197.0
+offset_bottom = 573.0
+scale = Vector2(1.96694, 1.15901)
+show_percentage = false
+
 [node name="progressbar_reload_spell" type="ProgressBar" parent="player/CanvasLayer"]
 z_index = 1
-offset_left = 32.0
+offset_left = 20.0
 offset_top = 661.0
-offset_right = 209.0
+offset_right = 197.0
 offset_bottom = 701.0
 scale = Vector2(1.96694, 1.15901)
 show_percentage = false
 
 [node name="label_spell" type="Label" parent="player/CanvasLayer"]
 z_index = 1
-offset_left = 37.0
+offset_left = 20.0
 offset_top = 580.0
-offset_right = 427.0
-offset_bottom = 625.0
+offset_right = 410.0
+offset_bottom = 659.0
+label_settings = ExtResource("8_w7kh3")
+
+[node name="label_portal_reload" type="Label" parent="player/CanvasLayer"]
+z_index = 1
+offset_left = 20.0
+offset_top = 363.0
+offset_right = 410.0
+offset_bottom = 442.0
 label_settings = ExtResource("8_w7kh3")
 
 [node name="texturerect_vignette" type="TextureRect" parent="player/CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 11660.0
-offset_bottom = 6490.0
+offset_left = 2.0
+offset_right = 11642.0
+offset_bottom = 6540.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.1, 0.1)
@@ -128,5 +146,8 @@ script = ExtResource("7_4mrxx")
 target_position = Vector3(0, 0, -50)
 collision_mask = 577
 
+[node name="timer_portal_reload" type="Timer" parent="player"]
+
 [connection signal="timeout" from="timer_height_scan" to="." method="_on_timer_height_scan_timeout"]
 [connection signal="timeout" from="player/timer_reload_spell" to="player" method="_on_timer_reload_spell_timeout"]
+[connection signal="timeout" from="player/timer_portal_reload" to="player" method="_on_timer_portal_reload_timeout"]

@@ -148,20 +148,25 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 		player_in_area = false
 
 func take_damage(buf, amount: int):
-	if animation_player.current_animation != "Death":
-		if buf:
-			_add_buf_to_list(buf)
+	if animation_player.current_animation != "Death":		
 		current_health -= amount
 		current_health = clamp(current_health, 0, enemy_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
 		emit_signal("health_changed", current_health)	
 		if !is_alive():
+			if !timer_throw.is_stopped():
+				timer_throw.stop()			
+				if is_instance_valid(fireball):
+					fireball.call_deferred("queue_free")
 			area.monitoring = false
 			if target != player:
 				target.list_enemy.erase(self)
 			label_health.visible = false	
 			animation_player.play("Death")
 			_timers_delete()
-		timer_damage.start()
+		else:
+			if buf:
+				_add_buf_to_list(buf)
+			timer_damage.start()
 		skeleton_surface.set_surface_override_material(0, skeleton_standart_material)
 		skeleton_joints.set_surface_override_material(0, skeleton_standart_material)
 
@@ -254,7 +259,7 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 		global_transform.origin = pos
 		animation_player.stop()
 	else:		
-		animation_player.play("Walk")
+		_on_animation_finished("Walk")
 		if is_instance_valid(timer_after_exit_portal):
 			timer_after_exit_portal.start()
 		else:

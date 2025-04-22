@@ -7,7 +7,10 @@ extends CharacterBody3D
 @onready var timer_reload_spell = $timer_reload_spell
 @onready var texturerect_vignette = $CanvasLayer/texturerect_vignette
 @onready var progressbar_reload_spell = $CanvasLayer/progressbar_reload_spell
+@onready var progressbar_mana = $CanvasLayer/progressbar_mana
 @onready var label_spell = $CanvasLayer/label_spell
+@onready var timer_portal_reload : Timer = $timer_portal_reload
+@onready var label_portal_reload = $CanvasLayer/label_portal_reload
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
 @export var prefabtornado : PackedScene
@@ -38,6 +41,10 @@ var world_common_time_slowing = 60
 var time_reload_spell = 1
 # speed scroll_container spells
 var spell_currently_index = 1
+# time reload portal
+var time_reload_portal = 10
+# currently time reload portal
+var time_currently_reload_portal = time_reload_portal
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
 
@@ -51,6 +58,7 @@ func _ready() -> void:
 		world_scale_slowing = config.get_value("player", "world_scale_slowing", world_scale_slowing)
 		progressbar_world_slowing.max_value = config.get_value("player", "world_common_time_slowing", 60)
 		time_reload_spell = config.get_value("player", "time_reload_spell", 1)
+		time_reload_portal = config.get_value("player", "time_reload_portal", 10)			
 		# spell waterball
 		var mana_cost = config.get_value("player", "waterball_spell_mana_cost", 1)
 		var damage = config.get_value("player", "waterball_spell_damage", 1)
@@ -71,9 +79,13 @@ func _ready() -> void:
 		spells.append(spell)			
 		#config.save("res://settings.cfg")
 	config = null
+	label_portal_reload.visible = false
 	Engine.time_scale = 1.0
 	current_health = player_max_health
 	label_spell.text = spells[spell_currently_index].spell_name.to_upper()
+	progressbar_mana.max_value = randi_range(5, 10)
+	progressbar_mana.step = 1
+	progressbar_mana.value = progressbar_reload_spell.max_value
 	progressbar_reload_spell.step = 0.1
 	progressbar_reload_spell.value = 1
 	progressbar_reload_spell.max_value = 1
@@ -147,14 +159,18 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func create_spell(prefab: Node3D):
-	prefab.spell = spells[spell_currently_index]
-	prefab.player = self	
-	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point())
-	world.add_child(prefab)
-	prefab.global_transform.origin = raycast.global_transform.origin
-	prefab.global_transform.basis = raycast.global_transform.basis
-	timer_reload_spell.start()
-	progressbar_reload_spell.value = 0
+	if progressbar_mana.value - spells[spell_currently_index].mana_cost < 0:
+		pass
+	else:
+		prefab.spell = spells[spell_currently_index]
+		prefab.player = self	
+		prefab.set_collider(raycast.get_collider(), raycast.get_collision_point())
+		world.add_child(prefab)
+		prefab.global_transform.origin = raycast.global_transform.origin
+		prefab.global_transform.basis = raycast.global_transform.basis
+		timer_reload_spell.start()
+		progressbar_reload_spell.value = 0
+		progressbar_mana.value -= spells[spell_currently_index].mana_cost
 	
 func take_damage(amount: int):
 	current_health -= amount
@@ -178,3 +194,19 @@ func _on_timer_reload_spell_timeout() -> void:
 	progressbar_reload_spell.value += timer_reload_spell.wait_time
 	if progressbar_reload_spell.value > 0.99:
 		timer_reload_spell.stop()
+
+func portal_free(portal) -> void:
+	world.list_portal_set_position.append(portal)
+	if world.list_portal_set_position.size() == world.create_portal_count:
+		label_portal_reload.text = "%02d" % time_reload_portal
+		label_portal_reload.set_deferred("visible", true)
+		time_currently_reload_portal = time_reload_portal
+		timer_portal_reload.start()
+
+func _on_timer_portal_reload_timeout() -> void:
+	time_currently_reload_portal -= timer_portal_reload.wait_time
+	label_portal_reload.text = "%02d" % time_currently_reload_portal
+	if time_currently_reload_portal < 0.001:		
+		world.timer_height_scan_start()
+		timer_portal_reload.stop()
+		label_portal_reload.set_deferred("visible", false)
