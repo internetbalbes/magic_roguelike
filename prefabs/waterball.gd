@@ -54,8 +54,6 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 		for obj in enemies_in_waterball:
 			if obj.get_groups().size() > 0:
 				if obj.get_groups()[0] == "portal":
-					for obj_enemy in obj.list_enemy:
-						obj_enemy._set_target(player)
 					obj.portal_free()
 				elif obj.get_groups()[0] == "enemy":
 					obj.take_damage("wet", spell.damage)

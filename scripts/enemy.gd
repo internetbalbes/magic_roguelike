@@ -52,8 +52,8 @@ var timer_set_trap: Timer = Timer.new()
 var enemy_speed = enemy_speed_walk
 # angle enemy's start
 var enemy_angle_start: float = 0
-# node enemy's hand
-var skeleton_standart_material: StandardMaterial3D = StandardMaterial3D.new()
+#enemy's standard material when demage enemy
+var standart_material_demage: StandardMaterial3D = StandardMaterial3D.new()
 # Place on which enemy orientation 
 var target : Node3D
 # array of Buf
@@ -79,7 +79,7 @@ func _ready() -> void:
 	config = null
 	current_health = enemy_max_health
 	area.monitoring = false
-	skeleton_standart_material.albedo_color = Color(1.0, 1.0, 1.0)
+	standart_material_demage.albedo_color = Color(1.0, 1.0, 1.0)
 	timer_throw.wait_time = time_to_throw
 	animation_player.animation_finished.connect(_on_animation_finished)
 	_on_health_changed(current_health)
@@ -167,8 +167,8 @@ func take_damage(buf, amount: int):
 			if buf:
 				_add_buf_to_list(buf)
 			timer_damage.start()
-		skeleton_surface.set_surface_override_material(0, skeleton_standart_material)
-		skeleton_joints.set_surface_override_material(0, skeleton_standart_material)
+		skeleton_surface.set_surface_override_material(0, standart_material_demage)
+		skeleton_joints.set_surface_override_material(0, standart_material_demage)
 
 func heal(amount: int):
 	current_health += amount
