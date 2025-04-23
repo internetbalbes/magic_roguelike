@@ -77,7 +77,7 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 			var x = cos(deg_to_rad(angle))
 			var z = sin(deg_to_rad(angle))		
 			if is_instance_valid(obj):				
-				obj._set_position_freeze(collider.global_position + Vector3(x, 2, z), true)
+				obj._set_position_freeze(collider.global_position + Vector3(x, 0, z), true)
 			angle += angle_shift	
 	var time = player_tornado_time_life - body_tornado.lifetime
 	if time < 0.001:

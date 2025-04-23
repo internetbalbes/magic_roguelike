@@ -2,8 +2,6 @@ extends StaticBody3D
 
 @onready var omnolight = $OmniLight3D
 @onready var collision : CollisionShape3D = $CollisionShape3D
-@onready var mesh_body : MeshInstance3D = $MeshInstance3D
-@onready var mesh_fire : MeshInstance3D = $MeshInstance3D2
 @onready var collision_shape : Shape3D = collision.shape
 #timer period generation new enemies on a map
 @onready var timer_create_new_enemy : Timer = $timer_create_new_enemy
@@ -22,7 +20,6 @@ var portal_create_new_enemy_count = 1
 #groupe's size new enemies
 var portal_create_new_enemy_groupe_count = 2
 
-	
 func _ready() -> void:
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:		
@@ -51,14 +48,12 @@ func create_enemy()->Node:
 	return enemy
 
 func portal_process_stop() -> void:
-	mesh_body.visible = false
-	mesh_fire.visible = false
+	visible = false
 	collision.set_deferred("disabled", true)
 	timer_create_new_enemy.stop()
 	
 func portal_process_start() -> void:
-	mesh_body.visible = true
-	mesh_fire.visible = true	
+	visible = true
 	collision.set_deferred("disabled", false)
 	call_deferred("_add_child")
 	timer_create_new_enemy.start()
