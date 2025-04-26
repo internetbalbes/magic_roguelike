@@ -102,6 +102,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="texturerect_base" type="TextureRect" parent="control_spell"]
+layout_mode = 0
 offset_left = 23.0
 offset_top = 587.0
 offset_right = 87.0

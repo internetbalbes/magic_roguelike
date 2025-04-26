@@ -6,7 +6,7 @@ extends CharacterBody3D
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
 @onready var label_health: Label3D = $label_health
 @onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
-@onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/enemy_model/Skeleton3D/BoneAttachment3D
+@onready var skeleton: Skeleton3D = $enemy_model/enemy_model/Skeleton3D
 @onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
 @onready var timer_throw: Timer = $timer_throw
 @onready var timer_damage: Timer = $timer_damage
@@ -74,6 +74,7 @@ var enemy_list_modificators: Array
 var probability_modificator = 50.0
 # object portal spawn
 var portal: Node3D
+var skeleton_bone_hand = BoneAttachment3D.new()
 
 # procedure change enemy's health
 signal health_changed(new_health)
@@ -93,7 +94,9 @@ func _ready() -> void:
 		enemy_max_health =  randi_range(1, config.get_value("enemy", "enemy_max_health", enemy_max_health))
 		probability_modificator =  config.get_value("enemy", "probability_modificator", probability_modificator)
 		#config.save("res://settings.cfg")
-	config = null
+	config = null	
+	skeleton.add_child(skeleton_bone_hand)
+	skeleton_bone_hand.bone_idx = 27
 	current_health = enemy_max_health
 	area.monitoring = false
 	standart_material_demage.albedo_color = Color(1.0, 1.0, 1.0)

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://scripts/enemy.gd" id="1_yfjof"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="2_cypye"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/fireball.tscn" id="3_cypye"]
-[ext_resource type="PackedScene" uid="uid://dipswpevn2nh" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
+[ext_resource type="PackedScene" uid="uid://bpgykdhxg1pfg" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
 radius = 0.3
@@ -16,7 +16,7 @@ viewport_path = NodePath("icons_status/SubViewport")
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
-collision_mask = 97
+collision_mask = 33
 script = ExtResource("1_yfjof")
 prefabtrap = ExtResource("2_cypye")
 prefabfireball = ExtResource("3_cypye")
@@ -82,7 +82,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="Sprite3D" type="Sprite3D" parent="."]
+[node name="sprite_buf_modificator" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73572, 0)
 billboard = 1
 texture = SubResource("ViewportTexture_a7d0n")
