@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ca0vpts7yl584"
-path="res://.godot/imported/book.png-d5247f1b0b91fee0bb47652e744d3601.ctex"
+uid="uid://df34rwrvix77"
+path="res://.godot/imported/card_mana_max_increase.png-3fa4267b6e1550d38e9a57c153d400a5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://deck_sprites/book.png"
-dest_files=["res://.godot/imported/book.png-d5247f1b0b91fee0bb47652e744d3601.ctex"]
+source_file="res://deck_sprites/card_mana_max_increase.png"
+dest_files=["res://.godot/imported/card_mana_max_increase.png-3fa4267b6e1550d38e9a57c153d400a5.ctex"]
 
 [params]
 
