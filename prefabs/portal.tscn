@@ -1,11 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://cc3rjb24c5g3x"]
+[gd_scene load_steps=10 format=3 uid="uid://cc3rjb24c5g3x"]
 
 [ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://prefabs/portal.gd" id="1_4ooq7"]
 [ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://map/models/portal_portal.res" id="3_fd87k"]
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
+[ext_resource type="Texture2D" uid="uid://cwdl7jkhhmqyh" path="res://sprites/portal_marker.png" id="4_4ooq7"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_7td2o"]
-height = 1.5
+[sub_resource type="CylinderMesh" id="CylinderMesh_srbon"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 200.0
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_fyhix"]
 
@@ -13,7 +16,7 @@ height = 1.5
 noise = SubResource("FastNoiseLite_fyhix")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_76t5s"]
-render_priority = 0
+render_priority = 1
 shader = ExtResource("4_0jtqf")
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_q81iy")
 shader_parameter/base_color = Color(1, 0.75, 0.3, 1)
@@ -44,8 +47,8 @@ distance_fade_begin = 1338.73
 distance_fade_shadow = 449.61
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1.40185, 0, 0, 0, 2.88751, 0, 0, 0, 1.40185, 0, 1.88145, 0)
-mesh = SubResource("SphereMesh_7td2o")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 104, 0)
+mesh = SubResource("CylinderMesh_srbon")
 surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -53,5 +56,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73127, 0)
 shape = SubResource("CylinderShape3D_oq7w4")
 
 [node name="timer_create_new_enemy" type="Timer" parent="."]
+
+[node name="marker" type="Sprite3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1.87139, 0)
+billboard = 1
+no_depth_test = true
+texture_filter = 0
+texture = ExtResource("4_4ooq7")
 
 [connection signal="timeout" from="timer_create_new_enemy" to="." method="_on_timer_create_new_enemy_timeout"]

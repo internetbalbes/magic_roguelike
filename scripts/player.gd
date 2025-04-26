@@ -1,16 +1,20 @@
 extends CharacterBody3D
 
+@onready var camera = $Camera3D
 @onready var raycast = $Camera3D/RayCast3D
-@onready var label_health = $CanvasLayer/label_health
-@onready var image_pointcatch = $CanvasLayer/image_pointcatch
-@onready var progressbar_world_slowing = $CanvasLayer/progressbar_world_slowing
+@onready var label_health = $interface/label_health
+@onready var image_pointcatch = $interface/image_pointcatch
 @onready var timer_reload_spell = $timer_reload_spell
-@onready var texturerect_vignette = $CanvasLayer/texturerect_vignette
-@onready var progressbar_reload_spell = $CanvasLayer/progressbar_reload_spell
-@onready var progressbar_mana = $CanvasLayer/progressbar_mana
-@onready var label_spell = $CanvasLayer/label_spell
+@onready var progressbar_reload_spell = $interface/progressbar_reload_spell
+@onready var progressbar_mana = $interface/progressbar_mana
+@onready var label_mana = $interface/progressbar_mana/label_mana
+@onready var texturerect_base = $interface/control_spell/texturerect_base
+@onready var texturerect_overlay = $interface/control_spell/texturerect_overlay
 @onready var timer_portal_reload : Timer = $timer_portal_reload
-@onready var label_portal_reload = $CanvasLayer/label_portal_reload
+@onready var label_portal_reload = $interface/label_portal_reload
+@onready var parent_hboxcontainer_card = $interface/Control
+@onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
+@onready var texturerect_card: TextureRect = $interface/texturerect_card
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
 @export var prefabtornado : PackedScene
@@ -34,9 +38,6 @@ var player_jump_velocity = 3
 # camer's sensitivity
 var player_rotate_sensitivity = 0.085
 var current_health: int = player_max_health
-var world_scale_slowing = 2
-# common time slowing world
-var world_common_time_slowing = 60
 # time reload spell
 var time_reload_spell = 1
 # speed scroll_container spells
@@ -45,6 +46,22 @@ var spell_currently_index = 1
 var time_reload_portal = 10
 # currently time reload portal
 var time_currently_reload_portal = time_reload_portal
+#list file spels
+var spell_thunderbolt = preload("res://sprites/thunderbolt.png") 
+var spell_waterball = preload("res://sprites/waterball_icon.png")
+var spell_tornado = preload("res://sprites/tornado_icon.png")
+var texturerect_card_set = Vector2.ZERO
+#list file cards
+var card_all_list_enemy: Array = ["card_mana_potion", "card_mana_hp", "card_mana_max_increase"]
+var card_mana_potion = preload("res://sprites/card_mana_potion.png") 
+var card_mana_hp = preload("res://sprites/card_mana_hp.png")
+var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
+var card_scale = 2
+var card_size = card_scale * Vector2(32, 48)
+var card_currently_index = -1
+var card_list : Array
+var card_list_animation : Array
+
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
 
@@ -55,10 +72,9 @@ func _ready() -> void:
 		player_max_health = config.get_value("player", "player_max_health", player_max_health)
 		player_jump_velocity = config.get_value("player", "player_jump_velocity", player_jump_velocity)
 		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
-		world_scale_slowing = config.get_value("player", "world_scale_slowing", world_scale_slowing)
-		progressbar_world_slowing.max_value = config.get_value("player", "world_common_time_slowing", 60)
 		time_reload_spell = config.get_value("player", "time_reload_spell", 1)
-		time_reload_portal = config.get_value("player", "time_reload_portal", 10)			
+		time_reload_portal = config.get_value("player", "time_reload_portal", 10)
+		progressbar_mana.max_value =  config.get_value("player", "player_max_mana", 10)
 		# spell waterball
 		var mana_cost = config.get_value("player", "waterball_spell_mana_cost", 1)
 		var damage = config.get_value("player", "waterball_spell_damage", 1)
@@ -76,53 +92,89 @@ func _ready() -> void:
 		damage = config.get_value("player", "tornado_spell_damage", 1)
 		type = config.get_value("player", "tornado_spell_type", "sphere")
 		spell = SpellClass.new("tornado", mana_cost, damage, type)
-		spells.append(spell)			
+		spells.append(spell)	
 		#config.save("res://settings.cfg")
 	config = null
+	texturerect_card.visible = false
+	texturerect_card.size = Vector2(card_size.x, card_size.y)
+	parent_hboxcontainer_card.size = Vector2(8 * card_size.x, card_size.y)	
+	var top = camera.get_viewport().get_visible_rect().size.y - parent_hboxcontainer_card.size.y
+	var left = (camera.get_viewport().get_visible_rect().size.x - parent_hboxcontainer_card.size.x) / 2.0	
+	parent_hboxcontainer_card.position = Vector2(left, top)	
+	for card in hboxcontainer_card.get_children():
+		card.custom_minimum_size = card_size
+		card.expand = true
+		card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	texturerect_card.position = parent_hboxcontainer_card.position	
+	texturerect_card.custom_minimum_size = card_size
+	texturerect_card.expand = true
+	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	label_portal_reload.visible = false
 	Engine.time_scale = 1.0
 	current_health = player_max_health
-	label_spell.text = spells[spell_currently_index].spell_name.to_upper()
-	progressbar_mana.max_value = randi_range(5, 10)
+	texturerect_overlay.texture = get_spell_texture(spells[spell_currently_index].spell_name)
 	progressbar_mana.step = 1
-	progressbar_mana.value = progressbar_reload_spell.max_value
+	take_mana(progressbar_reload_spell.max_value)
 	progressbar_reload_spell.step = 0.1
 	progressbar_reload_spell.value = 1
 	progressbar_reload_spell.max_value = 1
-	texturerect_vignette.visible = false
-	progressbar_world_slowing.value = progressbar_world_slowing.max_value	
 	_on_health_changed(player_max_health)
 	connect("health_changed", _on_health_changed)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)	
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP:
-		spell_currently_index -=1
-		if spell_currently_index < 0:
-			spell_currently_index = spells.size() - 1
-		label_spell.text = spells[spell_currently_index].spell_name.to_upper()
-	elif event is InputEventMouseButton and event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN:
-		spell_currently_index +=1
-		if spell_currently_index == spells.size():
-			spell_currently_index = 0
-		label_spell.text = spells[spell_currently_index].spell_name.to_upper()
-	if event is InputEventMouseButton:		
-		if  event.button_index == MOUSE_BUTTON_LEFT && event.pressed && timer_reload_spell.is_stopped():
-			if spells[spell_currently_index].spell_name.to_lower() == "thunderbolt":
-				create_spell(prefathunderbolt.instantiate())				
-			elif spells[spell_currently_index].spell_name.to_lower() == "waterball":
-				create_spell(prefabwaterball.instantiate())				
-			elif spells[spell_currently_index].spell_name.to_lower() == "tornado":
-				create_spell(prefabtornado.instantiate())				
-		elif event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
-			if Engine.time_scale < 1:
-				Engine.time_scale = 1.0
-				texturerect_vignette.visible = false
-			elif progressbar_world_slowing.value > 0:
-				Engine.time_scale /= world_scale_slowing
-				texturerect_vignette.visible = true	
+	if event is InputEventMouseButton:
+		if event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP && event.pressed:
+			if texturerect_card.visible:
+				if card_list.size() > 1:
+					if texturerect_card.texture:
+						hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
+					card_currently_index -=1
+					if card_currently_index < 0:
+						card_currently_index = card_list.size() - 1
+					set_card_new_position(card_currently_index)
+			else:
+				spell_currently_index -=1
+				if spell_currently_index < 0:
+					spell_currently_index = spells.size() - 1
+				texturerect_overlay.texture = get_spell_texture(spells[spell_currently_index].spell_name)
+		elif event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN && event.pressed:
+			if texturerect_card.visible:
+				if card_list.size() > 1:
+					if texturerect_card.texture:
+						hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
+					card_currently_index +=1
+					if card_currently_index == card_list.size():
+						card_currently_index = 0
+					set_card_new_position(card_currently_index)
+			else:
+				spell_currently_index +=1
+				if spell_currently_index == spells.size():
+					spell_currently_index = 0
+				texturerect_overlay.texture = get_spell_texture(spells[spell_currently_index].spell_name)
+		elif  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
+			if texturerect_card.visible:
+				if texturerect_card.texture:
+					remove_card()				 
+			elif timer_reload_spell.is_stopped():
+				if spells[spell_currently_index].spell_name.to_lower() == "thunderbolt":
+					create_spell(prefathunderbolt.instantiate())				
+				elif spells[spell_currently_index].spell_name.to_lower() == "waterball":
+					create_spell(prefabwaterball.instantiate())				
+				elif spells[spell_currently_index].spell_name.to_lower() == "tornado":
+					create_spell(prefabtornado.instantiate())			
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
+	elif Input.is_action_just_pressed("choose_card"):	
+		texturerect_card.visible = !texturerect_card.visible
+		if texturerect_card.visible:
+			card_currently_index = 0
+			if card_list.size() > 0:
+				set_card_new_position(card_currently_index)
+		else:
+			if card_list.size() > 0:
+				hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
+			texturerect_card.texture = null
 
 func _physics_process(delta: float) -> void:
 	# find collide with object
@@ -134,11 +186,6 @@ func _physics_process(delta: float) -> void:
 			image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)
 	else:
 		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)			
-	if Engine.time_scale < 1.0:
-		progressbar_world_slowing.value -= delta / Engine.time_scale
-		if progressbar_world_slowing.value < 0.001:
-			Engine.time_scale = 1.0
-			texturerect_vignette.visible = false
 	if !is_on_floor():
 		# Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta
@@ -170,8 +217,8 @@ func create_spell(prefab: Node3D):
 		prefab.global_transform.basis = raycast.global_transform.basis
 		timer_reload_spell.start()
 		progressbar_reload_spell.value = 0
-		progressbar_mana.value -= spells[spell_currently_index].mana_cost
-	
+		take_mana(-spells[spell_currently_index].mana_cost)
+		
 func take_damage(amount: int):
 	current_health -= amount
 	current_health = clamp(current_health, 0, player_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
@@ -179,10 +226,14 @@ func take_damage(amount: int):
 	if !is_alive():
 		get_tree().call_deferred("reload_current_scene")
 
-func heal(amount: int):
+func take_heal(amount: int):
 	current_health += amount
 	current_health = clamp(current_health, 0, player_max_health)
 	emit_signal("health_changed", current_health)
+	
+func take_mana(amount: int):
+	progressbar_mana.value = clamp(progressbar_mana.value + amount, 0, progressbar_mana.max_value)
+	label_mana.text = str(int(progressbar_mana.value)) + "/" + str(int(progressbar_mana.max_value))
 
 func is_alive() -> bool:
 	return current_health > 0
@@ -210,3 +261,66 @@ func _on_timer_portal_reload_timeout() -> void:
 		world.timer_height_scan_start()
 		timer_portal_reload.stop()
 		label_portal_reload.set_deferred("visible", false)
+
+func card_list_update()->void:
+	var width = card_list.size() * card_size.x
+	hboxcontainer_card.remove_theme_constant_override("separation")
+	if width > parent_hboxcontainer_card.size.x:
+		var separation = (width - parent_hboxcontainer_card.size.x)/(card_list.size()-1)
+		hboxcontainer_card.add_theme_constant_override("separation", -round(separation + 0.5))
+	else:
+		hboxcontainer_card.add_theme_constant_override("separation", 0)
+
+func get_card_texture(card_name: String)->Texture2D:
+	match card_name:
+		"card_mana_potion": return card_mana_potion 
+		"card_mana_hp": return card_mana_hp
+		"card_mana_max_increase": return card_mana_max_increase
+		_: return null		
+		
+func get_spell_texture(sell_name: String)->Texture2D:
+	match sell_name:
+		"thunderbolt": return spell_thunderbolt 
+		"tornado": return spell_tornado
+		"waterball": return spell_waterball
+		_: return null		
+	
+func set_card_new_position(index)->void:
+	var card = hboxcontainer_card.get_child(index)
+	texturerect_card.position = Vector2(parent_hboxcontainer_card.position.x + clamp(card.position.x, 0, parent_hboxcontainer_card.size.x - texturerect_card.size.x), parent_hboxcontainer_card.position.y - texturerect_card.size.y)
+	texturerect_card.texture = card.texture	
+	card.texture = null
+	card.custom_minimum_size = card_size
+						
+func add_card()->void:
+	var card_name = card_all_list_enemy[randi_range(0, card_all_list_enemy.size()-1)]
+	card_list.append(card_name)
+	var card = TextureRect.new()
+	card.custom_minimum_size = card_size
+	card.expand = true
+	card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	card.texture = get_card_texture(card_name)
+	card_list_update()	
+	if hboxcontainer_card.get_child_count() == 0:
+		hboxcontainer_card.add_child(card)
+		card_currently_index = 0
+		if texturerect_card.visible:
+			set_card_new_position(card_currently_index)
+	else:	
+		hboxcontainer_card.add_child(card)
+	
+func remove_card()->void:	
+	match card_list[card_currently_index]:
+		"card_mana_potion": take_mana(1)
+		"card_mana_hp": take_heal(1)
+		"card_mana_max_increase": 
+			progressbar_mana.max_value +=1
+			take_mana(0)
+	card_list.remove_at(card_currently_index)
+	hboxcontainer_card.remove_child(hboxcontainer_card.get_child(card_currently_index))
+	texturerect_card.texture = null	
+	if card_currently_index == card_list.size():
+		card_currently_index -= 1
+	card_list_update()
+	if card_currently_index >-1:
+		call_deferred("set_card_new_position", card_currently_index)

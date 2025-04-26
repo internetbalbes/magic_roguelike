@@ -1,0 +1,116 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwiarthxnrnrq"]
+
+[ext_resource type="LabelSettings" uid="uid://bdgea7p016j3g" path="res://fonts/LabelSettings.tres" id="1_irfrh"]
+[ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://interface/target.png" id="2_6qr8u"]
+[ext_resource type="Texture2D" uid="uid://b80mj4r30tbw8" path="res://sprites/book.png" id="4_7spvn"]
+
+[node name="interface" type="CanvasLayer"]
+
+[node name="label_health" type="Label" parent="."]
+z_index = 1
+offset_left = 20.0
+offset_top = 447.0
+offset_right = 312.0
+offset_bottom = 526.0
+label_settings = ExtResource("1_irfrh")
+
+[node name="image_pointcatch" type="TextureRect" parent="."]
+z_index = 1
+anchors_preset = -1
+anchor_left = 0.472
+anchor_top = 0.45
+anchor_right = 0.528
+anchor_bottom = 0.55
+offset_left = -36.16
+offset_top = -36.0
+offset_right = 36.16
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(72, 72)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_6qr8u")
+
+[node name="progressbar_mana" type="ProgressBar" parent="."]
+z_index = 1
+offset_left = 20.0
+offset_top = 533.0
+offset_right = 197.0
+offset_bottom = 573.0
+scale = Vector2(1.96694, 1.15901)
+size_flags_vertical = 1
+show_percentage = false
+
+[node name="label_mana" type="Label" parent="progressbar_mana"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="progressbar_reload_spell" type="ProgressBar" parent="."]
+z_index = 1
+offset_left = 20.0
+offset_top = 661.0
+offset_right = 197.0
+offset_bottom = 701.0
+scale = Vector2(1.96694, 1.15901)
+show_percentage = false
+
+[node name="label_portal_reload" type="Label" parent="."]
+z_index = 1
+offset_left = 20.0
+offset_top = 363.0
+offset_right = 410.0
+offset_bottom = 442.0
+label_settings = ExtResource("1_irfrh")
+
+[node name="Control" type="Control" parent="."]
+z_index = 1
+layout_mode = 3
+anchors_preset = 0
+offset_left = 436.0
+offset_top = 606.0
+offset_right = 936.0
+offset_bottom = 702.0
+
+[node name="hboxcontainer_card" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 10
+
+[node name="texturerect_card" type="TextureRect" parent="."]
+z_index = 1
+offset_left = 740.0
+offset_top = 469.0
+offset_right = 780.0
+offset_bottom = 509.0
+
+[node name="control_spell" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="texturerect_base" type="TextureRect" parent="control_spell"]
+offset_left = 23.0
+offset_top = 587.0
+offset_right = 87.0
+offset_bottom = 651.0
+texture = ExtResource("4_7spvn")
+
+[node name="texturerect_overlay" type="TextureRect" parent="control_spell"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 596.0
+offset_right = 88.0
+offset_bottom = 636.0

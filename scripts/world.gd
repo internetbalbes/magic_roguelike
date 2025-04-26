@@ -37,12 +37,7 @@ func _ready() -> void:
 		obj.portal_process_stop()
 	timer_height_scan_start()
 	audio_stream.play()	
-
-func _input(_event: InputEvent) -> void:
-	if Input.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		get_tree().change_scene_to_file("res://scenes/mainmenu.tscn")  # Przejdź do menu opcji	
-		
+	
 func _on_timer_height_scan_timeout() -> void:
 	if height_scan.is_colliding():
 		var obj = height_scan.get_collider()

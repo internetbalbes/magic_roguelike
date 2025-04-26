@@ -56,7 +56,7 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 				if obj.get_groups()[0] == "portal":
 					obj.portal_free()
 				elif obj.get_groups()[0] == "enemy":
-					obj.take_damage("wet", spell.damage)
+					obj.take_damage("waterball", "wet", spell.damage)
 	area3d_waterball_circle.monitoring = true
 	body_waterball.emitting = true	
 	timer_remove_object.wait_time = body_waterball.lifetime

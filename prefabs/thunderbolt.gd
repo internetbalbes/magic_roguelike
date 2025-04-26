@@ -62,5 +62,5 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 	if enemies_in_area.size() > 0:
 		for obj in enemies_in_area:
 			if obj == collider || obj.find_buf("wet"):
-				obj.take_damage("", spell.damage)
+				obj.take_damage("thunderbolt", "", spell.damage)
 	call_deferred("queue_free")

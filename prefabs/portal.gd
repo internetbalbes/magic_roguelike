@@ -34,14 +34,13 @@ func _add_child():
 	var angle_shift = 330.0 / portal_create_enemy_count
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
-		var enemy = create_enemy()
-		enemy.enemy_angle_start = angle
+		var enemy = create_enemy()		
 		world.add_child(enemy)
+		enemy._set_portal(self, angle)
 		angle += angle_shift
 
 func create_enemy()->Node:
 	var enemy = prefabenemy.instantiate()
-	enemy._set_target(self)
 	enemy.player = player
 	enemy.world = world
 	list_enemy.append(enemy)	
@@ -60,9 +59,9 @@ func portal_process_start() -> void:
 	
 func portal_free() -> void:
 	for obj in list_enemy:
-		obj._set_target(player)
+		obj._set_portal(null, 0)
 	for obj in list_new_enemy:
-		obj._set_target(player)
+		obj._set_portal(null, 0)
 	list_enemy.clear()
 	list_new_enemy.clear()
 	portal_process_stop()
@@ -75,14 +74,14 @@ func _get_object_size() -> float:
 func _on_timer_create_new_enemy_timeout() -> void:
 	var enemy = create_enemy()
 	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-	standart_material.albedo_color = Color(1.0, 0.0, 0.0)	
+	standart_material.albedo_color = Color(0.0, 0.0, 1.0)	
 	world.add_child(enemy)
 	enemy.skeleton_surface.set_surface_override_material(0, standart_material)
-	enemy.skeleton_joints.set_surface_override_material(0, standart_material)
-	enemy.enemy_angle_start = randf_range(0.0, 359.0)
+	enemy._set_portal(self, randf_range(0.0, 359.0))
 	list_new_enemy.append(enemy)
 	# grups enemy go yo player
 	if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
 		for obj in list_new_enemy:
-			obj._set_target(player)
+			list_enemy.erase(obj)
+			obj._set_portal(null, 0)
 		list_new_enemy.clear()

@@ -29,7 +29,7 @@ shader_parameter/fire_speed = Vector2(0, 1)
 [sub_resource type="CylinderMesh" id="CylinderMesh_sx0kk"]
 top_radius = 0.05
 bottom_radius = 0.1
-height = 1.0
+height = 0.25
 cap_top = false
 cap_bottom = false
 
@@ -65,7 +65,7 @@ mesh = SubResource("SphereMesh_q0r75")
 surface_material_override/0 = SubResource("ShaderMaterial_x5ema")
 
 [node name="MeshInstance_tail" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.5)
+transform = Transform3D(1, 0, 0, 0, -7.35137e-08, -1, 0, 1, -7.35137e-08, 0, 0, 0.125)
 mesh = SubResource("CylinderMesh_sx0kk")
 skeleton = NodePath("../MeshInstance_head")
 surface_material_override/0 = SubResource("ShaderMaterial_jlkf5")

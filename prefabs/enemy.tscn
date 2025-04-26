@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://scripts/enemy.gd" id="1_yfjof"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="2_cypye"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/fireball.tscn" id="3_cypye"]
-[ext_resource type="PackedScene" uid="uid://cqanv4jfub3v" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
+[ext_resource type="PackedScene" uid="uid://dipswpevn2nh" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
 radius = 0.3
@@ -12,7 +12,7 @@ radius = 0.3
 height = 10.0
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_a7d0n"]
-viewport_path = NodePath("status_icons/SubViewport")
+viewport_path = NodePath("icons_status/SubViewport")
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
@@ -22,7 +22,13 @@ prefabtrap = ExtResource("2_cypye")
 prefabfireball = ExtResource("3_cypye")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_height_offset = -1.0
+path_height_offset = -0.8
+path_max_distance = 100.01
+avoidance_enabled = true
+height = 2.0
+neighbor_distance = 2.0
+avoidance_layers = 64
+avoidance_mask = 64
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0832466, 0)
@@ -43,7 +49,7 @@ fixed_size = true
 font_size = 16
 
 [node name="enemy_model" parent="." instance=ExtResource("4_a7d0n")]
-transform = Transform3D(-0.01, 0, -1.50996e-09, 0, 0.01, 0, 1.50996e-09, 0, -0.01, 0, 0, 0)
+transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, -0.962739, 0)
 
 [node name="timer_throw" type="Timer" parent="."]
 one_shot = true
@@ -52,7 +58,7 @@ one_shot = true
 wait_time = 0.5
 one_shot = true
 
-[node name="status_icons" type="SubViewportContainer" parent="."]
+[node name="icons_status" type="SubViewportContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -61,14 +67,14 @@ offset_bottom = -718.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SubViewport" type="SubViewport" parent="status_icons"]
+[node name="SubViewport" type="SubViewport" parent="icons_status"]
 disable_3d = true
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(64, 45)
 render_target_update_mode = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="status_icons/SubViewport"]
+[node name="hboxcontainer_status" type="HBoxContainer" parent="icons_status/SubViewport"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
