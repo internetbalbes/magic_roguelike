@@ -16,7 +16,7 @@ viewport_path = NodePath("icons_status/SubViewport")
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
-collision_mask = 33
+collision_mask = 545
 script = ExtResource("1_yfjof")
 prefabtrap = ExtResource("2_cypye")
 prefabfireball = ExtResource("3_cypye")

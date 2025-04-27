@@ -74,7 +74,7 @@ func _get_object_size() -> float:
 func _on_timer_create_new_enemy_timeout() -> void:
 	var enemy = create_enemy()
 	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-	standart_material.albedo_color = Color(0.0, 0.0, 1.0)	
+	standart_material.albedo_color = Color(0.0, 1.0, 1.0)	
 	world.add_child(enemy)
 	enemy.skeleton_surface.set_surface_override_material(0, standart_material)
 	enemy._set_portal(self, randf_range(0.0, 359.0))

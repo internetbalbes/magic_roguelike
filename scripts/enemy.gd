@@ -319,8 +319,11 @@ func _set_portal(object: Node3D, angle: float) ->void:
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		area.monitoring = true
-		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
-		_timers_delete()
+		if is_instance_valid(timer_set_trap) && !timer_set_trap.is_stopped():
+			_timers_delete()
+		elif state == enemystate.WALKING_PORTAL:
+			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
+			_timers_delete()
 	
 func _set_state_enemy(value)->void:
 	match value:
