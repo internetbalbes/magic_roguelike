@@ -3,7 +3,11 @@
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://scripts/enemy.gd" id="1_yfjof"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="2_cypye"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/fireball.tscn" id="3_cypye"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://bpgykdhxg1pfg" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
+=======
+[ext_resource type="PackedScene" uid="uid://2jg24hitddup" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
+>>>>>>> 669886451b2a32e14bdb5702f3cce60afb3e9afe
 [ext_resource type="FontFile" uid="uid://b65ph5aofnb5w" path="res://fonts/Ancial-Regular.otf" id="4_aivmq"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
