@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwdl7jkhhmqyh"
-path="res://.godot/imported/portal_marker.png-54cfa050acd9d5acb074ce08bd408fdc.ctex"
+uid="uid://bru3abn3yn3eu"
+path="res://.godot/imported/portal_icon.png-5baaadc30e2cba177f5c5b841944b229.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://deck_sprites/portal_marker.png"
-dest_files=["res://.godot/imported/portal_marker.png-54cfa050acd9d5acb074ce08bd408fdc.ctex"]
+source_file="res://sprites/portal_icon.png"
+dest_files=["res://.godot/imported/portal_icon.png-5baaadc30e2cba177f5c5b841944b229.ctex"]
 
 [params]
 

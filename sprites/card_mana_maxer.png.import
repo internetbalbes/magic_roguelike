@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyuct4gwxnmhq"
-path="res://.godot/imported/tornado_icon.png-0e537c74ec5acc8775400e8a1e301c6f.ctex"
+uid="uid://bhrfw2nhcjspk"
+path="res://.godot/imported/card_mana_maxer.png-7d2b721812f1cb8d28c7e4ea01bb9dc1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://deck_sprites/tornado_icon.png"
-dest_files=["res://.godot/imported/tornado_icon.png-0e537c74ec5acc8775400e8a1e301c6f.ctex"]
+source_file="res://sprites/card_mana_maxer.png"
+dest_files=["res://.godot/imported/card_mana_maxer.png-7d2b721812f1cb8d28c7e4ea01bb9dc1.ctex"]
 
 [params]
 
