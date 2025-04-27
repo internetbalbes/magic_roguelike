@@ -55,6 +55,7 @@ wait_time = 0.1
 
 [node name="Camera3D" type="Camera3D" parent="player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+fov = 90.0
 script = ExtResource("7_4mrxx")
 
 [node name="RayCast3D" type="RayCast3D" parent="player/Camera3D"]

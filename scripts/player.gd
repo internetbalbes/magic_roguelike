@@ -2,19 +2,21 @@ extends CharacterBody3D
 
 @onready var camera = $Camera3D
 @onready var raycast = $Camera3D/RayCast3D
-@onready var label_health = $interface/label_health
-@onready var image_pointcatch = $interface/image_pointcatch
+@onready var image_pointcatch = $interface/aim
 @onready var timer_reload_spell = $timer_reload_spell
-@onready var progressbar_reload_spell = $interface/progressbar_reload_spell
-@onready var progressbar_mana = $interface/progressbar_mana
-@onready var label_mana = $interface/progressbar_mana/label_mana
-@onready var texturerect_base = $interface/control_spell/texturerect_base
-@onready var texturerect_overlay = $interface/control_spell/texturerect_overlay
 @onready var timer_portal_reload : Timer = $timer_portal_reload
-@onready var label_portal_reload = $interface/label_portal_reload
+
+@onready var label_health = $interface/hp/hp
+@onready var progressbar_reload_spell = $interface/spells/book/progressbar_reload_spell
+@onready var progressbar_mana = $interface/mana/progressbar_mana
+@onready var label_mana = $interface/mana/progressbar_mana/labelmana
+@onready var texturerect_base = $interface/spells/book
+@onready var texturerect_overlay = $interface/spells/book/spell_icon
+@onready var label_portal_reload = $interface/portal_spawn_time_left/portal_icon/portal_spawn_time_left
 @onready var parent_hboxcontainer_card = $interface/Control
 @onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
 @onready var texturerect_card: TextureRect = $interface/texturerect_card
+
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
 @export var prefabtornado : PackedScene
@@ -54,7 +56,7 @@ var texturerect_card_set = Vector2.ZERO
 #list file cards
 var card_all_list_enemy: Array = ["card_mana_potion", "card_mana_hp", "card_mana_max_increase"]
 var card_mana_potion = preload("res://sprites/card_mana_potion.png") 
-var card_mana_hp = preload("res://sprites/card_mana_hp.png")
+var card_mana_hp = preload("res://sprites/card_hp_potion.png")
 var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
 var card_scale = 2
 var card_size = card_scale * Vector2(32, 48)
