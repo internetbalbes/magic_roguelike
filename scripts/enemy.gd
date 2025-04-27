@@ -96,7 +96,7 @@ func _ready() -> void:
 		#config.save("res://settings.cfg")
 	config = null	
 	skeleton.add_child(skeleton_bone_hand)
-	skeleton_bone_hand.bone_idx = 27
+	skeleton_bone_hand.bone_idx = 14
 	current_health = enemy_max_health
 	area.monitoring = false
 	standart_material_demage.albedo_color = Color(1.0, 1.0, 1.0)
@@ -222,7 +222,7 @@ func fireball_create() -> void:
 	fireball = prefabfireball.instantiate()
 	skeleton_bone_hand.add_child(fireball)	
 	fireball.global_position = skeleton_bone_hand.global_position
-	fireball.scale *= 100
+	fireball.scale *= 160
 	fireball.player = player
 	timer_throw.start()
 	_set_state_enemy(enemystate.THROWING)	
