@@ -27,6 +27,18 @@ func _ready() -> void:
 		scale_size_map_to_set_portal = config.get_value("world", "scale_size_map_to_set_portal", 4)
 		#config.save("res://settings.cfg")
 	config = null
+	# buil wall
+	var wall_thickness = 1.0
+	var wall_height = 20.0
+	var map_size = Vector2(map.scale.x * map_relief.get_aabb().size.x, map.scale.z * map_relief.get_aabb().size.z)
+	# Wall front
+	create_wall(Vector3(0, wall_height / 2, map_size.y / 2 - wall_thickness / 2), Vector3(map_size.x, wall_height, wall_thickness))
+	## Wall back
+	create_wall(Vector3(0, wall_height / 2, -map_size.y / 2 + wall_thickness / 2), Vector3(map_size.x, wall_height, wall_thickness))
+	## Wall left
+	create_wall(Vector3(-map_size.x / 2 + wall_thickness / 2, wall_height / 2, 0), Vector3(wall_thickness, wall_height, map_size.y))
+	## Wall right
+	create_wall(Vector3(map_size.x / 2 - wall_thickness / 2, wall_height / 2, 0), Vector3(wall_thickness, wall_height, map_size.y))
 	while  list_portal_set_position.size() < create_portal_count:
 		var obj = prefabportal.instantiate()
 		list_portal_set_position.append(obj)		
@@ -57,3 +69,13 @@ func timer_height_scan_start():
 	height_scan.target_position.x = map.scale.x * randf_range(-aabb.x, aabb.x)
 	height_scan.target_position.z = map.scale.z * randf_range(-aabb.z, aabb.z)
 	timer_height_scan.start()
+
+func create_wall(pos: Vector3, size: Vector3):
+	var wall = StaticBody3D.new()
+	var collision = CollisionShape3D.new()
+	var shape: BoxShape3D = BoxShape3D.new()
+	shape.size = size
+	collision.shape = shape
+	wall.add_child(collision)
+	wall.position = pos	
+	add_child(wall)

@@ -4,9 +4,10 @@ extends CharacterBody3D
 @onready var area: Area3D = $Area3D
 @onready var collision_area_shape: Shape3D = $Area3D/CollisionShape3D.shape
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
-@onready var label_health: Label3D = $label_health
+@onready var icons_status: SubViewportContainer = $icons_status
+@onready var label_health: ProgressBar = $icons_status/SubViewport/progressbar_health
 @onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
-@onready var skeleton: Skeleton3D = $enemy_model/enemy_model/Skeleton3D
+@onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/enemy_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
 @onready var timer_throw: Timer = $timer_throw
 @onready var timer_damage: Timer = $timer_damage
@@ -42,10 +43,6 @@ var time_to_set_trap: float = 2
 var time_after_exit_portal: float = 1
 # flag whith set that player in enemy's area
 var player_in_area: bool = false
-# enemy's maxhealth
-var enemy_max_health: int = 5
-# enemy's current health
-var current_health: int = enemy_max_health
 # Node fireball
 var fireball: Area3D
 # Node tram
@@ -74,7 +71,8 @@ var enemy_list_modificators: Array
 var probability_modificator = 50.0
 # object portal spawn
 var portal: Node3D
-var skeleton_bone_hand = BoneAttachment3D.new()
+# enemy time's stand still
+var time_stand_still = 0
 
 # procedure change enemy's health
 signal health_changed(new_health)
@@ -91,19 +89,18 @@ func _ready() -> void:
 		time_after_exit_portal = config.get_value("enemy", "time_after_exit_portal", time_after_exit_portal)
 		timer_damage.wait_time = config.get_value("enemy", "enemy_time_is_damaged", timer_damage.wait_time)
 		collision_area_shape.radius = config.get_value("enemy", "enemy_area_scan_player", enemy_radius_around_portal)
-		enemy_max_health =  randi_range(1, config.get_value("enemy", "enemy_max_health", enemy_max_health))
+		label_health.max_value = randi_range(1, config.get_value("enemy", "enemy_max_health", label_health.max_value))
 		probability_modificator =  config.get_value("enemy", "probability_modificator", probability_modificator)
+		var var_scale = config.get_value("enemy", "enemy_transform_scale",  1.0)
+		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
-	config = null	
-	skeleton.add_child(skeleton_bone_hand)
-	skeleton_bone_hand.bone_idx = 14
-	current_health = enemy_max_health
+	config = null
+	label_health.value = label_health.max_value
+	skeleton_bone_hand.bone_name = "mixamorig_RightHand"
 	area.monitoring = false
 	standart_material_demage.albedo_color = Color(1.0, 1.0, 1.0)
 	timer_throw.wait_time = time_to_throw
 	animation_player.animation_finished.connect(_on_animation_finished)
-	_on_health_changed(current_health)
-	connect("health_changed", _on_health_changed)	
 	for modificator in list_modificators:
 		if randi_range(1, 100) > probability_modificator:
 			_add_modificator_to_list(modificator)
@@ -125,6 +122,7 @@ func _ready() -> void:
 	timer_after_exit_portal.start()
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("run").loop = true
+	animation_player.get_animation("tornado").loop = true
 
 func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
@@ -137,8 +135,8 @@ func _physics_process(delta: float) -> void:
 		pass		
 	elif state in [enemystate.THROWING]:
 		# Obracanie wroga w stronę celu	
-		#rotate_towards_target(player.global_transform.origin, delta)
-		look_at(player.global_transform.origin, Vector3.UP)
+		rotate_towards_target(player.global_transform.origin, delta)
+		#look_at(player.global_transform.origin, Vector3.UP)
 	elif state == enemystate.POOLING_TO_POINT:
 		var direction = (enemy_pooling_to_point - global_transform.origin).normalized()
 		# Poruszanie wroga w kierunku celu
@@ -146,23 +144,29 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()		
 	elif state in [enemystate.WALKING_PORTAL,  enemystate.RUNNING_TO_PLAYER]:
 		# Sprawdzamy, czy agent ma jakąś ścieżkę do celu
-		if not navigation_agent.is_navigation_finished():
+		if not navigation_agent.is_navigation_finished() && time_stand_still < 1:
 			var next_position = navigation_agent.get_next_path_position()
 			# Obracanie wroga w stronę celu
-			look_at(next_position, Vector3.UP)
-			#rotate_towards_target(next_position, delta)
+			#look_at(next_position, Vector3.UP)
+			rotate_towards_target(next_position, delta)
 			# Obliczanie wektora kierunku
 			var direction = (next_position - global_transform.origin).normalized()
 			# Poruszanie wroga w kierunku celu
 			velocity = direction * enemy_speed
 			move_and_slide()
+			navigation_agent.set_velocity_forced(velocity)
+			time_stand_still += delta
 			#global_transform.origin = global_transform.origin + move_vector
-		elif state in [enemystate.WALKING_PORTAL]:
-			# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
-			navigation_agent.target_position = _set_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
-			enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
 		else:
-			navigation_agent.target_position = player.global_position	
+			time_stand_still = 0 
+			if state in [enemystate.WALKING_PORTAL]:
+				if navigation_agent.is_navigation_finished() || velocity.length() < 0.1:
+					# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
+					navigation_agent.target_position = _set_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
+					enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
+				time_stand_still = 0
+			else:
+				navigation_agent.target_position = player.global_position
 
 func _set_point_on_circle(angle) -> Vector3:
 	var x = enemy_radius_around_portal * cos(angle)
@@ -185,9 +189,9 @@ func take_damage(spell, buf, amount: int):
 		match spell:
 			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
 		if is_demage:
-			current_health -= amount
-			current_health = clamp(current_health, 0, enemy_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
-			emit_signal("health_changed", current_health)	
+			label_health.value -= amount
+			print(label_health.value)
+			emit_signal("health_changed", label_health.value)	
 			if !is_alive():
 				player.add_card()
 				if !timer_throw.is_stopped():
@@ -198,7 +202,7 @@ func take_damage(spell, buf, amount: int):
 				if portal:
 					portal.list_enemy.erase(self)
 					portal.list_new_enemy.erase(self)
-				label_health.visible = false
+				$sprite_status.set_deferred("visible", false)
 				_set_state_enemy(enemystate.DEATHING)
 				_timers_delete()
 			else:
@@ -207,22 +211,14 @@ func take_damage(spell, buf, amount: int):
 				timer_damage.start()
 			skeleton_surface.set_surface_override_material(0, standart_material_demage)
 
-func heal(amount: int):
-	current_health += amount
-	current_health = clamp(current_health, 0, enemy_max_health)
-	emit_signal("health_changed", current_health)
-
 func is_alive() -> bool:
-	return current_health > 0
-
-func _on_health_changed(new_health: int):	
-	label_health.text = str(new_health)  # Skalowanie wartości na pasek zdrowia
+	return label_health.value > 0
 
 func fireball_create() -> void:
 	fireball = prefabfireball.instantiate()
 	skeleton_bone_hand.add_child(fireball)	
 	fireball.global_position = skeleton_bone_hand.global_position
-	fireball.scale *= 160
+	fireball.scale *= 100
 	fireball.player = player
 	timer_throw.start()
 	_set_state_enemy(enemystate.THROWING)	
@@ -313,15 +309,15 @@ func _get_object_height() -> float:
 	
 func _set_portal(object: Node3D, angle: float) ->void:
 	portal = object
-	if portal:
-		enemy_angle_to_walk = angle * count_segments_around_portal / 360
-		global_transform.origin = portal.global_transform.origin + Vector3(0, collision_shape.height / 2, 0)	
+	if portal:		
+		enemy_angle_to_walk = angle * count_segments_around_portal / 360		
+		var x = 2 * cos(deg_to_rad(angle))
+		var z = 2 * sin(deg_to_rad(angle))	
+		global_transform.origin = portal.global_transform.origin + Vector3(x, collision_shape.height, z)
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		area.monitoring = true
-		if is_instance_valid(timer_set_trap) && !timer_set_trap.is_stopped():
-			_timers_delete()
-		elif state == enemystate.WALKING_PORTAL:
+		if state == enemystate.WALKING_PORTAL:
 			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
 			_timers_delete()
 	
@@ -340,7 +336,7 @@ func _set_state_enemy(value)->void:
 			animation_player.play("throw")
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
-			animation_player.play("walk")
+			animation_player.play("tornado")
 			enemy_speed = enemy_speed_run
 		enemystate.TRAPING:
 			state = enemystate.TRAPING

@@ -39,7 +39,7 @@ func _ready()->void:
 	
 func _physics_process(delta: float) -> void:	
 	if global_position.distance_to(collider_position) < min_distance_to_object:
-		if collider.get_groups().size() > 0:
+		if is_instance_valid(collider) && collider.get_groups().size() > 0:
 			body_tornado.global_position = collider.global_position
 			if collider.get_groups()[0] == "enemy":
 				body_tornado.global_transform.origin.y -= collider._get_object_height() / 2

@@ -62,6 +62,11 @@ transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1.87139, 0)
 billboard = 1
 no_depth_test = true
 texture_filter = 0
+render_priority = 1
 texture = ExtResource("4_4ooq7")
+
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
+radius = 2.0
+affect_navigation_mesh = true
 
 [connection signal="timeout" from="timer_create_new_enemy" to="." method="_on_timer_create_new_enemy_timeout"]
