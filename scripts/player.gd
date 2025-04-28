@@ -17,6 +17,7 @@ extends CharacterBody3D
 @onready var parent_hboxcontainer_card = $interface/Control
 @onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
 @onready var texturerect_card: TextureRect = $interface/texturerect_card
+@onready var coldsteel: Node3D = $coldsteel
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -182,7 +183,9 @@ func _input(event: InputEvent) -> void:
 				elif spells[spell_currently_index].spell_name.to_lower() == "waterball":
 					create_spell(prefabwaterball.instantiate())				
 				elif spells[spell_currently_index].spell_name.to_lower() == "tornado":
-					create_spell(prefabtornado.instantiate())			
+					create_spell(prefabtornado.instantiate())					
+		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")					
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 

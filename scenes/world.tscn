@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=14 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="PackedScene" uid="uid://cc3rjb24c5g3x" path="res://prefabs/portal.tscn" id="2_71j4m"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cfv0ltjj40es8" path="res://prefabs/waterball.tscn" id="7_jhx03"]
 [ext_resource type="PackedScene" uid="uid://clwkngxgw3ryf" path="res://prefabs/tornado.tscn" id="8_o8fc1"]
 [ext_resource type="PackedScene" uid="uid://cwiarthxnrnrq" path="res://prefabs/interface.tscn" id="10_w7kh3"]
+[ext_resource type="PackedScene" uid="uid://bka2ha4sm0s0a" path="res://prefabs/coldsteel.tscn" id="11_e3hyu"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_w7kh3"]
 
@@ -65,6 +66,8 @@ collision_mask = 577
 [node name="timer_portal_reload" type="Timer" parent="player"]
 
 [node name="interface" parent="player" instance=ExtResource("10_w7kh3")]
+
+[node name="coldsteel" parent="player" instance=ExtResource("11_e3hyu")]
 
 [connection signal="timeout" from="timer_height_scan" to="." method="_on_timer_height_scan_timeout"]
 [connection signal="timeout" from="player/timer_reload_spell" to="player" method="_on_timer_reload_spell_timeout"]

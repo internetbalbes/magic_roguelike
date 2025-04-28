@@ -6,6 +6,7 @@ extends CharacterBody3D
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
 @onready var icons_status: SubViewportContainer = $icons_status
 @onready var label_health: ProgressBar = $icons_status/SubViewport/progressbar_health
+@onready var label_buf: HBoxContainer = $icons_status/SubViewport/hboxcontainer_status
 @onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
 @onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/enemy_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
@@ -73,9 +74,6 @@ var probability_modificator = 50.0
 var portal: Node3D
 # enemy time's stand still
 var time_stand_still = 0
-
-# procedure change enemy's health
-signal health_changed(new_health)
 
 func _ready() -> void:	
 	var config = ConfigFile.new()
@@ -190,8 +188,6 @@ func take_damage(spell, buf, amount: int):
 			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
 		if is_demage:
 			label_health.value -= amount
-			print(label_health.value)
-			emit_signal("health_changed", label_health.value)	
 			if !is_alive():
 				player.add_card()
 				if !timer_throw.is_stopped():
@@ -359,7 +355,7 @@ func _add_buf_to_list(name_buf):
 		if name_buf == "wet":  
 			icon.texture = load("res://sprites/wet_icon.png") as Texture2D
 		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		$icons_status/SubViewport/hboxcontainer_status.add_child(icon)
+		label_buf.add_child(icon)
 		list_buf.append(name_buf)	
 	
 func _add_modificator_to_list(name_modificator):
@@ -368,7 +364,7 @@ func _add_modificator_to_list(name_modificator):
 		if name_modificator == "water_resist":  
 			icon.texture = load("res://sprites/water_resist_icon.png") as Texture2D
 		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		$icons_status/SubViewport/hboxcontainer_status.add_child(icon)
+		label_buf.add_child(icon)
 		enemy_list_modificators.append(name_modificator)
 		
 func find_buf(name_buf)->bool:

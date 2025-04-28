@@ -17,8 +17,6 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(1, 0, 0, 1)
-border_blend = true
-corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aivmq"]
 content_margin_left = 0.0
@@ -26,7 +24,6 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(0, 1, 0, 1)
-border_blend = true
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_a7d0n"]
 viewport_path = NodePath("icons_status/SubViewport")
@@ -78,26 +75,23 @@ disable_3d = true
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
-size = Vector2i(64, 50)
+size = Vector2i(64, 52)
 render_target_update_mode = 4
 
-[node name="hboxcontainer_status" type="HBoxContainer" parent="icons_status/SubViewport"]
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 32.0
-grow_horizontal = 2
-
 [node name="progressbar_health" type="ProgressBar" parent="icons_status/SubViewport"]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -20.0
+offset_top = 32.0
+offset_right = 64.0
+offset_bottom = 52.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_a7d0n")
 theme_override_styles/fill = SubResource("StyleBoxFlat_aivmq")
 show_percentage = false
+
+[node name="hboxcontainer_status" type="HBoxContainer" parent="icons_status/SubViewport"]
+offset_right = 64.0
+offset_bottom = 32.0
+grow_horizontal = 2
 
 [node name="sprite_status" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12925, 0)
