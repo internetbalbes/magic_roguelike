@@ -1,14 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://cgosusbqw7ioc"]
+[gd_scene load_steps=10 format=3 uid="uid://cgosusbqw7ioc"]
 
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://scripts/enemy.gd" id="1_yfjof"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="2_cypye"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/fireball.tscn" id="3_cypye"]
-<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://bpgykdhxg1pfg" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
-=======
-[ext_resource type="PackedScene" uid="uid://2jg24hitddup" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
->>>>>>> 669886451b2a32e14bdb5702f3cce60afb3e9afe
-[ext_resource type="FontFile" uid="uid://b65ph5aofnb5w" path="res://fonts/Ancial-Regular.otf" id="4_aivmq"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
 radius = 0.3
@@ -16,13 +11,29 @@ radius = 0.3
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_yfjof"]
 height = 10.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a7d0n"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 0, 0, 1)
+border_blend = true
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aivmq"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 1, 0, 1)
+border_blend = true
+
 [sub_resource type="ViewportTexture" id="ViewportTexture_a7d0n"]
 viewport_path = NodePath("icons_status/SubViewport")
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
-transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 0, 0, 0)
 collision_layer = 64
-collision_mask = 545
+collision_mask = 609
 script = ExtResource("1_yfjof")
 prefabtrap = ExtResource("2_cypye")
 prefabfireball = ExtResource("3_cypye")
@@ -46,14 +57,6 @@ collision_mask = 32
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("CylinderShape3D_yfjof")
 
-[node name="label_health" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.68161, 0)
-billboard = 1
-no_depth_test = true
-fixed_size = true
-font = ExtResource("4_aivmq")
-outline_size = 0
-
 [node name="enemy_model" parent="." instance=ExtResource("4_a7d0n")]
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, -0.962739, 0)
 
@@ -65,31 +68,39 @@ wait_time = 0.5
 one_shot = true
 
 [node name="icons_status" type="SubViewportContainer" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1278.0
-offset_bottom = -718.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -152.0
+offset_top = 305.0
+offset_right = -88.0
+offset_bottom = 357.0
 
 [node name="SubViewport" type="SubViewport" parent="icons_status"]
 disable_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(64, 45)
+canvas_item_default_texture_filter = 0
+size = Vector2i(64, 50)
 render_target_update_mode = 4
 
 [node name="hboxcontainer_status" type="HBoxContainer" parent="icons_status/SubViewport"]
-anchors_preset = 15
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+
+[node name="progressbar_health" type="ProgressBar" parent="icons_status/SubViewport"]
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -20.0
 grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_a7d0n")
+theme_override_styles/fill = SubResource("StyleBoxFlat_aivmq")
+show_percentage = false
 
-[node name="sprite_buf_modificator" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.06943, 0)
+[node name="sprite_status" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12925, 0)
 billboard = 1
 texture = SubResource("ViewportTexture_a7d0n")
 

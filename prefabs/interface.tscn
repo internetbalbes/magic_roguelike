@@ -122,6 +122,14 @@ grow_horizontal = 2
 grow_vertical = 2
 show_percentage = false
 
+[node name="mana_cost" type="Label" parent="spells"]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 33.0
+offset_right = 183.0
+offset_bottom = 98.0
+label_settings = ExtResource("1_6qr8u")
+
 [node name="hp" type="Panel" parent="."]
 anchors_preset = -1
 anchor_top = 0.91

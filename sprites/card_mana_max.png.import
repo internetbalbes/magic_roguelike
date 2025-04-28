@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhrfw2nhcjspk"
-path="res://.godot/imported/card_mana_maxer.png-7d2b721812f1cb8d28c7e4ea01bb9dc1.ctex"
+path="res://.godot/imported/card_mana_max.png-33025d5cd49af088331674c8cc75970f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/card_mana_maxer.png"
-dest_files=["res://.godot/imported/card_mana_maxer.png-7d2b721812f1cb8d28c7e4ea01bb9dc1.ctex"]
+source_file="res://sprites/card_mana_max.png"
+dest_files=["res://.godot/imported/card_mana_max.png-33025d5cd49af088331674c8cc75970f.ctex"]
 
 [params]
 

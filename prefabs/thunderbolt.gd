@@ -35,7 +35,7 @@ func _ready()->void:
 	
 func _physics_process(delta: float) -> void:
 	if min_distance_to_object > 0 && global_position.distance_to(collider_position) < min_distance_to_object:		
-		if collider.get_groups().size() > 0:
+		if is_instance_valid(collider) && collider.get_groups().size() > 0:
 			if collider.get_groups()[0] == "portal":
 				collider.portal_free()
 			elif collider.get_groups()[0] == "enemy":
