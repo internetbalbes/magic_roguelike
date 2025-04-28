@@ -3,7 +3,11 @@
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://scripts/enemy.gd" id="1_yfjof"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/trap.tscn" id="2_cypye"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/fireball.tscn" id="3_cypye"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://c2fe0kkm82tfx" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
+=======
+[ext_resource type="PackedScene" uid="uid://bpgykdhxg1pfg" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
+>>>>>>> e73d51f3320da420ac3af06814dc9d608ce3adf7
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
 radius = 0.3
