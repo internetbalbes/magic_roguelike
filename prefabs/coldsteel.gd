@@ -11,7 +11,7 @@ var move_speed = 20.0
 # sektor wykrywania (np. 60 stopni)
 var detection_angle_deg_near_enemy = 60.0
 var single_steel_demage = 1
-var groupe_steel_demage = 1
+var splash_steel_demage = 1
 
 func _ready()->void:
 	var config = ConfigFile.new()
@@ -20,18 +20,18 @@ func _ready()->void:
 		move_speed = config.get_value("player_coldsteel", "move_speed", move_speed)
 		collision_near_enemy.shape.radius = config.get_value("player_coldsteel", "detection_distance_near_enemy", 1.5)
 		single_steel_demage = config.get_value("player_coldsteel", "single_steel_demage", single_steel_demage)
-		groupe_steel_demage = config.get_value("player_coldsteel", "groupe_steel_demage", groupe_steel_demage)
+		splash_steel_demage = config.get_value("player_coldsteel", "splash_steel_demage", splash_steel_demage)
 		#config.save("res://settings.cfg")
 	config = null
 	area3d_near_enemy.monitoring = false
 	
 func action_cold_steel(node: Node3D, pos: Vector3, type: String):
-	if node.is_in_group("enemy"):
+	if node && node.is_in_group("enemy"):
 		if type == "single":
 			var distance = global_position.distance_to(pos)
 			if distance < collision_near_enemy.shape.radius:
 				node.take_damage("coldsteel", "", single_steel_demage)
-		elif type == "groupe":
+		elif type == "splash":
 			area3d_near_enemy.monitoring = true
 			timer_find_enemy_in_area.start()
 	
@@ -45,5 +45,5 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 	var enemies_in_area = area3d_near_enemy.get_overlapping_bodies()	
 	for obj in enemies_in_area:
 		if _check_near_enemy(obj.global_position):
-			obj.take_damage("coldsteel", "", groupe_steel_demage)
+			obj.take_damage("coldsteel", "", splash_steel_demage)
 	area3d_near_enemy.emitting = false

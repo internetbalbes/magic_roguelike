@@ -38,7 +38,7 @@ one_shot = true
 [node name="player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("world")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.13379, 8.35625, 0)
 collision_layer = 32
-collision_mask = 65
+collision_mask = 577
 script = ExtResource("5_7r4gi")
 prefathunderbolt = ExtResource("6_q5onr")
 prefabwaterball = ExtResource("7_jhx03")
