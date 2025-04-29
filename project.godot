@@ -71,8 +71,9 @@ choose_card={
 3d_physics/layer_8="fireball"
 3d_physics/layer_9="spell"
 3d_physics/layer_10="portal"
-3d_physics/layer_11="trap"
+3d_physics/layer_11="enemy_trap"
 3d_physics/layer_12="enemy_area"
+3d_physics/layer_13="player_trap"
 
 [rendering]
 

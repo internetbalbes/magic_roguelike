@@ -35,17 +35,14 @@ func _ready()->void:
 	
 func _physics_process(delta: float) -> void:
 	if min_distance_to_object > 0 && global_position.distance_to(collider_position) < min_distance_to_object:		
-		if is_instance_valid(collider) && collider.get_groups().size() > 0:
-			if collider.get_groups()[0] == "portal":
-				collider.portal_free()
-			elif collider.get_groups()[0] == "enemy":
-				mesh.visible = false
-				set_physics_process(false)
-				area3d_thunderbolt_circle.monitoring = true
-				timer_find_enemy_in_area.start()
-				timer_remove_object.stop()			
-				return
-		call_deferred("queue_free")		
+		if is_instance_valid(collider) && collider.is_in_group("enemy"):
+			mesh.visible = false
+			set_physics_process(false)
+			area3d_thunderbolt_circle.monitoring = true
+			timer_find_enemy_in_area.start()
+			timer_remove_object.stop()			
+		else:
+			call_deferred("queue_free")		
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
 		global_position += direction * player_thunderbolt_speed *  delta
@@ -58,9 +55,8 @@ func _on_timer_remove_object_timeout() -> void:
 	call_deferred("queue_free")
 
 func _on_timer_find_enemy_in_area_timeout() -> void:
-	var enemies_in_area = area3d_thunderbolt_circle.get_overlapping_bodies()	
-	if enemies_in_area.size() > 0:
-		for obj in enemies_in_area:
-			if obj == collider || obj.find_buf("wet"):
-				obj.take_damage("thunderbolt", "", spell.damage)
+	var enemies_in_area = area3d_thunderbolt_circle.get_overlapping_bodies()
+	for obj in enemies_in_area:
+		if obj == collider || obj.find_buf("wet"):
+			obj.take_damage("thunderbolt", "", spell.damage)
 	call_deferred("queue_free")

@@ -50,14 +50,10 @@ func _on_timer_remove_object_timeout() -> void:
 
 func _on_timer_find_enemy_in_area_timeout() -> void:
 	var enemies_in_waterball = area3d_waterball_circle.get_overlapping_bodies()	
-	if enemies_in_waterball.size() > 0:
-		for obj in enemies_in_waterball:
-			if obj.get_groups().size() > 0:
-				if obj.get_groups()[0] == "portal":
-					obj.portal_free()
-				elif obj.get_groups()[0] == "enemy":
-					obj.take_damage("waterball", "wet", spell.damage)
-	area3d_waterball_circle.monitoring = true
+	for obj in enemies_in_waterball:
+		if obj.is_in_group("enemy"):
+			obj.take_damage("waterball", "wet", spell.damage)
+	area3d_waterball_circle.monitoring = false
 	body_waterball.emitting = true	
 	timer_remove_object.wait_time = body_waterball.lifetime
 	timer_remove_object.start()

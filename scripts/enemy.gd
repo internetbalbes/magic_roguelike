@@ -4,9 +4,8 @@ extends CharacterBody3D
 @onready var area: Area3D = $Area3D
 @onready var collision_area_shape: Shape3D = $Area3D/CollisionShape3D.shape
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
-@onready var icons_status: SubViewportContainer = $icons_status
-@onready var label_health: ProgressBar = $icons_status/SubViewport/progressbar_health
-@onready var label_buf: HBoxContainer = $icons_status/SubViewport/hboxcontainer_status
+@onready var label_health: ProgressBar = $subviewport/progressbar_health
+@onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
 @onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
 @onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/enemy_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
@@ -70,6 +69,8 @@ var list_modificators: Array = ["water_resist"]
 var enemy_list_modificators: Array
 # modificators value's probability
 var probability_modificator = 50.0
+# cards value's probability
+var probability_card = 50.0
 # object portal spawn
 var portal: Node3D
 # enemy time's stand still
@@ -89,6 +90,7 @@ func _ready() -> void:
 		collision_area_shape.radius = config.get_value("enemy", "enemy_area_scan_player", enemy_radius_around_portal)
 		label_health.max_value = randi_range(1, config.get_value("enemy", "enemy_max_health", label_health.max_value))
 		probability_modificator =  config.get_value("enemy", "probability_modificator", probability_modificator)
+		probability_card =  config.get_value("enemy", "probability_card", probability_card)
 		var var_scale = config.get_value("enemy", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
@@ -162,7 +164,6 @@ func _physics_process(delta: float) -> void:
 					# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
 					navigation_agent.target_position = _set_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
 					enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
-				time_stand_still = 0
 			else:
 				navigation_agent.target_position = player.global_position
 
@@ -189,7 +190,8 @@ func take_damage(spell, buf, amount: int):
 		if is_demage:
 			label_health.value -= amount
 			if !is_alive():
-				player.add_card()
+				if randi_range(1, 100) > probability_card:
+					player.add_card()
 				if !timer_throw.is_stopped():
 					timer_throw.stop()			
 					if is_instance_valid(fireball):

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4iqf313yjyp0"
-path="res://.godot/imported/card_hp_to mana_sacrifice.png-bc8d27f880329193ed35d5082bd042a6.ctex"
+path="res://.godot/imported/card_hp_to_mana_sacrifice.png-2f28c4ebcc8fd9e3d2d515ee714f3f75.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/card_hp_to mana_sacrifice.png"
-dest_files=["res://.godot/imported/card_hp_to mana_sacrifice.png-bc8d27f880329193ed35d5082bd042a6.ctex"]
+source_file="res://sprites/card_hp_to_mana_sacrifice.png"
+dest_files=["res://.godot/imported/card_hp_to_mana_sacrifice.png-2f28c4ebcc8fd9e3d2d515ee714f3f75.ctex"]
 
 [params]
 

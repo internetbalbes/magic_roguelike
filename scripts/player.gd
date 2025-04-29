@@ -5,7 +5,7 @@ extends CharacterBody3D
 @onready var image_pointcatch = $interface/aim
 @onready var timer_reload_spell = $timer_reload_spell
 @onready var timer_portal_reload : Timer = $timer_portal_reload
-
+@onready var collision_shape: Shape3D = $CollisionShape3D.shape
 @onready var label_health = $interface/hp/hp
 @onready var progressbar_reload_spell = $interface/spells/book/progressbar_reload_spell
 @onready var progressbar_mana = $interface/mana/progressbar_mana
@@ -22,6 +22,7 @@ extends CharacterBody3D
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
 @export var prefabtornado : PackedScene
+@export var prefabtrap : PackedScene
 @export var world: Node3D
 
 # List spell
@@ -54,13 +55,15 @@ var time_currently_reload_portal = time_reload_portal
 var spell_thunderbolt = preload("res://sprites/thunderbolt.png") 
 var spell_waterball = preload("res://sprites/waterball_icon.png")
 var spell_tornado = preload("res://sprites/tornado_icon.png")
+var spell_trap = preload("res://sprites/trap_icon.png")
 var texturerect_card_set = Vector2.ZERO
 #list file cards
-var card_all_list_enemy: Array = ["card_mana_potion", "card_hp_potion", "card_mana_max_increase", "card_mana_max"]
+var card_all_list_enemy: Array = ["card_mana_potion", "card_hp_potion", "card_mana_max_increase", "card_mana_max", "card_hp_to_mana_sacrifice"]
 var card_mana_potion = preload("res://sprites/card_mana_potion.png") 
 var card_hp_potion = preload("res://sprites/card_hp_potion.png")
 var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
 var card_mana_max = preload("res://sprites/card_mana_max.png")
+var card_hp_to_mana_sacrifice = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 var card_scale = 2
 var card_size = card_scale * Vector2(32, 48)
 var card_currently_index = -1
@@ -68,6 +71,7 @@ var card_list : Array
 var card_list_animation : Array
 var card_mana_potion_mana_increase = 2
 var card_hp_potion_hp_increase = 2
+var card_hp_to_mana_sacrifice_exchange = 2
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -100,9 +104,16 @@ func _ready() -> void:
 		type = config.get_value("spells", "tornado_spell_type", "sphere")
 		spell = SpellClass.new("tornado", mana_cost, damage, type)
 		spells.append(spell)
+		# spell tornado
+		mana_cost = config.get_value("spells", "trap_spell_mana_cost", 1)
+		damage = config.get_value("spells", "trap_spell_damage", 1)
+		type = config.get_value("spells", "trap_spell_type", "sphere")
+		spell = SpellClass.new("trap", mana_cost, damage, type)
+		spells.append(spell)		
 		#cards
 		card_mana_potion_mana_increase  = config.get_value("cards", "card_mana_potion_mana_increase", card_mana_potion_mana_increase)
 		card_hp_potion_hp_increase  = config.get_value("cards", "card_hp_potion_hp_increase", card_hp_potion_hp_increase)
+		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)
 		#config.save("res://settings.cfg")
 	config = null
 	texturerect_card.visible = false
@@ -178,12 +189,17 @@ func _input(event: InputEvent) -> void:
 				if texturerect_card.texture:
 					remove_card()				 
 			elif timer_reload_spell.is_stopped():
-				if spells[spell_currently_index].spell_name.to_lower() == "thunderbolt":
-					create_spell(prefathunderbolt.instantiate())				
-				elif spells[spell_currently_index].spell_name.to_lower() == "waterball":
-					create_spell(prefabwaterball.instantiate())				
-				elif spells[spell_currently_index].spell_name.to_lower() == "tornado":
-					create_spell(prefabtornado.instantiate())					
+				var spell = spells[spell_currently_index]
+				if progressbar_mana.value - spell.mana_cost < 0:
+					pass
+				elif spell.spell_name.to_lower() == "thunderbolt":
+					create_spell(prefathunderbolt.instantiate())
+				elif spell.spell_name.to_lower() == "waterball":
+					create_spell(prefabwaterball.instantiate())
+				elif spell.spell_name.to_lower() == "tornado":
+					create_spell(prefabtornado.instantiate())
+				elif spell.spell_name.to_lower() == "trap":
+					create_trap()
 		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
 			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")					
 	elif event is InputEventMouseMotion:
@@ -223,19 +239,27 @@ func _set_spell_currently(index):
 	label_mana_cost.text = str(int(spells[index].mana_cost))
 	
 func create_spell(prefab: Node3D):
-	if progressbar_mana.value - spells[spell_currently_index].mana_cost < 0:
-		pass
-	else:
-		prefab.spell = spells[spell_currently_index]
-		prefab.player = self	
-		prefab.set_collider(raycast.get_collider(), raycast.get_collision_point())
-		world.add_child(prefab)
-		prefab.global_transform.origin = raycast.global_transform.origin
-		prefab.global_transform.basis = raycast.global_transform.basis
-		timer_reload_spell.start()
-		progressbar_reload_spell.value = 0
-		take_mana(-spells[spell_currently_index].mana_cost)
+	prefab.spell = spells[spell_currently_index]
+	prefab.player = self	
+	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point())
+	world.add_child(prefab)
+	prefab.global_transform.origin = raycast.global_transform.origin
+	prefab.global_transform.basis = raycast.global_transform.basis
+	reload_spell()
+	
+func create_trap():
+	var prefab = prefabtrap.instantiate()
+	prefab.spell = spells[spell_currently_index]
+	world.add_child(prefab)
+	var direction = Vector3(0, collision_shape.height / 2, 0.5).normalized()
+	prefab.global_transform.origin = global_transform.origin - direction
+	reload_spell()
 		
+func reload_spell():
+	timer_reload_spell.start()
+	progressbar_reload_spell.value = 0
+	take_mana(-spells[spell_currently_index].mana_cost)	
+			
 func take_damage(amount: int):
 	current_health -= amount
 	current_health = clamp(current_health, 0, player_max_health)  # Zapobiega przekroczeniu zakresu zdrowia
@@ -297,6 +321,7 @@ func get_card_texture(card_name: String)->Texture2D:
 		"card_hp_potion": return card_hp_potion
 		"card_mana_max_increase": return card_mana_max_increase
 		"card_mana_max": return card_mana_max
+		"card_hp_to_mana_sacrifice": return card_hp_to_mana_sacrifice
 		_: return null		
 		
 func get_spell_texture(sell_name: String)->Texture2D:
@@ -304,6 +329,7 @@ func get_spell_texture(sell_name: String)->Texture2D:
 		"thunderbolt": return spell_thunderbolt 
 		"tornado": return spell_tornado
 		"waterball": return spell_waterball
+		"trap": return spell_trap
 		_: return null		
 	
 func set_card_new_position(index)->void:
@@ -315,6 +341,7 @@ func set_card_new_position(index)->void:
 						
 func add_card()->void:
 	var card_name = card_all_list_enemy[randi_range(0, card_all_list_enemy.size()-1)]
+	card_name = "card_hp_to_mana_sacrifice"
 	card_list.append(card_name)
 	var card = TextureRect.new()
 	card.custom_minimum_size = card_size
@@ -338,6 +365,15 @@ func remove_card()->void:
 			progressbar_mana.max_value +=1
 			take_mana(0)
 		"card_mana_max": take_mana(progressbar_mana.max_value)
+		"card_hp_to_mana_sacrifice":
+			if current_health - card_hp_to_mana_sacrifice_exchange > 1:
+				var exchange = card_hp_to_mana_sacrifice_exchange
+				if progressbar_mana.value + exchange > progressbar_mana.max_value:
+					exchange = progressbar_mana.max_value - progressbar_mana.value				
+				take_mana(exchange)
+				take_damage(exchange)
+			else:
+				return
 	card_list.remove_at(card_currently_index)
 	hboxcontainer_card.remove_child(hboxcontainer_card.get_child(card_currently_index))
 	texturerect_card.texture = null	
@@ -346,3 +382,5 @@ func remove_card()->void:
 	card_list_update()
 	if card_currently_index >-1:
 		call_deferred("set_card_new_position", card_currently_index)
+	else:
+		texturerect_card.visible = false

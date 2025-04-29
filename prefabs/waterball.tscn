@@ -21,7 +21,7 @@ radius = 0.1
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_psxt3"]
+[sub_resource type="CurveTexture" id="CurveTexture_ad3cw"]
 curve = SubResource("Curve_ad3cw")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6rvgu"]
@@ -31,16 +31,16 @@ initial_velocity_min = 12.0
 initial_velocity_max = 14.0
 scale_min = 0.5
 scale_max = 1.5
-scale_curve = SubResource("CurveTexture_psxt3")
+scale_curve = SubResource("CurveTexture_ad3cw")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yp45b"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6rvgu"]
 albedo_color = Color(0, 1, 1, 1)
 emission_enabled = true
 emission = Color(0, 1, 1, 1)
 emission_energy_multiplier = 2.0
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_5dhe1"]
-material = SubResource("StandardMaterial3D_yp45b")
+material = SubResource("StandardMaterial3D_6rvgu")
 top_radius = 0.1
 bottom_radius = 0.0
 

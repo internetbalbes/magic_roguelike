@@ -9,6 +9,7 @@ extends StaticBody3D
 @export var player: CharacterBody3D
 @export var world: Node3D
 
+var enemy_two_wave_material = preload("res://sprites/thunderbolt.png")
 #generation count enemies on a map
 var portal_create_enemy_count = 4
 #generation list enemies on a map
@@ -74,9 +75,9 @@ func _get_object_size() -> float:
 func _on_timer_create_new_enemy_timeout() -> void:
 	var enemy = create_enemy()
 	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-	standart_material.albedo_color = Color(0.0, 1.0, 1.0)	
+	standart_material.albedo_texture = enemy_two_wave_material	
 	world.add_child(enemy)
-	enemy.skeleton_surface.set_surface_override_material(0, standart_material)
+	enemy.skeleton_surface.set_surface_override_material(0, standart_material)	
 	enemy._set_portal(self, randf_range(0.0, 359.0))
 	list_new_enemy.append(enemy)
 	# grups enemy go yo player

@@ -26,11 +26,14 @@ func _ready()->void:
 	area3d_near_enemy.monitoring = false
 	
 func action_cold_steel(node: Node3D, pos: Vector3, type: String):
-	if node && node.is_in_group("enemy"):
+	if node && (node.is_in_group("enemy") || node.is_in_group("portal")):
 		if type == "single":
 			var distance = global_position.distance_to(pos)
 			if distance < collision_near_enemy.shape.radius:
-				node.take_damage("coldsteel", "", single_steel_demage)
+				if node.is_in_group("enemy"):
+					node.take_damage("coldsteel", "", single_steel_demage)
+				else:
+					node.portal_free()
 		elif type == "splash":
 			area3d_near_enemy.monitoring = true
 			timer_find_enemy_in_area.start()

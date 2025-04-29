@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=15 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="PackedScene" uid="uid://cc3rjb24c5g3x" path="res://prefabs/portal.tscn" id="2_71j4m"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://c6mp17ybxyse8" path="res://scripts/camera_3d.gd" id="7_4mrxx"]
 [ext_resource type="PackedScene" uid="uid://cfv0ltjj40es8" path="res://prefabs/waterball.tscn" id="7_jhx03"]
 [ext_resource type="PackedScene" uid="uid://clwkngxgw3ryf" path="res://prefabs/tornado.tscn" id="8_o8fc1"]
+[ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/player_trap.tscn" id="9_q5onr"]
 [ext_resource type="PackedScene" uid="uid://cwiarthxnrnrq" path="res://prefabs/interface.tscn" id="10_w7kh3"]
 [ext_resource type="PackedScene" uid="uid://bka2ha4sm0s0a" path="res://prefabs/coldsteel.tscn" id="11_e3hyu"]
 
@@ -43,6 +44,7 @@ script = ExtResource("5_7r4gi")
 prefathunderbolt = ExtResource("6_q5onr")
 prefabwaterball = ExtResource("7_jhx03")
 prefabtornado = ExtResource("8_o8fc1")
+prefabtrap = ExtResource("9_q5onr")
 world = NodePath("..")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
