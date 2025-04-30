@@ -20,6 +20,8 @@ var list_new_enemy : Array
 var portal_create_new_enemy_count = 1
 #groupe's size new enemies
 var portal_create_new_enemy_groupe_count = 2
+#count enemy increase after reload portal
+var portal_reload_enemy_increase = 1
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -28,6 +30,7 @@ func _ready() -> void:
 		portal_create_new_enemy_count = config.get_value("portal", "portal_create_new_enemy_count", portal_create_new_enemy_count)
 		timer_create_new_enemy.wait_time = config.get_value("portal", "portal_create_new_enemy_time", 5)
 		portal_create_new_enemy_groupe_count = config.get_value("portal", "portal_create_new_enemy_groupe_count", portal_create_new_enemy_groupe_count)
+		portal_reload_enemy_increase = config.get_value("portal", "portal_reload_enemy_increase", portal_reload_enemy_increase)
 		#config.save("res://settings.cfg")
 	config = null		
 
@@ -68,6 +71,7 @@ func portal_free() -> void:
 	portal_process_stop()
 	if is_instance_valid(player):
 		player.portal_free(self)
+	portal_create_enemy_count+=portal_reload_enemy_increase
 	
 func _get_object_size() -> float:
 	return collision_shape.radius

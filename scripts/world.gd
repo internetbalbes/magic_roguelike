@@ -42,7 +42,6 @@ func _ready() -> void:
 	while  list_portal_set_position.size() < create_portal_count:
 		var obj = prefabportal.instantiate()
 		list_portal_set_position.append(obj)		
-		obj.prefabenemy = load("res://prefabs/enemy.tscn")  # Ścieżka do prefaba
 		obj.player = player
 		obj.world = self
 		add_child(obj)

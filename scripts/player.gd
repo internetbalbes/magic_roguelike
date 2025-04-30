@@ -341,7 +341,6 @@ func set_card_new_position(index)->void:
 						
 func add_card()->void:
 	var card_name = card_all_list_enemy[randi_range(0, card_all_list_enemy.size()-1)]
-	card_name = "card_hp_to_mana_sacrifice"
 	card_list.append(card_name)
 	var card = TextureRect.new()
 	card.custom_minimum_size = card_size

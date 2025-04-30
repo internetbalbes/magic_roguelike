@@ -75,6 +75,8 @@ var probability_card = 50.0
 var portal: Node3D
 # enemy time's stand still
 var time_stand_still = 0
+# enemy's material
+var enemy_material: Material
 
 func _ready() -> void:	
 	var config = ConfigFile.new()
@@ -207,6 +209,7 @@ func take_damage(spell, buf, amount: int):
 				if buf:
 					_add_buf_to_list(buf)
 				timer_damage.start()
+			enemy_material=skeleton_surface.get_surface_override_material(0)	
 			skeleton_surface.set_surface_override_material(0, standart_material_demage)
 
 func is_alive() -> bool:
@@ -267,8 +270,8 @@ func _on_timer_after_exit_portal_timeout():
 	timer_wait_set_trap.start()
 
 func _on_timer_damage_timeout() -> void:
-	if is_alive():
-		skeleton_surface.set_surface_override_material(0, null)
+	if is_alive():		
+		skeleton_surface.set_surface_override_material(0, enemy_material)
 
 func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 	if state != enemystate.DEATHING:
