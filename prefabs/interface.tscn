@@ -63,15 +63,19 @@ size_flags_vertical = 10
 
 [node name="portal_spawn_time_left" type="Control" parent="."]
 layout_mode = 3
-anchor_left = 0.1
-anchor_top = 0.911
-anchor_right = 0.15
-anchor_bottom = 1.0
-offset_top = -0.920044
-offset_bottom = -1.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -36.0
+offset_top = 12.0
+offset_right = -36.0
+offset_bottom = 12.0
+grow_horizontal = 2
 
 [node name="portal_icon" type="TextureRect" parent="portal_spawn_time_left"]
 layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_right = 64.0
 offset_bottom = 64.0
 texture = ExtResource("4_vet5l")
@@ -87,6 +91,19 @@ grow_vertical = 2
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="progressbar_reload_coldsteel" type="ProgressBar" parent="."]
+z_index = 1
+anchors_preset = -1
+anchor_top = 0.875
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -176.0
+offset_right = -1152.0
+offset_bottom = -250.0
+grow_horizontal = 2
+grow_vertical = 2
+show_percentage = false
 
 [node name="spells" type="Control" parent="."]
 layout_mode = 3

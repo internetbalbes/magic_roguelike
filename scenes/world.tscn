@@ -62,7 +62,7 @@ fov = 90.0
 script = ExtResource("7_4mrxx")
 
 [node name="RayCast3D" type="RayCast3D" parent="player/Camera3D"]
-target_position = Vector3(0, 0, -50)
+target_position = Vector3(0, 0, -10)
 collision_mask = 577
 
 [node name="timer_portal_reload" type="Timer" parent="player"]
@@ -71,6 +71,10 @@ collision_mask = 577
 
 [node name="coldsteel" parent="player" instance=ExtResource("11_e3hyu")]
 
+[node name="timer_reload_coldsteel" type="Timer" parent="player"]
+wait_time = 0.05
+
 [connection signal="timeout" from="timer_height_scan" to="." method="_on_timer_height_scan_timeout"]
 [connection signal="timeout" from="player/timer_reload_spell" to="player" method="_on_timer_reload_spell_timeout"]
 [connection signal="timeout" from="player/timer_portal_reload" to="player" method="_on_timer_portal_reload_timeout"]
+[connection signal="timeout" from="player/timer_reload_coldsteel" to="player" method="_on_timer_reload_coldsteel_timeout"]

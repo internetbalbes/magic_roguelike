@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-@onready var body_tornado : GPUParticles3D = $GPUParticles3D
+@onready var body_tornado : MeshInstance3D = $MeshInstance3D2
 @onready var timer_remove_object : Timer = $timer_remove_object
 @onready var timer_find_enemy_in_area : Timer = $timer_find_enemy_in_area
 @onready var mesh : MeshInstance3D = $MeshInstance3D
@@ -29,22 +29,17 @@ func _ready()->void:
 		if collider.get_groups().size() > 0:
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
 		else:
-			min_distance_to_object = 1.0			
-
-	if body_tornado.process_material is ShaderMaterial:
-		body_tornado.process_material.set_shader_parameter("base_radius", collision_tornado_circle.shape.radius)
-	body_tornado.emitting = false
+			min_distance_to_object = 1.0
+	(body_tornado.mesh as CylinderMesh).top_radius = collision_tornado_circle.shape.radius
+	(body_tornado.mesh as CylinderMesh).bottom_radius = collision_tornado_circle.shape.radius
+	body_tornado.visible = false
 	area3d_tornado_circle.monitoring = false
 	timer_remove_object.start()
 	
 func _physics_process(delta: float) -> void:	
 	if global_position.distance_to(collider_position) < min_distance_to_object:
-		if is_instance_valid(collider) && collider.get_groups().size() > 0:
-			body_tornado.global_position = collider.global_position
-			if collider.get_groups()[0] == "enemy":
-				body_tornado.global_transform.origin.y -= collider._get_object_height() / 2
-		else:
-			body_tornado.global_position = collider_position		
+		rotation = Vector3.ZERO
+		body_tornado.global_position += Vector3(0, (body_tornado.mesh as CylinderMesh).height/4, 0)	
 		mesh.visible = false
 		set_physics_process(false)
 		area3d_tornado_circle.monitoring = true
@@ -55,17 +50,10 @@ func _physics_process(delta: float) -> void:
 		global_position += direction * player_tornado_speed	* delta	
 
 func _on_timer_remove_object_timeout() -> void:
-	if abs(timer_remove_object.wait_time - body_tornado.lifetime) < 0.001:
-		for obj in enemies_in_tornado:
-			if is_instance_valid(obj):
-				obj._set_position_freeze(Vector3.ZERO, false)
-		call_deferred("queue_free")
-	elif body_tornado.emitting:
-		body_tornado.emitting = false
-		timer_remove_object.wait_time = body_tornado.lifetime
-		timer_remove_object.start()
-	else:
-		call_deferred("queue_free")
+	for obj in enemies_in_tornado:
+		if is_instance_valid(obj):
+			obj._set_position_freeze(Vector3.ZERO, false)
+	call_deferred("queue_free")	
 	
 func _on_timer_find_enemy_in_area_timeout() -> void:
 	enemies_in_tornado = area3d_tornado_circle.get_overlapping_bodies()	
@@ -77,14 +65,9 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 			var x = cos(deg_to_rad(angle))
 			var z = sin(deg_to_rad(angle))		
 			if is_instance_valid(obj):				
-				obj._set_position_freeze(collider.global_position + Vector3(x, 0, z), true)
+				obj._set_position_freeze(collider_position + Vector3(x, 0, z), true)
 			angle += angle_shift	
-	var time = player_tornado_time_life - body_tornado.lifetime
-	if time < 0.001:
-		timer_remove_object.wait_time = body_tornado.lifetime
-	else:
-		timer_remove_object.wait_time = time
-	body_tornado.emitting = true
+	body_tornado.visible = true
 	timer_remove_object.wait_time = player_tornado_time_life
 	timer_remove_object.start()
 

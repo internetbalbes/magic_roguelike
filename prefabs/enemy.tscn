@@ -6,7 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://c2fe0kkm82tfx" path="res://map/enemy/enemy_model.tscn" id="4_a7d0n"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
-radius = 0.3
+radius = 0.6
+height = 2.5
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_yfjof"]
 height = 10.0
@@ -60,10 +61,6 @@ transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, -0.
 [node name="timer_throw" type="Timer" parent="."]
 one_shot = true
 
-[node name="timer_damage" type="Timer" parent="."]
-wait_time = 0.5
-one_shot = true
-
 [node name="sprite_status" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12925, 0)
 billboard = 1
@@ -107,4 +104,3 @@ show_percentage = false
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]
-[connection signal="timeout" from="timer_damage" to="." method="_on_timer_damage_timeout"]

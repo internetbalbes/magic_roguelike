@@ -3,14 +3,14 @@ extends CharacterBody3D
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var area: Area3D = $Area3D
 @onready var collision_area_shape: Shape3D = $Area3D/CollisionShape3D.shape
-@onready var collision_shape: Shape3D = $CollisionShape3D.shape
+@onready var collision: CollisionShape3D = $CollisionShape3D
+@onready var collision_shape: Shape3D = collision.shape
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
 @onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
 @onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/enemy_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
 @onready var timer_throw: Timer = $timer_throw
-@onready var timer_damage: Timer = $timer_damage
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
 @export var world: Node3D
@@ -59,24 +59,20 @@ var enemy_speed = enemy_speed_walk
 var enemy_angle_to_walk: float = 0
 # point's coordinate enemy's mast pool
 var enemy_pooling_to_point: Vector3 = Vector3.ZERO
-#enemy's standard material when demage enemy
-var standart_material_demage: StandardMaterial3D = StandardMaterial3D.new()
 # array of Buf
 var list_buf: Array
 # array of all modificators
 var list_modificators: Array = ["water_resist"]
-# array of enemy modificators
-var enemy_list_modificators: Array
 # modificators value's probability
 var probability_modificator = 50.0
+# array of enemy modificators
+var enemy_list_modificators: Array
 # cards value's probability
 var probability_card = 50.0
 # object portal spawn
 var portal: Node3D
 # enemy time's stand still
 var time_stand_still = 0
-# enemy's material
-var enemy_material: Material
 
 func _ready() -> void:	
 	var config = ConfigFile.new()
@@ -88,10 +84,8 @@ func _ready() -> void:
 		time_to_throw = config.get_value("enemy", "time_to_throw", time_to_throw)
 		time_to_set_trap = config.get_value("enemy", "time_to_set_trap", time_to_set_trap)		
 		time_after_exit_portal = config.get_value("enemy", "time_after_exit_portal", time_after_exit_portal)
-		timer_damage.wait_time = config.get_value("enemy", "enemy_time_is_damaged", timer_damage.wait_time)
 		collision_area_shape.radius = config.get_value("enemy", "enemy_area_scan_player", enemy_radius_around_portal)
 		label_health.max_value = randi_range(1, config.get_value("enemy", "enemy_max_health", label_health.max_value))
-		probability_modificator =  config.get_value("enemy", "probability_modificator", probability_modificator)
 		probability_card =  config.get_value("enemy", "probability_card", probability_card)
 		var var_scale = config.get_value("enemy", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
@@ -100,11 +94,10 @@ func _ready() -> void:
 	label_health.value = label_health.max_value
 	skeleton_bone_hand.bone_name = "mixamorig_RightHand"
 	area.monitoring = false
-	standart_material_demage.albedo_color = Color(1.0, 1.0, 1.0)
 	timer_throw.wait_time = time_to_throw
 	animation_player.animation_finished.connect(_on_animation_finished)
 	for modificator in list_modificators:
-		if randi_range(1, 100) > probability_modificator:
+		if randi_range(1, 100) < probability_modificator:
 			_add_modificator_to_list(modificator)
 	#set timer set trap
 	timer_set_trap.wait_time = time_to_set_trap
@@ -192,7 +185,8 @@ func take_damage(spell, buf, amount: int):
 		if is_demage:
 			label_health.value -= amount
 			if !is_alive():
-				if randi_range(1, 100) > probability_card:
+				collision.set_deferred("disabled", true)
+				if randi_range(1, 100) < probability_card:
 					player.add_card()
 				if !timer_throw.is_stopped():
 					timer_throw.stop()			
@@ -208,9 +202,6 @@ func take_damage(spell, buf, amount: int):
 			else:
 				if buf:
 					_add_buf_to_list(buf)
-				timer_damage.start()
-			enemy_material=skeleton_surface.get_surface_override_material(0)	
-			skeleton_surface.set_surface_override_material(0, standart_material_demage)
 
 func is_alive() -> bool:
 	return label_health.value > 0
@@ -268,10 +259,6 @@ func _on_timer_after_exit_portal_timeout():
 	timer_after_exit_portal.call_deferred("queue_free")
 	area.monitoring = true
 	timer_wait_set_trap.start()
-
-func _on_timer_damage_timeout() -> void:
-	if is_alive():		
-		skeleton_surface.set_surface_override_material(0, enemy_material)
 
 func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 	if state != enemystate.DEATHING:

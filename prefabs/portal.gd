@@ -22,6 +22,12 @@ var portal_create_new_enemy_count = 1
 var portal_create_new_enemy_groupe_count = 2
 #count enemy increase after reload portal
 var portal_reload_enemy_increase = 1
+# modificators value's probability
+var probability_modificator = 50.0
+# modificators value's maximum probability
+var probability_modificator_maximum=50
+# modificators value's increase= probability
+var probability_modificator_increase=1
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -30,7 +36,10 @@ func _ready() -> void:
 		portal_create_new_enemy_count = config.get_value("portal", "portal_create_new_enemy_count", portal_create_new_enemy_count)
 		timer_create_new_enemy.wait_time = config.get_value("portal", "portal_create_new_enemy_time", 5)
 		portal_create_new_enemy_groupe_count = config.get_value("portal", "portal_create_new_enemy_groupe_count", portal_create_new_enemy_groupe_count)
-		portal_reload_enemy_increase = config.get_value("portal", "portal_reload_enemy_increase", portal_reload_enemy_increase)
+		portal_reload_enemy_increase = config.get_value("portal", "portal_reload_enemy_increase", portal_reload_enemy_increase)	
+		probability_modificator =  config.get_value("portal", "probability_modificator", probability_modificator)
+		probability_modificator_maximum =  config.get_value("portal", "probability_modificator_maximum", probability_modificator_maximum)
+		probability_modificator_increase =  config.get_value("portal", "probability_modificator_increase", probability_modificator_increase)
 		#config.save("res://settings.cfg")
 	config = null		
 
@@ -39,7 +48,7 @@ func _add_child():
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
 		var enemy = create_enemy()		
-		world.add_child(enemy)
+		world.add_child(enemy)		
 		enemy._set_portal(self, angle)
 		angle += angle_shift
 
@@ -47,6 +56,7 @@ func create_enemy()->Node:
 	var enemy = prefabenemy.instantiate()
 	enemy.player = player
 	enemy.world = world
+	enemy.probability_modificator = probability_modificator
 	list_enemy.append(enemy)	
 	return enemy
 
@@ -72,6 +82,7 @@ func portal_free() -> void:
 	if is_instance_valid(player):
 		player.portal_free(self)
 	portal_create_enemy_count+=portal_reload_enemy_increase
+	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
 	
 func _get_object_size() -> float:
 	return collision_shape.radius
