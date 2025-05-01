@@ -11,11 +11,17 @@ extends CharacterBody3D
 
 var player_tornado_speed = 20.0
 var player_tornado_time_life : float = 5.0
+#thunderbolt's class name
 var spell: SpellClass
+#thunderbolt's collider
 var collider : Node3D
+#thunderbolt's collider position
 var collider_position : Vector3 = Vector3.ZERO
+#min distance to collider
+var min_distance_to_object = 0
+#min distance to collider
+var max_distance_to_demage = 0
 var enemies_in_tornado: Array
-var min_distance_to_object = 0.0
 
 func _ready()->void:
 	var config = ConfigFile.new()
@@ -47,7 +53,15 @@ func _physics_process(delta: float) -> void:
 		timer_remove_object.stop()
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
-		global_position += direction * player_tornado_speed	* delta	
+		global_position += direction * player_tornado_speed	* delta
+		if global_position.distance_to(player.global_position) > max_distance_to_demage:
+			call_deferred("queue_free")
+
+# collider's param node: target's node, target's position, max distance fly spell
+func set_collider(node: Node3D, pos: Vector3, max_distance: float):
+	collider = node
+	collider_position = pos
+	max_distance_to_demage = max_distance		
 
 func _on_timer_remove_object_timeout() -> void:
 	for obj in enemies_in_tornado:
@@ -70,7 +84,3 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 	body_tornado.visible = true
 	timer_remove_object.wait_time = player_tornado_time_life
 	timer_remove_object.start()
-
-func set_collider(node: Node3D, pos: Vector3):
-	collider = node
-	collider_position = pos

@@ -252,7 +252,7 @@ func _set_spell_currently(index):
 func create_spell(prefab: Node3D):
 	prefab.spell = spells[spell_currently_index]
 	prefab.player = self	
-	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point())
+	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point(), abs(raycast.target_position.z))
 	world.add_child(prefab)
 	prefab.global_transform.origin = raycast.global_transform.origin
 	prefab.global_transform.basis = raycast.global_transform.basis

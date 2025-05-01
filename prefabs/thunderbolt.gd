@@ -18,6 +18,9 @@ var collider : Node3D
 var collider_position : Vector3 = Vector3.ZERO
 #min distance to collider
 var min_distance_to_object = 0
+#min distance to collider
+var max_distance_to_demage = 0
+
 
 func _ready()->void:
 	var config = ConfigFile.new()
@@ -46,10 +49,14 @@ func _physics_process(delta: float) -> void:
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
 		global_position += direction * player_thunderbolt_speed *  delta
+		if global_position.distance_to(player.global_position) > max_distance_to_demage:
+			call_deferred("queue_free")
 
-func set_collider(node: Node3D, pos: Vector3):
+# collider's param node: target's node, target's position, max distance fly spell
+func set_collider(node: Node3D, pos: Vector3, max_distance: float):
 	collider = node
-	collider_position = pos		
+	collider_position = pos
+	max_distance_to_demage = max_distance	
 
 func _on_timer_remove_object_timeout() -> void:
 	call_deferred("queue_free")
