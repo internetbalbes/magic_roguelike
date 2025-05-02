@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cwiarthxnrnrq"]
+[gd_scene load_steps=4 format=3 uid="uid://cwiarthxnrnrq"]
 
 [ext_resource type="LabelSettings" uid="uid://r0okgjw03rxk" path="res://fonts/new_label_settings.tres" id="1_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://interface/target.png" id="2_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://b80mj4r30tbw8" path="res://sprites/book.png" id="4_7spvn"]
-[ext_resource type="Texture2D" uid="uid://bru3abn3yn3eu" path="res://sprites/portal_icon.png" id="4_vet5l"]
 
 [node name="interface" type="CanvasLayer"]
 
@@ -60,37 +59,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 10
-
-[node name="portal_spawn_time_left" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -36.0
-offset_top = 12.0
-offset_right = -36.0
-offset_bottom = 12.0
-grow_horizontal = 2
-
-[node name="portal_icon" type="TextureRect" parent="portal_spawn_time_left"]
-layout_mode = 2
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 64.0
-offset_bottom = 64.0
-texture = ExtResource("4_vet5l")
-
-[node name="portal_spawn_time_left" type="Label" parent="portal_spawn_time_left/portal_icon"]
-z_index = 1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="progressbar_reload_coldsteel" type="ProgressBar" parent="."]
 z_index = 1

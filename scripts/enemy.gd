@@ -155,7 +155,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			time_stand_still = 0 
 			if state in [enemystate.WALKING_PORTAL]:
-				if navigation_agent.is_navigation_finished() || velocity.length() < 0.1:
+				if portal && (navigation_agent.is_navigation_finished() || velocity.length() < 0.1):
 					# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
 					navigation_agent.target_position = _set_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
 					enemy_angle_to_walk = randf_range(1, count_segments_around_portal)

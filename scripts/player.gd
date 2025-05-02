@@ -5,7 +5,6 @@ extends CharacterBody3D
 @onready var image_pointcatch = $interface/aim
 @onready var timer_reload_spell = $timer_reload_spell
 @onready var timer_reload_coldsteel = $timer_reload_coldsteel
-@onready var timer_portal_reload : Timer = $timer_portal_reload
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
 @onready var label_health = $interface/hp/hp
 @onready var progressbar_reload_coldsteel = $interface/progressbar_reload_coldsteel
@@ -14,7 +13,6 @@ extends CharacterBody3D
 @onready var label_mana = $interface/mana/progressbar_mana/labelmana
 @onready var texturerect_base = $interface/spells/book
 @onready var texturerect_overlay = $interface/spells/book/spell_icon
-@onready var label_portal_reload = $interface/portal_spawn_time_left/portal_icon/portal_spawn_time_left
 @onready var label_mana_cost = $interface/spells/mana_cost
 @onready var parent_hboxcontainer_card = $interface/Control
 @onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
@@ -138,7 +136,6 @@ func _ready() -> void:
 	texturerect_card.custom_minimum_size = card_size
 	texturerect_card.expand = true
 	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
-	label_portal_reload.visible = false
 	Engine.time_scale = 1.0
 	player_current_health = player_max_health
 	_set_spell_currently(spell_currently_index)
@@ -152,7 +149,7 @@ func _ready() -> void:
 	progressbar_reload_coldsteel.max_value = time_reload_coldspeel	
 	_on_health_changed(player_max_health)
 	connect("health_changed", _on_health_changed)
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)	
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -189,14 +186,15 @@ func _input(event: InputEvent) -> void:
 				if card_list.size() > 0:
 					hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
 				texturerect_card.texture = null
+				texturerect_card.visible = false
 			elif card_list.size() > 0:
 				texturerect_card.visible = true
 				card_currently_index = 0
-				set_card_new_position(card_currently_index)				
+				set_card_new_position(card_currently_index)
 		elif  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 			if texturerect_card.visible:
 				if texturerect_card.texture:
-					remove_card()				 
+					remove_card()
 			elif timer_reload_spell.is_stopped():
 				var spell = spells[spell_currently_index]
 				if progressbar_mana.value - spell.mana_cost < 0:
@@ -225,7 +223,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)
 	else:
-		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)			
+		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)		
 	if !is_on_floor():
 		# Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta
@@ -301,22 +299,8 @@ func _on_timer_reload_spell_timeout() -> void:
 	else:
 		progressbar_reload_spell.value = value
 
-func portal_free(portal) -> void:
+func portal_free() -> void:
 	create_card("card_mana_max")
-	world.list_portal_set_position.append(portal)
-	if world.list_portal_set_position.size() == world.create_portal_count:
-		label_portal_reload.text = "%02d" % time_reload_portal
-		label_portal_reload.set_deferred("visible", true)
-		time_currently_reload_portal = time_reload_portal
-		timer_portal_reload.start()
-
-func _on_timer_portal_reload_timeout() -> void:
-	time_currently_reload_portal -= timer_portal_reload.wait_time
-	label_portal_reload.text = "%02d" % time_currently_reload_portal
-	if time_currently_reload_portal < 0.001:		
-		world.timer_height_scan_start()
-		timer_portal_reload.stop()
-		label_portal_reload.set_deferred("visible", false)
 
 func card_list_update()->void:
 	var width = card_list.size() * card_size.x

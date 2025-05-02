@@ -1,7 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://cc3rjb24c5g3x"]
+[gd_scene load_steps=10 format=3 uid="uid://cc3rjb24c5g3x"]
 
-[ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://prefabs/portal.gd" id="1_4ooq7"]
-[ext_resource type="PackedScene" uid="uid://cgosusbqw7ioc" path="res://prefabs/enemy.tscn" id="2_bqeyo"]
+[ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://map_generator/prefabs/portal/portal.gd" id="1_4ooq7"]
 [ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://map/models/portal_portal.res" id="3_fd87k"]
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
 [ext_resource type="Texture2D" uid="uid://cwdl7jkhhmqyh" path="res://sprites/portal_marker.png" id="4_4ooq7"]
@@ -35,7 +34,6 @@ radius = 1.5
 collision_layer = 512
 collision_mask = 353
 script = ExtResource("1_4ooq7")
-prefabenemy = ExtResource("2_bqeyo")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
@@ -56,6 +54,7 @@ surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73127, 0)
 shape = SubResource("CylinderShape3D_oq7w4")
+disabled = true
 
 [node name="timer_create_new_enemy" type="Timer" parent="."]
 
@@ -63,7 +62,6 @@ shape = SubResource("CylinderShape3D_oq7w4")
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 1.87139, 0)
 billboard = 1
 no_depth_test = true
-fixed_size = true
 texture_filter = 0
 render_priority = 1
 texture = ExtResource("4_4ooq7")

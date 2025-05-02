@@ -75,6 +75,10 @@ choose_card={
 3d_physics/layer_12="enemy_area"
 3d_physics/layer_13="player_trap"
 
+[navigation]
+
+3d/default_cell_size=1.0
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

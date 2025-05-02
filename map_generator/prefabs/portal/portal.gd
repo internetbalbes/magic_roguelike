@@ -1,11 +1,9 @@
 extends StaticBody3D
 
-@onready var omnolight = $OmniLight3D
 @onready var collision : CollisionShape3D = $CollisionShape3D
 @onready var collision_shape : Shape3D = collision.shape
 #timer period generation new enemies on a map
 @onready var timer_create_new_enemy : Timer = $timer_create_new_enemy
-@export var prefabenemy : PackedScene
 @export var player: CharacterBody3D
 @export var world: Node3D
 
@@ -28,6 +26,12 @@ var probability_modificator = 50.0
 var probability_modificator_maximum=50
 # modificators value's increase= probability
 var probability_modificator_increase=1
+# prefab enemy
+var prefabenemy : PackedScene = preload("res://prefabs/enemy.tscn")
+# list enemy's prefab
+var list_prefabenemy = [preload("res://prefabs/enemy.tscn")]
+
+signal portal_destroyed()
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -41,54 +45,47 @@ func _ready() -> void:
 		probability_modificator_maximum =  config.get_value("portal", "probability_modificator_maximum", probability_modificator_maximum)
 		probability_modificator_increase =  config.get_value("portal", "probability_modificator_increase", probability_modificator_increase)
 		#config.save("res://settings.cfg")
-	config = null		
+	config = null
 
-func _add_child():
-	var angle_shift = 330.0 / portal_create_enemy_count
-	var angle = 0
-	for i in range(0, portal_create_enemy_count, 1):
-		var enemy = create_enemy()		
-		world.add_child(enemy)		
-		enemy._set_portal(self, angle)
-		angle += angle_shift
-
-func create_enemy()->Node:
-	var enemy = prefabenemy.instantiate()
+func create_enemy(prefab_scene)->Node:
+	var enemy = prefab_scene.instantiate()
 	enemy.player = player
 	enemy.world = world
 	enemy.probability_modificator = probability_modificator
 	list_enemy.append(enemy)	
 	return enemy
 
-func portal_process_stop() -> void:
-	visible = false
-	collision.set_deferred("disabled", true)
-	timer_create_new_enemy.stop()
-	
-func portal_process_start() -> void:
-	visible = true
-	collision.set_deferred("disabled", false)
-	call_deferred("_add_child")
+func create_enemies() -> void:
+	var angle_shift = 330.0 / portal_create_enemy_count
+	var angle = 0
+	for i in range(0, portal_create_enemy_count, 1):
+		var enemy = create_enemy(prefabenemy)		
+		world.add_child(enemy)		
+		enemy._set_portal(self, angle)
+		angle += angle_shift
 	timer_create_new_enemy.start()
 	
 func portal_free() -> void:
+	collision.set_deferred("disabled", true)
 	for obj in list_enemy:
 		obj._set_portal(null, 0)
 	for obj in list_new_enemy:
 		obj._set_portal(null, 0)
 	list_enemy.clear()
 	list_new_enemy.clear()
-	portal_process_stop()
+	timer_create_new_enemy.stop()
 	if is_instance_valid(player):
-		player.portal_free(self)
+		player.portal_free()
 	portal_create_enemy_count+=portal_reload_enemy_increase
 	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
+	emit_signal("portal_destroyed")
 	
 func _get_object_size() -> float:
 	return collision_shape.radius
 
 func _on_timer_create_new_enemy_timeout() -> void:
-	var enemy = create_enemy()
+	var random_enemy_index = randi_range(0,list_prefabenemy.size()-1)
+	var enemy = create_enemy(list_prefabenemy[random_enemy_index])
 	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
 	standart_material.albedo_texture = enemy_two_wave_material	
 	world.add_child(enemy)
