@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cc3rjb24c5g3x"]
+[gd_scene load_steps=10 format=3 uid="uid://bnas3bkk457tc"]
 
 [ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://map_generator/prefabs/portal/portal.gd" id="1_4ooq7"]
 [ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://map/models/portal_portal.res" id="3_fd87k"]
