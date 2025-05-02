@@ -3,9 +3,13 @@
 [ext_resource type="Script" uid="uid://bbmrlwrnbbul8" path="res://map_generator/map_generator.gd" id="1_1c4l0"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_0r6lh"]
+<<<<<<< HEAD
 geometry_parsed_geometry_type = 1
 cell_size = 1.0
 agent_radius = 1.0
+=======
+cell_size = 0.01
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0r6lh"]
 
@@ -19,6 +23,12 @@ sky = SubResource("Sky_7kg47")
 [node name="map_generator" type="NavigationRegion3D"]
 navigation_mesh = SubResource("NavigationMesh_0r6lh")
 script = ExtResource("1_1c4l0")
+<<<<<<< HEAD
+=======
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 15.1898, 21.0674, 15.1898)
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ej6gg")

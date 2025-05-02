@@ -16,12 +16,19 @@ var chunk_list = []
 
 var last_y_list = []
 
+<<<<<<< HEAD
 var created_portal
 var scale_size_map = 50.0
 
 func _ready() -> void:	
 	chunk_array_expansion()	
 
+=======
+func _ready() -> void:
+	chunk_array_expansion()
+	create_chunk()
+
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 func create_chunk():
 	chunk_array_clear()
 	create_chunk_prefab()
@@ -31,7 +38,10 @@ func create_chunk():
 	create_portal()
 	chunks_created_amount += 1
 	chunks_clearing()
+<<<<<<< HEAD
 	create_navigation()
+=======
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 	
 func create_chunk_prefab():
 	var created_chunk = chunk_prefab.instantiate()
@@ -46,22 +56,36 @@ func chunk_array_expansion():
 
 func create_ground():
 	var created_ground = ground_prefab.instantiate()
+<<<<<<< HEAD
 	created_ground.position.x = chunks_created_amount * CHUNK_SIZE * scale_size_map
 	created_ground.scale *= CHUNK_SIZE * scale_size_map
+=======
+	created_ground.position.x = chunks_created_amount * CHUNK_SIZE
+	created_ground.scale *= CHUNK_SIZE
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 	chunk_list[-1].add_child(created_ground)
 	
 func create_portal():
 	while true:
 		var random_chunk_array_index = Vector2i(randi_range(1,CHUNK_SIZE-2),randi_range(1,CHUNK_SIZE-2))
 		if chunk_array[random_chunk_array_index.x][random_chunk_array_index.y] == "FREE":
+<<<<<<< HEAD
 			created_portal = portal_prefab.instantiate()
 			created_portal.position.x = (random_chunk_array_index.x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5)*scale_size_map
 			created_portal.position.z = (random_chunk_array_index.y - HALF_CHUNK_SIZE + 0.5)*scale_size_map
+=======
+			var created_portal = portal_prefab.instantiate()
+			created_portal.position.x = random_chunk_array_index.x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5
+			created_portal.position.z = random_chunk_array_index.y - HALF_CHUNK_SIZE + 0.5
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 			chunk_list[-1].add_child(created_portal)
 			break
 
 func portal_destroyed():
+<<<<<<< HEAD
 	created_portal.queue_free()
+=======
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 	create_chunk()
 
 func create_navigation():
@@ -96,12 +120,17 @@ func create_path():
 		chunk_array[painter_position.x][painter_position.y] = "FREE"
 		
 	last_y_list.append(painter_position.y)
+<<<<<<< HEAD
+=======
+	chunk_array[painter_position.x][painter_position.y] = "BARRIER"
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 	
 func visualize_blocks_and_create_barriers():
 	for x in range(CHUNK_SIZE):
 		for y in range(CHUNK_SIZE):
 			if chunk_array[x][y] == "BLOCK":
 				var created_block = block_prefab.instantiate()
+<<<<<<< HEAD
 				created_block.position = scale_size_map * Vector3(x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5,0.5,y - HALF_CHUNK_SIZE + 0.5)
 				created_block.scale *=scale_size_map
 				chunk_list[-1].add_child(created_block)
@@ -111,9 +140,26 @@ func chunk_array_clear():
 		for y in range(CHUNK_SIZE):
 			chunk_array[x][y] = "BLOCK"
 
+=======
+				created_block.position = Vector3(x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5,0.5,y - HALF_CHUNK_SIZE + 0.5)
+				chunk_list[-1].add_child(created_block)
+
+func chunk_array_clear():
+	for x in range(CHUNK_SIZE):
+		for y in range(CHUNK_SIZE):
+			chunk_array[x][y] = "BLOCK"
+
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
 func chunks_clearing():
 	if chunks_created_amount > 2:
 		for chunk in chunk_list:
 			if chunk != null:
 				chunk.queue_free()
 				break
+<<<<<<< HEAD
+=======
+	
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		portal_destroyed()
+>>>>>>> dcdae23c1879c55098f73636b530ba14ecf04ee5
