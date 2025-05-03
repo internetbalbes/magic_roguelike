@@ -56,10 +56,20 @@ func create_portal():
 		if chunk_array[random_chunk_array_index.x][random_chunk_array_index.y] == "FREE":
 			created_portal = portal_prefab.instantiate()
 			created_portal.position.x = (random_chunk_array_index.x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5)*scale_size_map
-			created_portal.position.z = (random_chunk_array_index.y - HALF_CHUNK_SIZE + 0.5)*scale_size_map
-			chunk_list[-1].add_child(created_portal)
+			created_portal.position.z = (random_chunk_array_index.y - HALF_CHUNK_SIZE + 0.5)*scale_size_map			
+			chunk_list[-1].add_child(created_portal)			
 			break
 
+func find_block_free():
+	for x in range(1, CHUNK_SIZE-1, 1):
+		for y in range(1, CHUNK_SIZE-1, 1):			
+			if chunk_array[x][y] == "FREE":
+				var result= Vector3.ZERO
+				result.x = (x - HALF_CHUNK_SIZE + 0.5)*scale_size_map
+				result.z = (y - HALF_CHUNK_SIZE + 0.5)*scale_size_map
+				result.y = 0
+				return result	
+			
 func portal_destroyed():
 	created_portal.queue_free()
 	create_chunk()

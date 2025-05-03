@@ -18,12 +18,10 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xo05s"]
 shader = ExtResource("11_jhx03")
-shader_parameter/blur_radius = 0.0
-shader_parameter/grain_intensity = 0.0
-shader_parameter/sharpness = 0.0
+shader_parameter/sharpen_strength = 0.0
+shader_parameter/blur_strength = 10.0
 shader_parameter/aberration_strength = 0.0
-shader_parameter/aberration_offset_x = 0.01
-shader_parameter/aberration_offset_y = 0.01
+shader_parameter/grain_strength = 0.0
 
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")
@@ -56,7 +54,12 @@ script = ExtResource("7_4mrxx")
 target_position = Vector3(0, 0, -10)
 collision_mask = 577
 
-[node name="screen_effect" type="ColorRect" parent="player/Camera3D"]
+[node name="coldsteel" parent="player" instance=ExtResource("11_e3hyu")]
+
+[node name="timer_reload_coldsteel" type="Timer" parent="player"]
+wait_time = 0.05
+
+[node name="screen_effect" type="ColorRect" parent="player"]
 material = SubResource("ShaderMaterial_xo05s")
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,11 +68,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="interface" parent="player" instance=ExtResource("10_w7kh3")]
-
-[node name="coldsteel" parent="player" instance=ExtResource("11_e3hyu")]
-
-[node name="timer_reload_coldsteel" type="Timer" parent="player"]
-wait_time = 0.05
 
 [node name="map_generator" parent="." instance=ExtResource("12_q5onr")]
 

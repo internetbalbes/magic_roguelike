@@ -1,53 +1,55 @@
 shader_type canvas_item;
 
-uniform sampler2D screen_texture : hint_screen_texture;
-uniform float blur_radius : hint_range(0.0, 10.0) = 3.0;
-uniform float grain_intensity = 0.05;
-uniform float sharpness = 1.0;  // Siła wyostrzenia
-uniform float aberration_strength : hint_range(0.0, 1.0) = 0.02;
-uniform float aberration_offset_x : hint_range(-1.0, 1.0) = 0.01;
-uniform float aberration_offset_y : hint_range(-1.0, 1.0) = 0.01;
+uniform sampler2D screen_texture : hint_screen_texture;  // Tekstura ekranu
+uniform float sharpen_strength : hint_range(0.0, 10.0) = 1.0;  // Siła wyostrzenia
+uniform float blur_strength : hint_range(0.0, 10.0) = 5.0;  // Siła rozmycia
+uniform float aberration_strength : hint_range(0.0, 1.0) = 0.02;  // Siła aberracji chromatycznej
+uniform float grain_strength : hint_range(0.0, 1.0) = 0.05;  // Siła ziarnistości
 
-float rand(vec2 co) {
-	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+// Funkcja do generowania ziarnistości (noise)
+float random(vec2 st) {
+	return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
 void fragment() {
+	vec2 size = vec2(textureSize(screen_texture, 0));
+	vec2 texel_size = 1.0 / size;	
+	// Pobieranie oryginalnego koloru
+	vec4 color = texture(screen_texture, UV);
+	// 1. Wyostrzenie (Sharpening)
+	vec4 left = texture(screen_texture, UV + vec2(-texel_size.x, 0.0));
+	vec4 right = texture(screen_texture, UV + vec2(texel_size.x, 0.0));
+	vec4 up = texture(screen_texture, UV + vec2(0.0, -texel_size.y));
+	vec4 down = texture(screen_texture, UV + vec2(0.0, texel_size.y));
+	// Zastosowanie wyostrzenia
+	//color = color * (1.0 + sharpen_strength) - (left + right + up + down) * (sharpen_strength / 4.0);
 
-	// Ustawienie przesunięć dla każdego kanału
-	vec2 offset_r = vec2(aberration_offset_x, aberration_offset_y);
-	vec2 offset_g = vec2(-aberration_offset_x, aberration_offset_y);
-	vec2 offset_b = vec2(aberration_offset_x, -aberration_offset_y);
-
-	// Pobieranie kolorów z tekstury z przesunięciem dla każdego kanału
-	vec4 color_r = texture(screen_texture, UV + offset_r * aberration_strength);
-	vec4 color_g = texture(screen_texture, UV + offset_g * aberration_strength);
-	vec4 color_b = texture(screen_texture, UV + offset_b * aberration_strength);
-
-	// Chromatyczne aberracje: Łączenie przesuniętych kanałów
-	vec4 aberrated_color = vec4(color_r.r, color_g.g, color_b.b, 1.0);
-
-	// Gaussian Blur
-	vec4 blur_color = vec4(0.0);
-	float blur_kernel[9] = float[](0.0625, 0.125, 0.0625,
-									0.125, 0.25, 0.125,
-									0.0625, 0.125, 0.0625);
-
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
-			blur_color += texture(screen_texture, UV + vec2(float(i), float(j)) * blur_radius) * blur_kernel[(i+1)*3 + (j+1)];
+	// 2. Rozmycie (Blur)
+	vec4 blurred_color = vec4(0.0);
+	for (int x = -2; x <= 2; x++) {
+		for (int y = -2; y <= 2; y++) {
+			blurred_color += texture(screen_texture, UV + vec2(float(x), float(y)) * texel_size) * 0.04;
 		}
 	}
-	vec4 sharpened_color = aberrated_color * (1.0 + sharpness) - blur_color * sharpness;
-	// Final color: blend sharpened and blurred result
-	///vec4 color = mix(blur_color, sharpened_color, 1);
-	vec4 color = blur_color;
-	// Maska wyostrzająca (konwolucja)
-	float noise = rand(UV * TIME);
-	color.rgb += (noise - 0.5) * grain_intensity;
-	COLOR = color;
+	// Zastosowanie rozmycia
+	color = mix(color, blurred_color, blur_strength);
+
+	// 3. Aberracja Chromatyczna (Chromatic Aberration)
+	vec2 offset = aberration_strength * texel_size;
+
+	// Przemieszczanie tekstury dla różnych kanałów (RGB)
+	vec4 chromatic_color_r = texture(screen_texture, UV + vec2(offset.x, 0.0));  // Czerwony
+	vec4 chromatic_color_g = texture(screen_texture,UV);  // Zielony (bez przesunięcia)
+	vec4 chromatic_color_b = texture(screen_texture, UV + vec2(-offset.x, 0.0));  // Niebieski
+
+	// Łączenie kanałów z aberracją chromatyczną
+	vec4 aberrated_color = vec4(chromatic_color_r.r, chromatic_color_g.g, chromatic_color_b.b, color.a);
+
+	// 4. Ziarnistość (Noise)
+	// Generowanie ziarnistości
+	float noise = random(UV);
+	// Dodanie ziarnistości do koloru
+	aberrated_color.rgb += noise * grain_strength;
+	// Ustawienie końcowego koloru
+	COLOR = aberrated_color;
 }
-//void light() {
-//	// Called for every pixel for every light affecting the CanvasItem.
-//	// Uncomment to replace the default light processing function with this one.
-//}

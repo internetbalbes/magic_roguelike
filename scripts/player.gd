@@ -136,7 +136,6 @@ func _ready() -> void:
 	texturerect_card.custom_minimum_size = card_size
 	texturerect_card.expand = true
 	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
-	Engine.time_scale = 1.0
 	player_current_health = player_max_health
 	_set_spell_currently(spell_currently_index)
 	progressbar_mana.step = 1
@@ -223,7 +222,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)
 	else:
-		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)		
+		image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)	
 	if !is_on_floor():
 		# Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta

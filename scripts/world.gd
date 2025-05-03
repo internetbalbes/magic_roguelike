@@ -11,6 +11,9 @@ func _ready() -> void:
 		#config.save("res://settings.cfg")
 	config = null
 	map_generator.create_chunk()
+	var player_coordinate = map_generator.find_block_free()
+	#player_coordinate = map_generator.created_portal.global_position + Vector3(1, 0, 3)
+	player.set_deferred("global_position", Vector3(player_coordinate.x, player_coordinate.y + player.collision_shape.height/2, player_coordinate.z))
 	portal_update()		
 	
 func portal_destroyed():
