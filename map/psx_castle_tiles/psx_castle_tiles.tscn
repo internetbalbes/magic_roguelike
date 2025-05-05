@@ -1,5 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d125v8dp11nw7"]
-
-[ext_resource type="PackedScene" uid="uid://0wvhm5e2iow2" path="res://map/psx_castle_tiles/psx_castle_tiles.blend" id="1_op6er"]
-
-[node name="psx_castle_tiles" instance=ExtResource("1_op6er")]

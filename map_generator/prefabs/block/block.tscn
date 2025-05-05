@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://brq1fhqhqp156"]
+
+[ext_resource type="Texture2D" uid="uid://ceuhxtsi4l3sq" path="res://map_generator/prefabs/block/block.png" id="1_yciv2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ptkwc"]
+albedo_texture = ExtResource("1_yciv2")
+roughness = 0.75
+uv1_scale = Vector3(80, 80, 80)
+texture_filter = 4
+
+[sub_resource type="BoxMesh" id="BoxMesh_qncar"]
+material = SubResource("StandardMaterial3D_ptkwc")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_im0tn"]
+
+[node name="block" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_qncar")
+
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_im0tn")

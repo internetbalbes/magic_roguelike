@@ -1,0 +1,38 @@
+[gd_scene load_steps=8 format=3 uid="uid://cjv8bi7lh0qkl"]
+
+[ext_resource type="Script" uid="uid://dhamoh8xc2db2" path="res://prefabs/objects/skymage_sphere/skymage_sphere.gd" id="1_jb1su"]
+[ext_resource type="Shader" uid="uid://dvce4qqgyt5lb" path="res://prefabs/objects/skymage_sphere/skymage_sphere.gdshader" id="2_3yhly"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vs5hy"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d256b"]
+noise = SubResource("FastNoiseLite_vs5hy")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4ld04"]
+render_priority = 0
+shader = ExtResource("2_3yhly")
+shader_parameter/time = 0.0
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_d256b")
+shader_parameter/lightning_thickness = 0.05
+shader_parameter/lightning_color = Color(0.6, 0.8, 1, 1)
+shader_parameter/base_color = Color(0.05, 0.05, 0.1, 1)
+shader_parameter/transparency_strength = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_78syg"]
+material = SubResource("ShaderMaterial_4ld04")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_vs5hy"]
+
+[node name="sphere" type="Area3D"]
+collision_layer = 8192
+collision_mask = 32
+script = ExtResource("1_jb1su")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_78syg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_vs5hy")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

@@ -6,10 +6,10 @@
 [ext_resource type="Script" uid="uid://c6mp17ybxyse8" path="res://scripts/camera_3d.gd" id="7_4mrxx"]
 [ext_resource type="PackedScene" uid="uid://cfv0ltjj40es8" path="res://prefabs/waterball.tscn" id="7_jhx03"]
 [ext_resource type="PackedScene" uid="uid://clwkngxgw3ryf" path="res://prefabs/tornado.tscn" id="8_o8fc1"]
+[ext_resource type="Shader" uid="uid://car01xojlfxms" path="res://shaders/abberation_noise_effect.gdshader" id="9_e3hyu"]
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/player_trap.tscn" id="9_q5onr"]
 [ext_resource type="PackedScene" uid="uid://cwiarthxnrnrq" path="res://prefabs/interface.tscn" id="10_w7kh3"]
 [ext_resource type="PackedScene" uid="uid://bka2ha4sm0s0a" path="res://prefabs/coldsteel.tscn" id="11_e3hyu"]
-[ext_resource type="Shader" uid="uid://car01xojlfxms" path="res://shaders/screen_effect.gdshader" id="11_jhx03"]
 [ext_resource type="PackedScene" uid="uid://bf7ukl85fy8hi" path="res://map_generator/map_generator.tscn" id="12_q5onr"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_w7kh3"]
@@ -17,9 +17,7 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e3hyu"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xo05s"]
-shader = ExtResource("11_jhx03")
-shader_parameter/sharpen_strength = 0.0
-shader_parameter/blur_strength = 10.0
+shader = ExtResource("9_e3hyu")
 shader_parameter/aberration_strength = 0.0
 shader_parameter/grain_strength = 0.0
 
@@ -48,18 +46,22 @@ wait_time = 0.05
 
 [node name="Camera3D" type="Camera3D" parent="player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+current = true
 script = ExtResource("7_4mrxx")
 
 [node name="RayCast3D" type="RayCast3D" parent="player/Camera3D"]
 target_position = Vector3(0, 0, -10)
 collision_mask = 577
 
+[node name="camera_effect" type="Camera3D" parent="player"]
+
 [node name="coldsteel" parent="player" instance=ExtResource("11_e3hyu")]
 
 [node name="timer_reload_coldsteel" type="Timer" parent="player"]
 wait_time = 0.05
 
-[node name="screen_effect" type="ColorRect" parent="player"]
+[node name="abberation_noise_effect" type="ColorRect" parent="player"]
 material = SubResource("ShaderMaterial_xo05s")
 anchors_preset = 15
 anchor_right = 1.0

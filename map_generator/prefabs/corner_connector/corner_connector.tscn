@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://dd1lxqi7mjqg7"]
+
+[ext_resource type="Texture2D" uid="uid://ceuhxtsi4l3sq" path="res://map_generator/prefabs/block/block.png" id="2_1cnmf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lvybc"]
+albedo_texture = ExtResource("2_1cnmf")
+uv1_scale = Vector3(40, 40, 40)
+uv1_triplanar = true
+texture_filter = 4
+
+[sub_resource type="BoxMesh" id="BoxMesh_nams6"]
+material = SubResource("StandardMaterial3D_lvybc")
+size = Vector3(0.125, 0.125, 0.125)
+
+[node name="corner_connector" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.438, 0, 0.438)
+mesh = SubResource("BoxMesh_nams6")
+skeleton = NodePath("../..")
