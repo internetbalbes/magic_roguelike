@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2fe0kkm82tfx"]
+
+[ext_resource type="PackedScene" uid="uid://b33f6aqo6ehvo" path="res://prefabs/enemies/imp/enemy_model.glb" id="1_7stb1"]
+
+[node name="enemy_model" instance=ExtResource("1_7stb1")]
+
+[node name="Skeleton3D" parent="enemy_model" index="0"]
+bones/0/position = Vector3(0.940965, -0.988707, -96.3393)
+bones/0/rotation = Quaternion(-0.625986, -0.12333, 0.100572, 0.763425)
+bones/1/position = Vector3(3.50177e-07, 9.02199, -0.477605)
+bones/1/rotation = Quaternion(-0.0037668, -0.00496099, 0.0177523, 0.999823)
+bones/2/rotation = Quaternion(0.0635089, -0.0112738, 0.011278, 0.997854)
+bones/3/position = Vector3(-5.99772e-07, 12.0462, -2.10106e-06)
+bones/3/rotation = Quaternion(0.0636087, -0.0103259, 0.0116342, 0.997854)
+bones/4/position = Vector3(1.9148e-06, 13.5519, -3.39792e-06)
+bones/4/rotation = Quaternion(-0.0209852, 0.0279688, -0.020945, 0.999169)
+bones/5/position = Vector3(-1.11759e-07, 8.24761, 1.76586)
+bones/5/rotation = Quaternion(-0.192316, 0.118523, -0.0322279, 0.973616)
+bones/7/rotation = Quaternion(-0.589656, -0.371681, 0.640226, -0.322908)
+bones/8/position = Vector3(-4.08602e-08, 11.7599, 2.04091e-06)
+bones/8/rotation = Quaternion(0.54896, 0.0105747, 0.143061, 0.823447)
+bones/9/position = Vector3(-3.88136e-07, 29.6336, 1.93548e-07)
+bones/9/rotation = Quaternion(0.0293192, 0.010501, 0.677856, 0.734534)
+bones/10/position = Vector3(-4.77768e-06, 27.1899, 1.19954e-06)
+bones/10/rotation = Quaternion(-0.216355, 0.174722, -0.0424473, 0.959615)
+bones/11/position = Vector3(-5.50579, 11.5743, -0.118368)
+bones/11/rotation = Quaternion(0.570289, -0.408216, 0.633714, 0.326401)
+bones/12/position = Vector3(-4.96655e-06, 11.7599, -4.73224e-06)
+bones/12/rotation = Quaternion(0.636877, 0.0442833, -0.192868, 0.745137)
+bones/13/position = Vector3(2.95481e-06, 29.6319, 1.84099e-05)
+bones/13/rotation = Quaternion(0.137007, 0.0328237, -0.690203, 0.709769)
+bones/14/position = Vector3(-1.19209e-06, 27.1893, 5.0515e-06)
+bones/14/rotation = Quaternion(0.0456457, -0.164591, -0.0580413, 0.983594)
+bones/15/rotation = Quaternion(0.13062, 0.354982, 0.904567, -0.196682)
+bones/16/rotation = Quaternion(-0.368437, -0.0547427, 0.0367406, 0.927312)
+bones/17/rotation = Quaternion(0.51106, -0.0904082, -0.133668, 0.844261)
+bones/18/rotation = Quaternion(0.308288, -0.0494296, 0.0175393, 0.949846)
+bones/20/position = Vector3(-8.65018, -5.0181, 0.356013)
+bones/20/rotation = Quaternion(-0.120541, 0.304963, 0.935694, 0.130174)
+bones/21/rotation = Quaternion(-0.379221, 0.0769503, -0.0459573, 0.920955)
+bones/22/position = Vector3(2.97128e-06, 45.6846, 3.62708e-06)
+bones/22/rotation = Quaternion(0.548882, 0.0863831, 0.120536, 0.822641)
+bones/23/position = Vector3(-3.56855e-06, 14.18, 3.04524e-06)
+bones/23/rotation = Quaternion(0.308442, 0.0546476, -0.0152907, 0.949549)
+bones/24/position = Vector3(-1.40523e-06, 6.02359, 5.07576e-08)
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="enemy_model/Skeleton3D" index="1"]
+transform = Transform3D(-0.169359, -0.255284, 0.951918, -0.128527, 0.963343, 0.235482, -0.977138, -0.082466, -0.195962, -15.0663, 27.6966, -103.566)
+bone_name = "mixamorig_RightHand"
+bone_idx = 14

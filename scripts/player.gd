@@ -206,10 +206,10 @@ func _input(event: InputEvent) -> void:
 					create_spell(prefabtornado.instantiate())
 				elif state != playerstate.JUMPING && spell.spell_name.to_lower() == "trap":
 					create_trap()
-		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed && timer_reload_coldsteel.is_stopped():
 			timer_reload_coldsteel.start()
 			progressbar_reload_coldsteel.value = 0
-			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")					
+			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 

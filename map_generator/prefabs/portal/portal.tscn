@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://bnas3bkk457tc"]
 
 [ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://map_generator/prefabs/portal/portal.gd" id="1_4ooq7"]
-[ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://map/models/portal_portal.res" id="3_fd87k"]
+[ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://prefabs/objects/portal/portal_portal.res" id="3_fd87k"]
 [ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
 [ext_resource type="Texture2D" uid="uid://cwdl7jkhhmqyh" path="res://sprites/portal_marker.png" id="4_4ooq7"]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cwiarthxnrnrq"]
 
 [ext_resource type="LabelSettings" uid="uid://r0okgjw03rxk" path="res://fonts/new_label_settings.tres" id="1_6qr8u"]
-[ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://interface/target.png" id="2_6qr8u"]
+[ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://sprites/target.png" id="2_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://b80mj4r30tbw8" path="res://sprites/book.png" id="4_7spvn"]
 
 [node name="interface" type="CanvasLayer"]

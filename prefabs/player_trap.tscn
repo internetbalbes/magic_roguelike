@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dpdnxixbp6ccs"]
 
 [ext_resource type="Script" uid="uid://b4i5otf247gjc" path="res://prefabs/player_trap.gd" id="1_f4mn6"]
-[ext_resource type="ArrayMesh" uid="uid://cxmysv4ewm0ev" path="res://map/models/trap_trap.res" id="2_qscck"]
+[ext_resource type="ArrayMesh" uid="uid://cxmysv4ewm0ev" path="res://prefabs/objects/imp_trap/trap_trap.res" id="2_qscck"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qscck"]
 size = Vector3(1, 0.191406, 1)

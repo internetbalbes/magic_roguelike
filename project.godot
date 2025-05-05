@@ -74,6 +74,7 @@ choose_card={
 3d_physics/layer_11="enemy_trap"
 3d_physics/layer_12="enemy_area"
 3d_physics/layer_13="player_trap"
+3d_physics/layer_14="skymage_sphere"
 
 [navigation]
 

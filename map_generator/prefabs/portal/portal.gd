@@ -26,10 +26,8 @@ var probability_modificator = 50.0
 var probability_modificator_maximum=50
 # modificators value's increase= probability
 var probability_modificator_increase=1
-# prefab enemy
-var prefabenemy : PackedScene = preload("res://prefabs/enemy.tscn")
 # list enemy's prefab
-var list_prefabenemy = [preload("res://prefabs/enemy.tscn")]
+var list_prefabenemy = [preload("res://prefabs/enemies/imp/enemy_imp.tscn"), preload("res://prefabs/enemies/skymage/enemy_skymage.tscn")]
 
 signal portal_destroyed()
 
@@ -59,7 +57,8 @@ func create_enemies() -> void:
 	var angle_shift = 330.0 / portal_create_enemy_count
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
-		var enemy = create_enemy(prefabenemy)		
+		var index = randi_range(0, list_prefabenemy.size()-1)
+		var enemy = create_enemy(list_prefabenemy[index])		
 		world.add_child(enemy)		
 		enemy._set_portal(self, angle)
 		angle += angle_shift
@@ -86,10 +85,11 @@ func _get_object_size() -> float:
 func _on_timer_create_new_enemy_timeout() -> void:
 	var random_enemy_index = randi_range(0,list_prefabenemy.size()-1)
 	var enemy = create_enemy(list_prefabenemy[random_enemy_index])
-	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-	standart_material.albedo_texture = enemy_two_wave_material	
-	world.add_child(enemy)
-	enemy.skeleton_surface.set_surface_override_material(0, standart_material)	
+	world.add_child(enemy)	
+	if random_enemy_index == 0:
+		var standart_material: StandardMaterial3D = StandardMaterial3D.new()
+		standart_material.albedo_texture = enemy_two_wave_material
+		enemy.skeleton_surface.set_surface_override_material(0, standart_material)	
 	enemy._set_portal(self, randf_range(0.0, 359.0))
 	list_new_enemy.append(enemy)
 	# grups enemy go yo player

@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bf7ukl85fy8hi"]
 
 [ext_resource type="Script" uid="uid://bbmrlwrnbbul8" path="res://map_generator/map_generator.gd" id="1_1c4l0"]
-[ext_resource type="Texture2D" uid="uid://cmhmb7glkjj3q" path="res://interface/skybox/AdobeStock_326992061 (1).jpeg" id="2_3n4u5"]
+[ext_resource type="Texture2D" uid="uid://cmhmb7glkjj3q" path="res://sprites/skybox.jpeg" id="2_3n4u5"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_0r6lh"]
 geometry_parsed_geometry_type = 1
