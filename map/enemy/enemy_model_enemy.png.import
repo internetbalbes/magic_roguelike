@@ -2,14 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dqmw1l4iovyxd"
+uid="uid://htjfvj0wpgf1"
 path.s3tc="res://.godot/imported/enemy_model_enemy.png-26fc4484231fe915079d31ce2ae80126.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
-}
-generator_parameters={
-"md5": "e456c128e368ecfddd990de2e3dbffab"
 }
 
 [deps]
