@@ -273,7 +273,8 @@ func take_damage(amount: int):
 	player_current_health = clamp(player_current_health, 0, player_max_health)
 	emit_signal("health_changed", player_current_health)
 	if !is_alive():
-		get_tree().call_deferred("reload_current_scene")
+		await get_tree().process_frame  # poczekaj jedną klatkę
+		get_tree().reload_current_scene()
 
 func take_heal(amount: int):
 	player_current_health += amount
