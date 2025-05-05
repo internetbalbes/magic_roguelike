@@ -1,20 +1,44 @@
-[gd_scene load_steps=6 format=3 uid="uid://bf7ukl85fy8hi"]
+[gd_scene load_steps=7 format=3 uid="uid://bf7ukl85fy8hi"]
 
 [ext_resource type="Script" uid="uid://bbmrlwrnbbul8" path="res://map_generator/map_generator.gd" id="1_1c4l0"]
+[ext_resource type="Texture2D" uid="uid://cmhmb7glkjj3q" path="res://interface/skybox/AdobeStock_326992061 (1).jpeg" id="2_3n4u5"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_0r6lh"]
 geometry_parsed_geometry_type = 1
 cell_size = 1.0
 agent_radius = 1.0
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0r6lh"]
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nchfj"]
+panorama = ExtResource("2_3n4u5")
 
 [sub_resource type="Sky" id="Sky_7kg47"]
-sky_material = SubResource("ProceduralSkyMaterial_0r6lh")
+sky_material = SubResource("PanoramaSkyMaterial_nchfj")
 
 [sub_resource type="Environment" id="Environment_ej6gg"]
 background_mode = 2
 sky = SubResource("Sky_7kg47")
+tonemap_mode = 4
+tonemap_exposure = 2.0
+ssr_fade_in = 3.39411
+ssr_fade_out = 4.14106
+ssr_depth_tolerance = 128.0
+ssao_radius = 16.0
+ssao_intensity = 16.0
+sdfgi_min_cell_size = 20.0313
+sdfgi_cascade0_distance = 1282.0
+sdfgi_max_distance = 20512.0
+glow_levels/2 = 13.88
+glow_levels/3 = 11.35
+glow_levels/7 = 8.82
+fog_mode = 1
+fog_light_color = Color(0.430399, 0.498213, 0.913329, 1)
+fog_light_energy = 0.1
+fog_density = 1.0
+fog_aerial_perspective = 0.05
+volumetric_fog_density = 0.003
+volumetric_fog_anisotropy = 0.5
+adjustment_brightness = 1.06
+adjustment_saturation = 0.75
 
 [node name="map_generator" type="NavigationRegion3D"]
 navigation_mesh = SubResource("NavigationMesh_0r6lh")
@@ -24,4 +48,8 @@ script = ExtResource("1_1c4l0")
 environment = SubResource("Environment_ej6gg")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(0.570376, 0.305064, 0.762632, -0.800805, -2.61799e-08, 0.598926, 0.182711, -0.952332, 0.244296, 0, 0, 0)
+light_specular = 0.0
+shadow_enabled = true
+shadow_bias = 0.0
+shadow_normal_bias = 0.0

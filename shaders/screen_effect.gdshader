@@ -13,7 +13,7 @@ float random(vec2 st) {
 
 void fragment() {
 	vec2 size = vec2(textureSize(screen_texture, 0));
-	vec2 texel_size = 1.0 / size;	
+	vec2 texel_size = 1.0 / size;
 	// Pobieranie oryginalnego koloru
 	vec4 color = texture(screen_texture, UV);
 	// 1. Wyostrzenie (Sharpening)

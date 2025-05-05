@@ -1,11 +1,20 @@
 extends NavigationRegion3D
 
 var portal_prefab = load("res://map_generator/prefabs/portal/portal.tscn")
-var ground_prefab = load("res://map_generator/prefabs/ground.tscn")
+var ground_prefab = load("res://map_generator/prefabs/ground/ground.tscn")
 var chunk_prefab = load("res://map_generator/prefabs/chunk.tscn")
-var block_prefab = load("res://map_generator/prefabs/block.tscn")
+var block_prefab = load("res://map_generator/prefabs/block/block.tscn")
+var stone_prefab = load("res://map_generator/prefabs/stone/stone.tscn")
+var corner_prefab = load("res://map_generator/prefabs/corner/corner.tscn")
+var corner_connector_prefab = load("res://map_generator/prefabs/corner_connector/corner_connector.tscn")
 
-var CHUNK_SIZE = 7
+var grass_plane_prefab = load("res://map_generator/prefabs/ground/grass_plane/grass_plane.tscn")
+
+var tree10_prefab = load("res://map_generator/prefabs/ground/tree/tree10.tscn")
+
+var bush08_prefab = load("res://map_generator/prefabs/ground/bush/bush08.tscn")
+
+var CHUNK_SIZE = 5
 var HALF_CHUNK_SIZE = CHUNK_SIZE / 2.0	
 
 var chunks_created_amount : int = 0
@@ -17,6 +26,7 @@ var chunk_list = []
 var last_y_list = []
 
 var created_portal
+var created_prefab
 var scale_size_map = 50.0
 
 func _ready() -> void:	
@@ -29,6 +39,7 @@ func create_chunk():
 	create_path()
 	visualize_blocks_and_create_barriers()
 	create_portal()
+	create_environment()
 	chunks_created_amount += 1
 	chunks_clearing()
 	create_navigation()
@@ -111,10 +122,10 @@ func visualize_blocks_and_create_barriers():
 	for x in range(CHUNK_SIZE):
 		for y in range(CHUNK_SIZE):
 			if chunk_array[x][y] == "BLOCK":
-				var created_block = block_prefab.instantiate()
-				created_block.position = scale_size_map * Vector3(x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5,0.5,y - HALF_CHUNK_SIZE + 0.5)
-				created_block.scale *=scale_size_map
-				chunk_list[-1].add_child(created_block)
+				created_prefab = block_prefab.instantiate()
+				created_prefab.position = scale_size_map * Vector3(x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5,-0.375,y - HALF_CHUNK_SIZE + 0.5)
+				created_prefab.scale *= scale_size_map 
+				chunk_list[-1].add_child(created_prefab)
 
 func chunk_array_clear():
 	for x in range(CHUNK_SIZE):
@@ -127,3 +138,51 @@ func chunks_clearing():
 			if chunk != null:
 				chunk.queue_free()
 				break
+
+func create_environment():
+	for x in range(CHUNK_SIZE):
+		for y in range(CHUNK_SIZE):
+			if chunk_array[x][y] == "FREE":
+				if x + 1 <= CHUNK_SIZE - 1 and chunk_array[x + 1][y] == "BLOCK":
+					create_object(corner_prefab, x, 0.0625,y, 0, 1)
+				if x - 1 >= 0 and chunk_array[x - 1][y] == "BLOCK":
+					create_object(corner_prefab, x, 0.0625,y, 180, 1)
+				if y + 1 <= CHUNK_SIZE - 1 and chunk_array[x][y + 1] == "BLOCK":
+					create_object(corner_prefab, x, 0.0625,y, -90, 1)
+				if y - 1 >= 0 and chunk_array[x][y - 1] == "BLOCK":
+					create_object(corner_prefab, x, 0.0625,y, 90, 1)
+					
+				if (x > 0 and y > 0 and chunk_array[x-1][y-1] == "BLOCK" and 
+					chunk_array[x-1][y] == "FREE" and chunk_array[x][y-1] == "FREE"):
+					create_object(corner_connector_prefab, x, 0.0625, y, 0, 1)
+				
+				# Правый нижний угол
+				if (x < CHUNK_SIZE-1 and y > 0 and chunk_array[x+1][y-1] == "BLOCK" and 
+					chunk_array[x+1][y] == "FREE" and chunk_array[x][y-1] == "FREE"):
+					create_object(corner_connector_prefab, x, 0.0625, y, 90, 1)
+				
+				# Левый верхний угол
+				if (x > 0 and y < CHUNK_SIZE-1 and chunk_array[x-1][y+1] == "BLOCK" and 
+					chunk_array[x-1][y] == "FREE" and chunk_array[x][y+1] == "FREE"):
+					create_object(corner_connector_prefab, x, 0.0625, y, -90, 1)
+				
+				# Правый верхний угол
+				if (x < CHUNK_SIZE-1 and y < CHUNK_SIZE-1 and chunk_array[x+1][y+1] == "BLOCK" and 
+					chunk_array[x+1][y] == "FREE" and chunk_array[x][y+1] == "FREE"):
+					create_object(corner_connector_prefab, x, 0.0625, y, 0, 1)
+								
+				create_object(grass_plane_prefab, x, 0,y, 0, 1)
+				
+			if chunk_array[x][y] == "BLOCK":
+				create_object(tree10_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.05, 0.15))
+				create_object(bush08_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.02, 0.05))
+				create_object(stone_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.2, 0.3))
+				
+func create_object(prefab_variable, x, y, z, rotation_y, scale_multiply):
+	created_prefab = prefab_variable.instantiate()
+	created_prefab.position.x = scale_size_map * (x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5)
+	created_prefab.position.y = scale_size_map * y
+	created_prefab.position.z = scale_size_map * (z - HALF_CHUNK_SIZE + 0.5)
+	created_prefab.rotation_degrees.y = rotation_y
+	created_prefab.scale *= scale_size_map * scale_multiply
+	chunk_list[-1].add_child(created_prefab)

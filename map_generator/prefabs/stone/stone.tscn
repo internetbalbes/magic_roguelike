@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh2d4k7aj08mn"]
+
+[ext_resource type="Texture2D" uid="uid://hkuxujjqtt3a" path="res://map_generator/prefabs/stone/stone.png" id="1_bln2l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6igov"]
+albedo_texture = ExtResource("1_bln2l")
+uv1_scale = Vector3(5, 5, 5)
+texture_filter = 4
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_p6f3v"]
+material = SubResource("StandardMaterial3D_6igov")
+radial_segments = 4
+rings = 1
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vacka"]
+
+[node name="stone" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_p6f3v")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_vacka")
+
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]

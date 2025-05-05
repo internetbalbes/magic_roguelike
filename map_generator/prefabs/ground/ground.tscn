@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxqlvp6215xop"]
+
+[ext_resource type="Texture2D" uid="uid://d1ejeekud1om3" path="res://map_generator/prefabs/ground/ground.png" id="1_ws143"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mpsm"]
+albedo_texture = ExtResource("1_ws143")
+anisotropy_enabled = true
+anisotropy = 1.0
+uv1_scale = Vector3(200, 200, 200)
+texture_filter = 4
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_r532w"]
+material = SubResource("StandardMaterial3D_7mpsm")
+size = Vector2(1, 1)
+subdivide_width = 16
+subdivide_depth = 16
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r532w"]
+size = Vector3(1, 0, 1)
+
+[node name="ground" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_r532w")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_r532w")
