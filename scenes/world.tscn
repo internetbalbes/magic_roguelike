@@ -18,8 +18,8 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xo05s"]
 shader = ExtResource("9_e3hyu")
-shader_parameter/aberration_strength = 0.0
-shader_parameter/grain_strength = 0.0
+shader_parameter/aberration_strength = 1.0
+shader_parameter/grain_strength = 0.15
 
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")

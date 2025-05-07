@@ -6,7 +6,8 @@
 albedo_texture = ExtResource("1_ws143")
 anisotropy_enabled = true
 anisotropy = 1.0
-uv1_scale = Vector3(200, 200, 200)
+uv1_scale = Vector3(300, 300, 300)
+uv1_triplanar = true
 texture_filter = 4
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r532w"]

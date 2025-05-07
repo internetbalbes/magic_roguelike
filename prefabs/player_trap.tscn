@@ -1,10 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://dpdnxixbp6ccs"]
+[gd_scene load_steps=11 format=3 uid="uid://dpdnxixbp6ccs"]
 
 [ext_resource type="Script" uid="uid://b4i5otf247gjc" path="res://prefabs/player_trap.gd" id="1_f4mn6"]
-[ext_resource type="ArrayMesh" uid="uid://cxmysv4ewm0ev" path="res://prefabs/objects/imp_trap/trap_trap.res" id="2_qscck"]
+[ext_resource type="Material" uid="uid://c78qtajuqw7dr" path="res://prefabs/objects/player_trap/player_trap.tres" id="2_f4mn6"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qscck"]
-size = Vector3(1, 0.191406, 1)
+size = Vector3(1.5, 1.5, 1.5)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_f4mn6"]
 
@@ -36,14 +36,14 @@ top_radius = 0.1
 bottom_radius = 0.05
 height = 1.0
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_pvt0c"]
+material = ExtResource("2_f4mn6")
+size = Vector2(1, 1)
+
 [node name="trap" type="Area3D" groups=["player_trap"]]
 collision_layer = 4096
 collision_mask = 64
 script = ExtResource("1_f4mn6")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.0677629, 0, 0, 0, 0.0677629, 0, 0, 0, 0.0677629, 0, 0, 0)
-mesh = ExtResource("2_qscck")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.614777, 0, 0, 0, 0.614777, 0, 0, 0, 0.614777, 0, 0, 0)
@@ -70,6 +70,15 @@ draw_pass_1 = SubResource("CylinderMesh_uwy26")
 
 [node name="timer_remove_object" type="Timer" parent="."]
 one_shot = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_pvt0c")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(5.77569e-06, 0.713104, 0.949594, 1)
+light_energy = 3.0
+omni_range = 1.0
+omni_attenuation = 1.02
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="timer_find_enemy_in_area" to="." method="_on_timer_find_enemy_in_area_timeout"]

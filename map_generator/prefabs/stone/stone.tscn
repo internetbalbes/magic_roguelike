@@ -1,20 +1,31 @@
-[gd_scene load_steps=5 format=3 uid="uid://bh2d4k7aj08mn"]
+[gd_scene load_steps=7 format=3 uid="uid://bh2d4k7aj08mn"]
 
-[ext_resource type="Texture2D" uid="uid://hkuxujjqtt3a" path="res://map_generator/prefabs/stone/stone.png" id="1_bln2l"]
+[ext_resource type="Script" uid="uid://chw7s7in2vdme" path="res://map_generator/prefabs/stone/stone.gd" id="1_6igov"]
+[ext_resource type="Texture2D" uid="uid://bksal4pe252o2" path="res://map_generator/prefabs/stone/stone.png" id="1_bln2l"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6igov"]
 albedo_texture = ExtResource("1_bln2l")
-uv1_scale = Vector3(5, 5, 5)
+uv1_scale = Vector3(2, 2, 2)
 texture_filter = 4
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_p6f3v"]
 material = SubResource("StandardMaterial3D_6igov")
-radial_segments = 4
+height = 1.0
+radial_segments = 6
 rings = 1
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vacka"]
+height = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_6igov"]
+radius = 0.55
+height = 0.5
+radial_segments = 6
+rings = 2
+is_hemisphere = true
 
 [node name="stone" type="StaticBody3D"]
+script = ExtResource("1_6igov")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_p6f3v")
@@ -23,3 +34,7 @@ mesh = SubResource("CapsuleMesh_p6f3v")
 shape = SubResource("CapsuleShape3D_vacka")
 
 [node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0650265, 0)
+mesh = SubResource("SphereMesh_6igov")

@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://br63atu5qtsrc"]
+
+[ext_resource type="ArrayMesh" uid="uid://durn4qbuiw1yu" path="res://map_generator/prefabs/ground/tree/dead/dead_tree_dead_tree.res" id="1_js2ym"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ukqp1"]
+size = Vector3(1, 3, 1)
+
+[node name="dead_tree" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_js2ym")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.47082, 0)
+shape = SubResource("BoxShape3D_ukqp1")
+
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]

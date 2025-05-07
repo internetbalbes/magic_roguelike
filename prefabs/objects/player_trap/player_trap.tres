@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c78qtajuqw7dr"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5gege"]
+load_path = "res://.godot/imported/mine.png-7c72e5e3f1facbd33f4fe50e6b2ee038.s3tc.ctex"
+
+[resource]
+transparency = 1
+albedo_texture = SubResource("CompressedTexture2D_5gege")
+texture_filter = 4

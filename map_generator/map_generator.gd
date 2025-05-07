@@ -8,9 +8,11 @@ var stone_prefab = load("res://map_generator/prefabs/stone/stone.tscn")
 var corner_prefab = load("res://map_generator/prefabs/corner/corner.tscn")
 var corner_connector_prefab = load("res://map_generator/prefabs/corner_connector/corner_connector.tscn")
 
+
 var grass_plane_prefab = load("res://map_generator/prefabs/ground/grass_plane/grass_plane.tscn")
 
-var tree10_prefab = load("res://map_generator/prefabs/ground/tree/tree10.tscn")
+var tree10_prefab = load("res://map_generator/prefabs/ground/tree/tree10/tree10.tscn")
+var dead_tree_prefab = load("res://map_generator/prefabs/ground/tree/dead/dead_tree.tscn")
 
 var bush08_prefab = load("res://map_generator/prefabs/ground/bush/bush08.tscn")
 
@@ -29,7 +31,7 @@ var created_portal
 var created_prefab
 var scale_size_map = 50.0
 
-func _ready() -> void:	
+func _ready() -> void:
 	chunk_array_expansion()	
 
 func create_chunk():
@@ -68,7 +70,7 @@ func create_portal():
 			created_portal = portal_prefab.instantiate()
 			created_portal.position.x = (random_chunk_array_index.x - HALF_CHUNK_SIZE + (CHUNK_SIZE * chunks_created_amount) + 0.5)*scale_size_map
 			created_portal.position.z = (random_chunk_array_index.y - HALF_CHUNK_SIZE + 0.5)*scale_size_map			
-			chunk_list[-1].add_child(created_portal)			
+			chunk_list[-1].add_child(created_portal)		
 			break
 
 func find_block_free():
@@ -174,9 +176,15 @@ func create_environment():
 				create_object(grass_plane_prefab, x, 0,y, 0, 1)
 				
 			if chunk_array[x][y] == "BLOCK":
-				create_object(tree10_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.05, 0.15))
+				for a in 3:
+					create_object(tree10_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.05, 0.15))
 				create_object(bush08_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.02, 0.05))
+				create_object(stone_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.4, 0.5))
+				
+			if chunk_array[x][y] == "FREE":
 				create_object(stone_prefab, randf_range(x + 0.5, x - 0.5),0, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.2, 0.3))
+			for a in 3:
+				create_object(dead_tree_prefab, randf_range(x + 0.5, x - 0.5),-0.05, randf_range(y + 0.5, y - 0.5), randi_range(0,360), randf_range(0.05, 0.075))
 				
 func create_object(prefab_variable, x, y, z, rotation_y, scale_multiply):
 	created_prefab = prefab_variable.instantiate()
