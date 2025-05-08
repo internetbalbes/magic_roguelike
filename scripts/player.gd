@@ -226,10 +226,10 @@ func _physics_process(delta: float) -> void:
 	if !is_on_floor():
 		# Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta
-		state = playerstate.JUMPING
+		state = playerstate.JUMPING		
 	else:
 		if Input.is_action_pressed("jump"):
-			velocity.y = player_jump_velocity
+			velocity.y = player_jump_velocity			
 		var input_dir = Input.get_vector("left", "right", "forward", "back")
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
@@ -269,12 +269,12 @@ func reload_spell():
 	take_mana(-spells[spell_currently_index].mana_cost)	
 	
 func take_damage(amount: int):
-	player_current_health -= amount
-	player_current_health = clamp(player_current_health, 0, player_max_health)
-	emit_signal("health_changed", player_current_health)
-	if !is_alive():
-		await get_tree().process_frame  # poczekaj jedną klatkę
-		get_tree().reload_current_scene()
+	if player_current_health > 0:
+		player_current_health -= amount
+		player_current_health = clamp(player_current_health, 0, player_max_health)
+		emit_signal("health_changed", player_current_health)
+		if !is_alive():
+			get_tree().call_deferred("reload_current_scene")
 
 func take_heal(amount: int):
 	player_current_health += amount
@@ -401,4 +401,4 @@ func _on_timer_reload_coldsteel_timeout() -> void:
 		progressbar_reload_coldsteel.value = progressbar_reload_coldsteel.max_value
 		timer_reload_coldsteel.stop()
 	else:
-		progressbar_reload_coldsteel.value = value
+		progressbar_reload_coldsteel.value = value	

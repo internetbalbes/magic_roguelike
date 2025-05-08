@@ -1,9 +1,8 @@
 [gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c78qtajuqw7dr"]
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5gege"]
-load_path = "res://.godot/imported/mine.png-7c72e5e3f1facbd33f4fe50e6b2ee038.s3tc.ctex"
+[ext_resource type="Texture2D" uid="uid://da4mtnodrlr5b" path="res://prefabs/objects/player_trap/player_trap.png" id="1_icq04"]
 
 [resource]
 transparency = 1
-albedo_texture = SubResource("CompressedTexture2D_5gege")
+albedo_texture = ExtResource("1_icq04")
 texture_filter = 4

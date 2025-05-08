@@ -4,8 +4,8 @@ extends CharacterBody3D
 @onready var collision_shape: Shape3D = collision.shape
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
-@onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
-@onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
+@onready var animation_player: AnimationPlayer = $sky_mage_model/AnimationPlayer
+@onready var skeleton_surface: MeshInstance3D = $sky_mage_model/sky_mage_model/Skeleton3D/sky_mage
 @onready var timer_throw: Timer = $timer_throw
 @export var world: Node3D
 @export var player : CharacterBody3D
@@ -44,6 +44,8 @@ var skymage_sphere_radius = 1.0
 var skymage_sphere_damage = 1
 # cards value's probability
 var probability_card = 50.0
+# object portal spawn
+var portal: Node3D
 # enemy pray's point
 var target_point_pray = Vector3.ZERO
 var enemy_material = preload("res://sprites/card_hp_potion.png")
@@ -73,7 +75,7 @@ func _ready() -> void:
 			_add_modificator_to_list(modificator)
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("tornado").loop = true
-	#animation_player.get_animation("putdown").loop = true
+	animation_player.get_animation("pray").loop = true
 
 func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
@@ -135,10 +137,10 @@ func _set_state_enemy(value)->void:
 			animation_player.play("walk")
 		enemystate.PRAYING:
 			state = enemystate.PRAYING
-			animation_player.play("putdown")
+			animation_player.play("pray")
 		enemystate.THROWING:
 			state = enemystate.THROWING
-			animation_player.play("throw")
+			animation_player.play("skycast")
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
@@ -159,6 +161,9 @@ func take_damage(spell, buf, amount: int):
 					player.add_card()
 				if !timer_throw.is_stopped():
 					timer_throw.stop()
+				if portal:
+					portal.list_enemy.erase(self)
+					portal.list_new_enemy.erase(self)	
 				$sprite_status.set_deferred("visible", false)
 				_set_state_enemy(enemystate.DEATHING)
 			elif buf:
@@ -185,7 +190,8 @@ func _get_object_height() -> float:
 	return collision_shape.height	
 	
 func _set_portal(object: Node3D, angle: float) ->void:
-	if object:
+	portal = object
+	if portal:		
 		var x = 2 * cos(deg_to_rad(angle))
 		var z = 2 * sin(deg_to_rad(angle))	
 		global_transform.origin = object.global_transform.origin + Vector3(x, collision_shape.height / 2, z)
@@ -215,7 +221,6 @@ func _add_modificator_to_list(name_modificator):
 		
 func find_buf(name_buf)->bool:
 	return list_buf.has(name_buf)
-
 
 func _on_timer_throw_timeout() -> void:
 	_set_state_enemy(enemystate.THROWING)

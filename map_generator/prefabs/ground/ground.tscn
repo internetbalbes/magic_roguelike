@@ -19,7 +19,7 @@ subdivide_depth = 16
 [sub_resource type="BoxShape3D" id="BoxShape3D_r532w"]
 size = Vector3(1, 0, 1)
 
-[node name="ground" type="StaticBody3D"]
+[node name="ground" type="StaticBody3D" groups=["navi"]]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_r532w")

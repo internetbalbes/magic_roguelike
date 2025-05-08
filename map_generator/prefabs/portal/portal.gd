@@ -58,6 +58,7 @@ func create_enemies() -> void:
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
 		var index = randi_range(0, list_prefabenemy.size()-1)
+		index = 1
 		var enemy = create_enemy(list_prefabenemy[index])		
 		world.add_child(enemy)		
 		enemy._set_portal(self, angle)
