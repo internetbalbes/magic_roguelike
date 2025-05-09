@@ -6,6 +6,7 @@ extends CharacterBody3D
 @onready var collision_thunderbolt_circle  = $area3d_thunderbolt_circle/CollisionShape3D
 @onready var area3d_thunderbolt_circle  = $area3d_thunderbolt_circle
 @onready var timer_find_enemy_in_area = $timer_find_enemy_in_area
+@onready var lighting = $lighting
 @export var player : CharacterBody3D
 
 #thunderbolt's speed
@@ -33,7 +34,8 @@ func _ready()->void:
 	if collider && collider.get_groups().size() > 0:
 		if collider.get_groups()[0] == "portal" || collider.get_groups()[0] == "enemy":
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
-	area3d_thunderbolt_circle.monitoring = false		
+	area3d_thunderbolt_circle.monitoring = false
+	lighting.visible = false
 	timer_remove_object.start()
 	
 func _physics_process(delta: float) -> void:
@@ -62,8 +64,28 @@ func _on_timer_remove_object_timeout() -> void:
 	call_deferred("queue_free")
 
 func _on_timer_find_enemy_in_area_timeout() -> void:
-	var enemies_in_area = area3d_thunderbolt_circle.get_overlapping_bodies()
-	for obj in enemies_in_area:
-		if obj == collider || obj.find_buf("wet"):
-			obj.take_damage("thunderbolt", "", spell.damage)
+	if player:
+		var list_lighting_on_enemy = []
+		var enemies_in_area = area3d_thunderbolt_circle.get_overlapping_bodies()
+		for obj in enemies_in_area:
+			if obj == collider || obj.find_buf("wet"):
+				obj.take_damage("thunderbolt", "", spell.damage)
+				var obj_lighting = lighting.duplicate()
+				player.world.add_child(obj_lighting)
+				obj_lighting.global_position = obj.global_position + Vector3(0, (obj._get_object_height() + obj_lighting.mesh.size.y)/2, 0)
+				obj_lighting.visible = true
+				list_lighting_on_enemy.append(obj_lighting)
+		if list_lighting_on_enemy.size() > 0:
+			var timer = Timer.new()
+			timer.wait_time = 1.0
+			timer.one_shot = true
+			timer.autostart = true
+			timer.timeout.connect(func():
+				for obj in list_lighting_on_enemy:
+					if is_instance_valid(obj):
+						obj.queue_free()
+				list_lighting_on_enemy.clear()
+				timer.queue_free()
+			)	
+			player.world.add_child(timer)
 	call_deferred("queue_free")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=21 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="Script" uid="uid://c2p21m1p41ign" path="res://scripts/player.gd" id="5_7r4gi"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dpdnxixbp6ccs" path="res://prefabs/player_trap.tscn" id="9_q5onr"]
 [ext_resource type="PackedScene" uid="uid://cwiarthxnrnrq" path="res://prefabs/interface.tscn" id="10_w7kh3"]
 [ext_resource type="PackedScene" uid="uid://bka2ha4sm0s0a" path="res://prefabs/coldsteel.tscn" id="11_e3hyu"]
+[ext_resource type="Texture2D" uid="uid://dndp80vg8y4ql" path="res://sprites/snowflake.png" id="11_q5onr"]
 [ext_resource type="PackedScene" uid="uid://bf7ukl85fy8hi" path="res://map_generator/map_generator.tscn" id="12_q5onr"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_w7kh3"]
@@ -20,6 +21,36 @@
 shader = ExtResource("9_e3hyu")
 shader_parameter/aberration_strength = 1.0
 shader_parameter/grain_strength = 0.15
+
+[sub_resource type="Curve" id="Curve_e3hyu"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.298701, 1), -0.207827, -0.207827, 0, 0, Vector2(0.668831, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_g1fr8"]
+curve = SubResource("Curve_e3hyu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_q5onr"]
+particle_flag_rotate_y = true
+emission_shape = 3
+emission_box_extents = Vector3(10, 0, 10)
+angle_min = 0.100011
+angle_max = 0.500011
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, -0.5, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_g1fr8")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jhx03"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("11_q5onr")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_o8fc1"]
+material = SubResource("StandardMaterial3D_jhx03")
+orientation = 0
 
 [node name="world" type="Node3D"]
 script = ExtResource("1_71j4m")
@@ -66,6 +97,15 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="interface" parent="player" instance=ExtResource("10_w7kh3")]
+
+[node name="snowflake" type="GPUParticles3D" parent="player"]
+transform = Transform3D(1.77623, 0, 0, 0, 1, 0, 0, 0, 2.90106, -1, 12.0607, -1)
+amount = 500
+lifetime = 5.0
+randomness = 0.5
+visibility_aabb = AABB(-8.98039, -8.90606, -4, 17.9608, 17.8121, 8)
+process_material = SubResource("ParticleProcessMaterial_q5onr")
+draw_pass_1 = SubResource("PlaneMesh_o8fc1")
 
 [node name="map_generator" parent="." instance=ExtResource("12_q5onr")]
 

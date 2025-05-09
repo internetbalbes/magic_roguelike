@@ -4,6 +4,7 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var skeleton_surface: MeshInstance3D = $zombie_model/zombie_model/Skeleton3D/zombie
 @onready var timer_beat: Timer = $timer_beat
 
+var enemy_type = "zombie"
 # enemy's initial state
 var state = enemystate.WALKING_PORTAL
 # enemy's state
@@ -27,23 +28,24 @@ var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
 var zombie_damage = 1.0
+var player_in_portal_area = false
 var enemy_material = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 
 func _ready() -> void:
 	super._ready()	
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
-		enemy_speed_walk = config.get_value("enemy_zmnbie", "enemy_speed_walk", enemy_speed_walk)
-		enemy_speed_run = config.get_value("enemy_zmnbie", "enemy_speed_run", enemy_speed_run)
-		enemy_radius_around_portal = config.get_value("enemy_zmnbie", "enemy_radius_around_portal", enemy_radius_around_portal)
-		count_segments_around_portal = config.get_value("enemy_zmnbie", "count_segments_around_portal", count_segments_around_portal)
-		timer_beat.wait_time = config.get_value("enemy_zmnbie", "time_to_throw", timer_beat.wait_time)
-		collision_areaseeing.radius = config.get_value("enemy_zmnbie", "enemy_area_scan_player", 1.0)
-		label_health.max_value = randi_range(1, config.get_value("enemy_zmnbie", "enemy_max_health", label_health.max_value))
-		probability_card =  config.get_value("enemy_zmnbie", "probability_card", probability_card)
-		probability_modificator =  config.get_value("enemy_zmnbie", "probability_modificator", probability_modificator)
-		zombie_damage = config.get_value("enemy_zmnbie", "zombie_damage", 1)
-		var var_scale = config.get_value("enemy_zmnbie", "enemy_transform_scale",  zombie_damage)
+		enemy_speed_walk = config.get_value("enemy_zombie", "enemy_speed_walk", enemy_speed_walk)
+		enemy_speed_run = config.get_value("enemy_zombie", "enemy_speed_run", enemy_speed_run)
+		enemy_radius_around_portal = config.get_value("enemy_zombie", "enemy_radius_around_portal", enemy_radius_around_portal)
+		count_segments_around_portal = config.get_value("enemy_zombie", "count_segments_around_portal", count_segments_around_portal)
+		timer_beat.wait_time = config.get_value("enemy_zombie", "time_to_throw", timer_beat.wait_time)
+		collision_areaseeing.radius = config.get_value("enemy_zombie", "enemy_area_scan_player", 1.0)
+		label_health.max_value = randi_range(1, config.get_value("enemy_zombie", "enemy_max_health", label_health.max_value))
+		probability_card =  config.get_value("enemy_zombie", "probability_card", probability_card)
+		probability_modificator =  config.get_value("enemy_zombie", "probability_modificator", probability_modificator)
+		zombie_damage = config.get_value("enemy_zombie", "zombie_damage", 1)
+		var var_scale = config.get_value("enemy_zombie", "enemy_transform_scale",  zombie_damage)
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
 	config = null
@@ -120,7 +122,7 @@ func _on_animation_finished(_anim_name: String) -> void:
 		call_deferred("queue_free")
 	elif player_in_area:
 		_set_state_enemy(enemystate.BEATING)
-	elif portal:
+	elif portal && !player_in_portal_area:
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
@@ -141,13 +143,12 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
-	if portal:		
-		area.monitoring = true
+	if portal:
 		enemy_angle_to_walk = angle * count_segments_around_portal / 360
 		_set_state_enemy(enemystate.WALKING_PORTAL)
-	else:
-		if state == enemystate.WALKING_PORTAL:
-			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
+	elif state == enemystate.WALKING_PORTAL:
+		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
+		navigation_agent.target_position = player.global_position
 	
 func _set_state_enemy(value)->void:
 	match value:
@@ -174,3 +175,12 @@ func _set_state_enemy(value)->void:
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
 		player.take_damage(zombie_damage)
+
+func _player_in_portal_area(value):
+	player_in_portal_area = value
+	if state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:
+		if value:
+			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
+		else:
+			_set_state_enemy(enemystate.WALKING_PORTAL)
+	

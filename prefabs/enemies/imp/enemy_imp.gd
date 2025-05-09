@@ -16,6 +16,7 @@ extends CharacterBody3D
 @export var world: Node3D
 @export var player : CharacterBody3D
 
+var enemy_type = "imp"
 # enemy's initial state
 var state = enemystate.WALKING_PORTAL
 # enemy's state
@@ -309,6 +310,7 @@ func _set_portal(object: Node3D, angle: float) ->void:
 		if state == enemystate.WALKING_PORTAL:
 			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
 			_timers_delete()
+			navigation_agent.target_position = player.global_position
 	
 func _set_state_enemy(value)->void:
 	match value:

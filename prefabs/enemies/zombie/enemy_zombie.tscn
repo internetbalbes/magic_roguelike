@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://3mrlcmitec87"]
 
-[ext_resource type="Script" uid="uid://bogf1gwodfcjv" path="res://prefabs/enemies/zombie/enemy_zombi.gd" id="1_h2fwl"]
-[ext_resource type="PackedScene" uid="uid://bftuny30u0mc0" path="res://prefabs/enemies/zombie/zombie_model.tscn" id="1_l45fb"]
+[ext_resource type="Script" uid="uid://bogf1gwodfcjv" path="res://prefabs/enemies/zombie/enemy_zombie.gd" id="1_xsgcf"]
+[ext_resource type="PackedScene" uid="uid://bftuny30u0mc0" path="res://prefabs/enemies/zombie/zombie_model.tscn" id="2_ki3et"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_h2fwl"]
 
@@ -27,13 +27,15 @@ height = 10.0
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
-collision_mask = 609
-script = ExtResource("1_h2fwl")
+collision_mask = 545
+script = ExtResource("1_xsgcf")
 
-[node name="zombie_model" parent="." instance=ExtResource("1_l45fb")]
+[node name="zombie_model" parent="." instance=ExtResource("2_ki3et")]
 transform = Transform3D(-0.1, 0, 8.74228e-09, 0, 0.1, 0, -8.74228e-09, 0, -0.1, 0, -1, 0)
 
 [node name="timer_beat" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_h2fwl")

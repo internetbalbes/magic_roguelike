@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bnas3bkk457tc"]
+[gd_scene load_steps=14 format=3 uid="uid://bnas3bkk457tc"]
 
 [ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://map_generator/prefabs/portal/portal.gd" id="1_4ooq7"]
 [ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://prefabs/objects/portal/portal_portal.res" id="3_fd87k"]
@@ -41,6 +41,8 @@ texture_filter = 4
 [sub_resource type="PlaneMesh" id="PlaneMesh_2508x"]
 material = SubResource("StandardMaterial3D_vtomx")
 size = Vector2(10, 10)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_vue68"]
 
 [node name="portal" type="StaticBody3D" groups=["portal"]]
 collision_layer = 512
@@ -96,4 +98,13 @@ light_energy = 5.0
 light_volumetric_fog_energy = 5.0
 spot_range = 10.0
 
+[node name="area_observe" type="Area3D" parent="."]
+collision_layer = 16384
+collision_mask = 32
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area_observe"]
+shape = SubResource("CylinderShape3D_vue68")
+
 [connection signal="timeout" from="timer_create_new_enemy" to="." method="_on_timer_create_new_enemy_timeout"]
+[connection signal="body_entered" from="area_observe" to="." method="_on_area_observe_body_entered"]
+[connection signal="body_exited" from="area_observe" to="." method="_on_area_observe_body_exited"]

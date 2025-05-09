@@ -37,11 +37,9 @@ func _ready() -> void:
 	area.body_entered.connect(_on_area_3d_body_entered)
 	area.body_exited.connect(_on_area_3d_body_exited)
 	label_health.value = label_health.max_value
-	area.monitoring = false
 	for modificator in list_modificators:
 		if randi_range(1, 100) < probability_modificator:
 			_add_modificator_to_list(modificator)
-	#set timer set trap
 
 func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
@@ -76,12 +74,10 @@ func take_damage(spell, buf, amount: int):
 
 func _set_portal(object: Node3D, angle: float) ->void:
 	portal = object
-	if portal:		
+	if portal:
 		var x = 2 * cos(deg_to_rad(angle))
 		var z = 2 * sin(deg_to_rad(angle))	
 		global_transform.origin = portal.global_transform.origin + Vector3(x, collision_shape.height, z)
-	else:
-		area.monitoring = true
 
 func is_alive() -> bool:
 	return label_health.value > 0

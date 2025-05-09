@@ -11,6 +11,7 @@ extends CharacterBody3D
 @export var player : CharacterBody3D
 @export var skymag_sphere : PackedScene
 
+var enemy_type = "skymage"
 # enemy's initial state
 var state = enemystate.WALKING_PORTAL
 # enemy's state

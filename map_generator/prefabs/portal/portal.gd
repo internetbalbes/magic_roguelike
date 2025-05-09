@@ -4,10 +4,11 @@ extends StaticBody3D
 @onready var collision_shape : Shape3D = collision.shape
 #timer period generation new enemies on a map
 @onready var timer_create_new_enemy : Timer = $timer_create_new_enemy
+@onready var area_observe : Area3D = $area_observe
+@onready var area_observe_collision : Shape3D = $area_observe/CollisionShape3D.shape
 @export var player: CharacterBody3D
 @export var world: Node3D
 
-var enemy_two_wave_material = preload("res://sprites/thunderbolt.png")
 #generation count enemies on a map
 var portal_create_enemy_count = 4
 #generation list enemies on a map
@@ -27,9 +28,11 @@ var probability_modificator_maximum=50
 # modificators value's increase= probability
 var probability_modificator_increase=1
 # list enemy's prefab
-var list_prefabenemy = [preload("res://prefabs/enemies/imp/enemy_imp.tscn"),
-						preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"),
-						preload("res://prefabs/enemies/zombie/enemy_zombi.tscn")]
+var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies/imp/enemy_imp.tscn"), "spawn_rate": 0},
+						{"name": "skymage", "prefab": preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"), "spawn_rate": 0},
+						{"name": "zombie", "prefab": preload("res://prefabs/enemies/zombie/enemy_zombie.tscn"), "spawn_rate": 0}
+						]
+var player_in_area: bool = false
 
 signal portal_destroyed()
 
@@ -44,9 +47,23 @@ func _ready() -> void:
 		probability_modificator =  config.get_value("portal", "probability_modificator", probability_modificator)
 		probability_modificator_maximum =  config.get_value("portal", "probability_modificator_maximum", probability_modificator_maximum)
 		probability_modificator_increase =  config.get_value("portal", "probability_modificator_increase", probability_modificator_increase)
+		area_observe_collision.radius =  config.get_value("portal", "area_observe_radius", 10.0)
+		for obj in list_prefabenemy:
+			obj.spawn_rate = config.get_value("enemy_spawn_rate", obj.name, obj.spawn_rate)	
 		#config.save("res://settings.cfg")
 	config = null
 
+func choose_enemy():
+	var total = 0
+	for obj in list_prefabenemy:
+		total += obj.spawn_rate
+	var rand = randi() % total
+	var sum = 0
+	for obj in list_prefabenemy:
+		sum += obj.spawn_rate
+		if rand <= sum:
+			return obj.prefab
+			
 func create_enemy(prefab_scene)->Node:
 	var enemy = prefab_scene.instantiate()
 	enemy.player = player
@@ -59,8 +76,7 @@ func create_enemies() -> void:
 	var angle_shift = 330.0 / portal_create_enemy_count
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
-		var index = randi_range(0, list_prefabenemy.size()-1)
-		var enemy = create_enemy(list_prefabenemy[index])		
+		var enemy = create_enemy(choose_enemy())		
 		world.add_child(enemy)		
 		enemy._set_portal(self, angle)
 		angle += angle_shift
@@ -79,20 +95,18 @@ func portal_free() -> void:
 		player.portal_free()
 	portal_create_enemy_count+=portal_reload_enemy_increase
 	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
+	area_observe.monitoring = false
 	emit_signal("portal_destroyed")
 	
 func _get_object_size() -> float:
 	return collision_shape.radius
 
 func _on_timer_create_new_enemy_timeout() -> void:
-	var random_enemy_index = randi_range(0,list_prefabenemy.size()-1)
-	var enemy = create_enemy(list_prefabenemy[random_enemy_index])
-	world.add_child(enemy)	
-	if random_enemy_index == 0:
-		var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-		standart_material.albedo_texture = enemy_two_wave_material
-		enemy.skeleton_surface.set_surface_override_material(0, standart_material)	
+	var enemy = create_enemy(choose_enemy())
+	world.add_child(enemy)
 	enemy._set_portal(self, randf_range(0.0, 359.0))
+	if player_in_area && enemy.enemy_type in ["zombie"]:
+		enemy._player_in_portal_area(true)
 	list_new_enemy.append(enemy)
 	# grups enemy go yo player
 	if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
@@ -100,3 +114,15 @@ func _on_timer_create_new_enemy_timeout() -> void:
 			list_enemy.erase(obj)
 			obj._set_portal(null, 0)
 		list_new_enemy.clear()
+
+func _on_area_observe_body_entered(_body: Node3D) -> void:
+	player_in_area = true
+	for obj in list_enemy:
+		if obj.enemy_type == "zombie":
+			obj._player_in_portal_area(true)
+
+func _on_area_observe_body_exited(_body: Node3D) -> void:
+	player_in_area = false
+	for obj in list_enemy:
+		if obj.enemy_type == "zombie":
+			obj._player_in_portal_area(false)

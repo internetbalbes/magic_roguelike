@@ -32,7 +32,7 @@ func _ready()->void:
 		#config.save("res://settings.cfg")
 	config = null
 	if collider:
-		if collider.get_groups().size() > 0:
+		if collider.get_groups().size() > 0 && collider.is_in_group("enemy"):
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
 		else:
 			min_distance_to_object = 1.0

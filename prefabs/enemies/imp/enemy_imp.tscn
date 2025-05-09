@@ -31,7 +31,7 @@ bg_color = Color(0, 1, 0, 1)
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
-collision_mask = 609
+collision_mask = 545
 script = ExtResource("1_vqrmm")
 prefabtrap = ExtResource("2_5fimp")
 prefabfireball = ExtResource("3_e782i")
