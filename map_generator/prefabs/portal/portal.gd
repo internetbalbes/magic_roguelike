@@ -27,7 +27,9 @@ var probability_modificator_maximum=50
 # modificators value's increase= probability
 var probability_modificator_increase=1
 # list enemy's prefab
-var list_prefabenemy = [preload("res://prefabs/enemies/imp/enemy_imp.tscn"), preload("res://prefabs/enemies/skymage/enemy_skymage.tscn")]
+var list_prefabenemy = [preload("res://prefabs/enemies/imp/enemy_imp.tscn"),
+						preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"),
+						preload("res://prefabs/enemies/zombie/enemy_zombi.tscn")]
 
 signal portal_destroyed()
 
@@ -58,7 +60,6 @@ func create_enemies() -> void:
 	var angle = 0
 	for i in range(0, portal_create_enemy_count, 1):
 		var index = randi_range(0, list_prefabenemy.size()-1)
-		index = 1
 		var enemy = create_enemy(list_prefabenemy[index])		
 		world.add_child(enemy)		
 		enemy._set_portal(self, angle)

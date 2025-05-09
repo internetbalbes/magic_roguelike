@@ -79,6 +79,6 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_cqfqn")
 show_percentage = false
 
 [node name="sky_mage_model" parent="." instance=ExtResource("3_n3man")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -1, 0)
 
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]
