@@ -14,7 +14,7 @@ left_to_right = 0.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3n4u5"]
 
-[node name="corner" type="StaticBody3D" groups=["navi"]]
+[node name="corner" type="StaticBody3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("PrismMesh_3n4u5")

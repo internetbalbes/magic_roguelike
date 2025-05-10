@@ -96,12 +96,12 @@ func _get_object_size() -> float:
 
 func _on_timer_create_new_enemy_timeout() -> void:
 	var angle_shift = 330.0 / portal_create_new_enemy_count
-	var angle = 0
+	var angle = randi_range(0, 359)
 	for i in range(0, portal_create_new_enemy_count, 1):		
 		var enemy = create_enemy(choose_enemy())
 		world.add_child(enemy)		
 		enemy._set_portal(self, angle)
-		angle += angle_shift
+		angle = fmod(angle + angle_shift, 360)
 		if player_in_area && enemy.enemy_type in ["zombie"]:
 			enemy._set_portal(null, 0)
 		else:

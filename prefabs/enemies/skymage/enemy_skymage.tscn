@@ -27,12 +27,11 @@ bg_color = Color(0, 1, 0, 1)
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
-collision_mask = 545
+collision_mask = 33
 script = ExtResource("1_udblb")
 skymag_sphere = ExtResource("2_n3man")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0832466, 0)
 shape = SubResource("CapsuleShape3D_udblb")
 
 [node name="timer_throw" type="Timer" parent="."]
@@ -79,6 +78,6 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_cqfqn")
 show_percentage = false
 
 [node name="sky_mage_model" parent="." instance=ExtResource("3_n3man")]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -1, 0)
+transform = Transform3D(-0.8, 0, 1.20797e-07, 0, 0.8, 0, -1.20797e-07, 0, -0.8, 0, -1, 0)
 
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]

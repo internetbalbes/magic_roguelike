@@ -31,21 +31,14 @@ bg_color = Color(0, 1, 0, 1)
 
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
-collision_mask = 545
+collision_mask = 33
 script = ExtResource("1_vqrmm")
 prefabtrap = ExtResource("2_5fimp")
 prefabfireball = ExtResource("3_e782i")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_height_offset = -0.8
-avoidance_enabled = true
-height = 2.0
-neighbor_distance = 2.0
-avoidance_layers = 64
-avoidance_mask = 64
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0832466, 0)
 shape = SubResource("CapsuleShape3D_jhx03")
 
 [node name="Area3D" type="Area3D" parent="."]

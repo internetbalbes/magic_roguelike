@@ -10,7 +10,6 @@ class tile:
 
 func _ready() -> void:
 	chunk_array_expansion()
-	create_chunk()
 	
 func chunk_array_expansion():
 	for i in range(CHUNK_SIZE):
@@ -24,13 +23,11 @@ func create_chunk():
 	create_path()
 	create_corners()
 	visualize_chunk()
-	create_portal()
-	chunks_created_amount += 1
-	chunks_clearing()
-	
+	create_portal()	
+	chunks_clearing()	
 	call_deferred("bake_navigation_mesh")
-		
 	transform_chunk()
+	chunks_created_amount += 1
 		
 func clear_chunk_array():
 	for x in range(CHUNK_SIZE):
@@ -93,7 +90,7 @@ func visualize_chunk():
 					current_tile.add_child(created_prefab)	
 				"block":
 					created_prefab = block_prefab.instantiate()
-					created_prefab.position = Vector3(x,0,y)
+					created_prefab.position = Vector3(x,0.5,y)
 					created_prefab.name = "block_" + str(x) + "_" + str(y)
 					current_tile.add_child(created_prefab)
 				"corner":
@@ -119,10 +116,11 @@ func create_portal():
 	created_prefab = portal_prefab.instantiate()
 	created_prefab.position = Vector3(CHUNK_SIZE - 1,0,last_y_list[-1])
 	created_prefab.name = "portal_" + str(CHUNK_SIZE - 1) + "_" + str(last_y_list[-1])
+	created_prefab.scale *=0.03
 	current_tile.add_child(created_prefab)
 	created_portal = created_prefab
 
-const SCALE_SIZE_MAP = 1
+var SCALE_SIZE_MAP = 1
 
 func transform_chunk():
 	chunk_list[-1].position.x = CHUNK_SIZE * chunks_created_amount * SCALE_SIZE_MAP
@@ -134,7 +132,7 @@ func chunks_clearing():
 		if old_chunk:
 			old_chunk.queue_free()
 
-const HALF_CHUNK_SIZE = SCALE_SIZE_MAP / 2.0
+var HALF_CHUNK_SIZE = SCALE_SIZE_MAP / 2.0
 
 func find_block_free():
 	return Vector3((1 - HALF_CHUNK_SIZE + 0.5) * SCALE_SIZE_MAP,0,(1 - HALF_CHUNK_SIZE + 0.5) * SCALE_SIZE_MAP)
@@ -151,29 +149,17 @@ func create_corners():
 			if chunk_array[x][y].relief == "block":
 				if x + 1 <= CHUNK_SIZE - 1 and chunk_array[x + 1][y].relief == "ground":
 					chunk_array[x][y].relief = "corner"
-				elif x - 1 >= 0 and chunk_array[x - 1][y].relief == "ground":
-					chunk_array[x][y].relief = "corner"
-				elif y + 1 <= CHUNK_SIZE - 1 and chunk_array[x][y + 1].relief == "ground":
-					chunk_array[x][y].relief = "corner"
-				elif y - 1 >= 0 and chunk_array[x][y - 1].relief == "ground":
-					chunk_array[x][y].relief = "corner"
 					
 	for x in range(CHUNK_SIZE):
 		for y in range(CHUNK_SIZE):
 			if chunk_array[x][y].relief == "corner":
 				if x + 1 <= CHUNK_SIZE - 1 and chunk_array[x + 1][y].relief == "ground":
 					chunk_array[x][y].corner_y_rotate = 0
-				elif x - 1 >= 0 and chunk_array[x - 1][y].relief == "ground":
-					chunk_array[x][y].corner_y_rotate = 0
-				elif y + 1 <= CHUNK_SIZE - 1 and chunk_array[x][y + 1].relief == "ground":
-					chunk_array[x][y].corner_y_rotate = 0
-				elif y - 1 >= 0 and chunk_array[x][y - 1].relief == "ground":
-					chunk_array[x][y].corner_y_rotate = 0
 
 
 func create_corner(x,y,y_rotate):
 	created_prefab = corner_prefab.instantiate()
-	created_prefab.position = Vector3(x,0,y)
+	created_prefab.position = Vector3(x,0.5,y)
 	created_prefab.name = "corner_" + str(x) + "_" + str(y)
 	created_prefab.rotation_degrees.y = y_rotate
 	current_tile.add_child(created_prefab)

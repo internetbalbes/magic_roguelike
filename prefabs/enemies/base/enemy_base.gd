@@ -77,7 +77,7 @@ func _set_portal(object: Node3D, angle: float) ->void:
 	if portal:
 		var x = 2 * cos(deg_to_rad(angle))
 		var z = 2 * sin(deg_to_rad(angle))	
-		global_transform.origin = portal.global_transform.origin + Vector3(x, collision_shape.height, z)
+		global_transform.origin = portal.global_transform.origin + Vector3(x, collision_shape.height/2, z)
 
 func is_alive() -> bool:
 	return label_health.value > 0
@@ -86,7 +86,7 @@ func rotate_towards_target(target_pos, delta):
 	var current = global_transform.basis.get_euler()
 	var direction = (global_transform.origin - target_pos).normalized()
 	var target_yaw = atan2(direction.x, direction.z)
-	current.y = lerp_angle(current.y, target_yaw, delta * 5.0)
+	current.y = lerp_angle(current.y, target_yaw, delta * 30.0)
 	global_transform.basis = Basis().rotated(Vector3.UP, current.y)
 	
 func _get_object_size() -> float:

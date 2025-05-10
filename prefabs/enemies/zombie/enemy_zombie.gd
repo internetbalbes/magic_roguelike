@@ -3,6 +3,7 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var animation_player: AnimationPlayer = $zombie_model/AnimationPlayer
 @onready var skeleton_surface: MeshInstance3D = $zombie_model/zombie_model/Skeleton3D/zombie
 @onready var timer_beat: Timer = $timer_beat
+@onready var timer_run_to_player: Timer = $timer_run_to_player
 
 var enemy_type = "zombie"
 # enemy's initial state
@@ -28,7 +29,6 @@ var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
 var zombie_damage = 1.0
-var enemy_material = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 
 func _ready() -> void:
 	super._ready()	
@@ -48,9 +48,6 @@ func _ready() -> void:
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
 	config = null
-	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-	standart_material.albedo_texture = enemy_material
-	skeleton_surface.set_surface_override_material(0, standart_material)
 	label_health.value = label_health.max_value
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("walk").loop = true
@@ -83,7 +80,6 @@ func _physics_process(delta: float) -> void:
 			# Poruszanie wroga w kierunku celu
 			velocity = direction * enemy_speed
 			move_and_slide()
-			navigation_agent.set_velocity_forced(velocity)
 			time_stand_still += delta
 			#global_transform.origin = global_transform.origin + move_vector
 		else:
@@ -109,8 +105,8 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():
-		if !timer_beat.is_stopped():
-			timer_beat.stop()			
+		timer_beat.stop()
+		timer_run_to_player.stop()
 		_set_state_enemy(enemystate.DEATHING)
 
 func is_alive() -> bool:
@@ -133,6 +129,7 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 			enemy_pooling_to_point = pos
 			timer_beat.stop()
 			area.monitoring = false
+			timer_run_to_player.stop()
 		else:
 			area.monitoring = true
 			if portal:
@@ -148,6 +145,7 @@ func _set_portal(object: Node3D, angle: float) ->void:
 	elif state == enemystate.WALKING_PORTAL:
 		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
 		navigation_agent.target_position = player.global_position
+		timer_run_to_player.start()
 	
 func _set_state_enemy(value)->void:
 	match value:
@@ -155,6 +153,7 @@ func _set_state_enemy(value)->void:
 			state = enemystate.RUNNING_TO_PLAYER
 			animation_player.play("run")
 			enemy_speed = enemy_speed_run
+			timer_run_to_player.start()
 		enemystate.WALKING_PORTAL:
 			state = enemystate.WALKING_PORTAL
 			animation_player.play("walk")
@@ -163,6 +162,7 @@ func _set_state_enemy(value)->void:
 			state = enemystate.BEATING
 			animation_player.play("melee")
 			timer_beat.start()
+			timer_run_to_player.stop()
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
@@ -174,3 +174,9 @@ func _set_state_enemy(value)->void:
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
 		player.take_damage(zombie_damage)	
+
+
+func _on_timer_run_to_player_timeout() -> void:
+	if navigation_agent.target_position.distance_to(player.global_position) > 1.0:
+		navigation_agent.target_position = player.global_position
+		

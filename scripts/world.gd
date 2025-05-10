@@ -13,7 +13,7 @@ func _ready() -> void:
 	message("loading game")
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
-		map_generator.scale_size_map = config.get_value("world", "scale_size_map", 50)
+		map_generator.SCALE_SIZE_MAP = config.get_value("world", "scale_size_map", 50)
 		portal_create_enemy_count = config.get_value("world", "portal_create_enemy_count", portal_create_enemy_count)
 		portal_reload_enemy_increase = config.get_value("world", "portal_reload_enemy_increase", portal_reload_enemy_increase)			
 		#config.save("res://settings.cfg")
