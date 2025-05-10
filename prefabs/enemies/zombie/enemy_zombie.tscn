@@ -41,7 +41,6 @@ one_shot = true
 shape = SubResource("CapsuleShape3D_h2fwl")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-debug_enabled = true
 
 [node name="sprite_status" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71601, 0)
