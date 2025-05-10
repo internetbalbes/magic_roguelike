@@ -72,11 +72,11 @@ func create_path():
 
 var created_prefab
 var chunk_list = []
-var ground_prefab = load("res://ground.tscn")
-var chunk_prefab = load("res://chunk.tscn")
-var block_prefab = load("res://block.tscn")
-var tile_prefab = load("res://tile.tscn")
-var portal_prefab = load("res://portal.tscn")
+var ground_prefab = load("res://map_generator/prefabs/ground/ground.tscn")
+var chunk_prefab = load("res://map_generator/prefabs/ground/chunk_prefab/chunk.tscn")
+var block_prefab = load("res://map_generator/prefabs/block/block.tscn")
+var tile_prefab = load("res://map_generator/prefabs/ground/tile_prefab/tile.tscn")
+var portal_prefab = load("res://map_generator/prefabs/portal/portal.tscn")
 var current_tile
 
 func visualize_chunk():
@@ -143,7 +143,7 @@ func portal_destroyed():
 	created_portal.queue_free()
 	create_chunk()
 
-var corner_prefab = load("res://corner.tscn")
+var corner_prefab = load("res://map_generator/prefabs/corner/corner.tscn")
 
 func create_corners():
 	for x in range(CHUNK_SIZE):
