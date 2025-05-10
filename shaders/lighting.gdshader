@@ -42,8 +42,8 @@ float fbm(vec2 uv, int octaves){
 }
 
 void fragment() {
-	vec2 uv = UV * 2.0 - 1.0; // center UVs
-	uv += 2.0 * fbm(uv + TIME * speed, octave_count) - 1.0;
+	vec2 uv = UV  - 0.5; // center UVs
+	uv += fbm(uv + TIME * speed, octave_count) - 0.5;
 
 	float dist = abs(uv.x);
 	float intensity = mix(0.0, 0.5, hash12(vec2(TIME))) / dist;
@@ -52,5 +52,4 @@ void fragment() {
 	
 	ALBEDO = color;
 	ALPHA = clamp(intensity / 20.0, 0.0, 1.0); // transparency
-	EMISSION = color * 1.5;	
 }

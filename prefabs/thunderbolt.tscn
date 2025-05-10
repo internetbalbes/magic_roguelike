@@ -17,7 +17,7 @@ shader_parameter/speed = 5.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_x28xq"]
 material = SubResource("ShaderMaterial_uba4g")
-size = Vector2(2, 3)
+size = Vector2(5, 5)
 orientation = 0
 
 [node name="thunderbolt" type="Node3D"]
