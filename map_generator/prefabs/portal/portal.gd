@@ -9,8 +9,6 @@ extends StaticBody3D
 @export var player: CharacterBody3D
 @export var world: Node3D
 
-#generation count enemies on a map
-var portal_create_enemy_count = 4
 #generation list enemies on a map
 var list_enemy : Array
 #generation list new enemies on a map
@@ -19,8 +17,6 @@ var list_new_enemy : Array
 var portal_create_new_enemy_count = 1
 #groupe's size new enemies
 var portal_create_new_enemy_groupe_count = 2
-#count enemy increase after reload portal
-var portal_reload_enemy_increase = 1
 # modificators value's probability
 var probability_modificator = 50.0
 # modificators value's maximum probability
@@ -39,11 +35,9 @@ signal portal_destroyed()
 func _ready() -> void:
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:		
-		portal_create_enemy_count = config.get_value("portal", "portal_create_enemy_count", portal_create_enemy_count)
 		portal_create_new_enemy_count = config.get_value("portal", "portal_create_new_enemy_count", portal_create_new_enemy_count)
 		timer_create_new_enemy.wait_time = config.get_value("portal", "portal_create_new_enemy_time", 5)
 		portal_create_new_enemy_groupe_count = config.get_value("portal", "portal_create_new_enemy_groupe_count", portal_create_new_enemy_groupe_count)
-		portal_reload_enemy_increase = config.get_value("portal", "portal_reload_enemy_increase", portal_reload_enemy_increase)	
 		probability_modificator =  config.get_value("portal", "probability_modificator", probability_modificator)
 		probability_modificator_maximum =  config.get_value("portal", "probability_modificator_maximum", probability_modificator_maximum)
 		probability_modificator_increase =  config.get_value("portal", "probability_modificator_increase", probability_modificator_increase)
@@ -58,6 +52,7 @@ func choose_enemy():
 	for obj in list_prefabenemy:
 		total += obj.spawn_rate
 	var rand = randi() % total
+	rand = 100
 	var sum = 0
 	for obj in list_prefabenemy:
 		sum += obj.spawn_rate
@@ -68,15 +63,15 @@ func create_enemy(prefab_scene)->Node:
 	var enemy = prefab_scene.instantiate()
 	enemy.player = player
 	enemy.world = world
-	enemy.probability_modificator = probability_modificator
-	list_enemy.append(enemy)	
+	enemy.probability_modificator = probability_modificator		
 	return enemy
 
-func create_enemies() -> void:
-	var angle_shift = 330.0 / portal_create_enemy_count
+func create_enemies(count) -> void:
+	var angle_shift = 330.0 / count
 	var angle = 0
-	for i in range(0, portal_create_enemy_count, 1):
-		var enemy = create_enemy(choose_enemy())		
+	for i in range(0, count, 1):
+		var enemy = create_enemy(choose_enemy())	
+		list_enemy.append(enemy)	
 		world.add_child(enemy)		
 		enemy._set_portal(self, angle)
 		angle += angle_shift
@@ -93,7 +88,6 @@ func portal_free() -> void:
 	timer_create_new_enemy.stop()
 	if is_instance_valid(player):
 		player.portal_free()
-	portal_create_enemy_count+=portal_reload_enemy_increase
 	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
 	area_observe.monitoring = false
 	emit_signal("portal_destroyed")
@@ -102,27 +96,33 @@ func _get_object_size() -> float:
 	return collision_shape.radius
 
 func _on_timer_create_new_enemy_timeout() -> void:
-	var enemy = create_enemy(choose_enemy())
-	world.add_child(enemy)
-	enemy._set_portal(self, randf_range(0.0, 359.0))
-	if player_in_area && enemy.enemy_type in ["zombie"]:
-		enemy._player_in_portal_area(true)
-	list_new_enemy.append(enemy)
-	# grups enemy go yo player
-	if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
-		for obj in list_new_enemy:
-			list_enemy.erase(obj)
-			obj._set_portal(null, 0)
-		list_new_enemy.clear()
+	var angle_shift = 330.0 / portal_create_new_enemy_count
+	var angle = 0
+	for i in range(0, portal_create_new_enemy_count, 1):		
+		var enemy = create_enemy(choose_enemy())
+		world.add_child(enemy)		
+		enemy._set_portal(self, angle)
+		angle += angle_shift
+		if player_in_area && enemy.enemy_type in ["zombie"]:
+			enemy._set_portal(null, 0)
+		else:
+			list_enemy.append(enemy)
+			list_new_enemy.append(enemy)
+			# grups enemy go yo player
+			if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
+				for obj in list_new_enemy:
+					list_enemy.erase(obj)
+					obj._set_portal(null, 0)
+				list_new_enemy.clear()	
 
 func _on_area_observe_body_entered(_body: Node3D) -> void:
 	player_in_area = true
-	for obj in list_enemy:
+	for i in range(list_enemy.size() - 1, -1, -1):
+		var obj = list_enemy[i]
 		if obj.enemy_type == "zombie":
-			obj._player_in_portal_area(true)
+			obj._set_portal(null, 0)
+			list_enemy.erase(obj)
+			list_new_enemy.erase(obj)
 
 func _on_area_observe_body_exited(_body: Node3D) -> void:
 	player_in_area = false
-	for obj in list_enemy:
-		if obj.enemy_type == "zombie":
-			obj._player_in_portal_area(false)

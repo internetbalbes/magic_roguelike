@@ -28,7 +28,6 @@ var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
 var zombie_damage = 1.0
-var player_in_portal_area = false
 var enemy_material = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 
 func _ready() -> void:
@@ -122,7 +121,7 @@ func _on_animation_finished(_anim_name: String) -> void:
 		call_deferred("queue_free")
 	elif player_in_area:
 		_set_state_enemy(enemystate.BEATING)
-	elif portal && !player_in_portal_area:
+	elif portal:
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
@@ -174,13 +173,4 @@ func _set_state_enemy(value)->void:
 
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
-		player.take_damage(zombie_damage)
-
-func _player_in_portal_area(value):
-	player_in_portal_area = value
-	if state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:
-		if value:
-			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
-		else:
-			_set_state_enemy(enemystate.WALKING_PORTAL)
-	
+		player.take_damage(zombie_damage)	

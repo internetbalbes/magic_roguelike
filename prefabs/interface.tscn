@@ -15,19 +15,8 @@ offset_top = -1.84003
 offset_right = 0.399994
 offset_bottom = -1.64001
 
-[node name="progressbar_mana" type="ProgressBar" parent="mana"]
-z_index = 1
+[node name="labelmana" type="Label" parent="mana"]
 layout_mode = 2
-size_flags_vertical = 1
-show_percentage = false
-
-[node name="labelmana" type="Label" parent="mana/progressbar_mana"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 text = "mana"
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
@@ -95,17 +84,6 @@ anchor_top = 0.25
 anchor_right = 0.75
 anchor_bottom = 0.758
 offset_bottom = -1.024
-
-[node name="progressbar_reload_spell" type="ProgressBar" parent="spells/book"]
-z_index = 1
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.875
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-show_percentage = false
 
 [node name="mana_cost" type="Label" parent="spells"]
 layout_mode = 0

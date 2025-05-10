@@ -3,14 +3,12 @@ extends CharacterBody3D
 @onready var camera = $Camera3D
 @onready var raycast = $Camera3D/RayCast3D
 @onready var image_pointcatch = $interface/aim
-@onready var timer_reload_spell = $timer_reload_spell
+@onready var timer_reload_spell: Timer = $timer_reload_spell
 @onready var timer_reload_coldsteel = $timer_reload_coldsteel
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
 @onready var label_health = $interface/hp/hp
 @onready var progressbar_reload_coldsteel = $interface/progressbar_reload_coldsteel
-@onready var progressbar_reload_spell = $interface/spells/book/progressbar_reload_spell
-@onready var progressbar_mana = $interface/mana/progressbar_mana
-@onready var label_mana = $interface/mana/progressbar_mana/labelmana
+@onready var label_mana = $interface/mana/labelmana
 @onready var texturerect_base = $interface/spells/book
 @onready var texturerect_overlay = $interface/spells/book/spell_icon
 @onready var label_mana_cost = $interface/spells/mana_cost
@@ -44,8 +42,6 @@ var player_jump_velocity = 3
 var player_rotate_sensitivity = 0.085
 # player's currently health
 var player_current_health: int = player_max_health
-# time reload spell
-var time_reload_spell = 1.0
 # time reload coldspeel
 var time_reload_coldspeel = 1.0
 # speed scroll_container spells
@@ -54,6 +50,10 @@ var spell_currently_index = 1
 var time_reload_portal = 10.0
 # currently time reload portal
 var time_currently_reload_portal = time_reload_portal
+# player's max mana 
+var player_max_mana  = 10
+# player's currently mana 
+var player_currently_mana = player_max_mana
 #list file spels
 var spell_thunderbolt = preload("res://sprites/thunderbolt.png") 
 var spell_waterball = preload("res://sprites/waterball_icon.png")
@@ -86,10 +86,10 @@ func _ready() -> void:
 		player_max_health = config.get_value("player", "player_max_health", player_max_health)
 		player_jump_velocity = config.get_value("player", "player_jump_velocity", player_jump_velocity)
 		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
-		time_reload_spell = config.get_value("player", "time_reload_spell", time_reload_spell)
+		timer_reload_spell.wait_time = config.get_value("player", "time_reload_spell", 1.0)
 		time_reload_coldspeel = config.get_value("player", "time_reload_coldspeel", time_reload_coldspeel)		
 		time_reload_portal = config.get_value("player", "time_reload_portal", time_reload_portal)
-		progressbar_mana.max_value =  config.get_value("player", "player_max_mana", 10)
+		player_max_mana =  config.get_value("player", "player_max_mana", player_max_mana)
 		raycast.target_position.z =  -config.get_value("player", "player_scan_enemy", abs(raycast.target_position.z))
 		# spell waterball
 		var mana_cost = config.get_value("spells", "waterball_spell_mana_cost", 1)
@@ -138,11 +138,8 @@ func _ready() -> void:
 	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	player_current_health = player_max_health
 	_set_spell_currently(spell_currently_index)
-	progressbar_mana.step = 1
-	take_mana(progressbar_mana.max_value)
-	progressbar_reload_spell.step = 0.1
-	progressbar_reload_spell.value = time_reload_spell
-	progressbar_reload_spell.max_value = time_reload_spell
+	player_currently_mana = player_max_mana
+	take_mana(player_max_mana)
 	progressbar_reload_coldsteel.step = 0.1
 	progressbar_reload_coldsteel.value = time_reload_coldspeel
 	progressbar_reload_coldsteel.max_value = time_reload_coldspeel	
@@ -196,10 +193,12 @@ func _input(event: InputEvent) -> void:
 					remove_card()
 			elif timer_reload_spell.is_stopped():
 				var spell = spells[spell_currently_index]
-				if progressbar_mana.value - spell.mana_cost < 0:
+				if player_currently_mana - spell.mana_cost < 0:
 					pass
 				elif spell.spell_name.to_lower() == "thunderbolt":
-					create_spell(prefathunderbolt.instantiate())
+					var collider = raycast.get_collider()
+					if collider && collider.is_in_group("enemy"):
+						create_spell(prefathunderbolt.instantiate())
 				elif spell.spell_name.to_lower() == "waterball":
 					create_spell(prefabwaterball.instantiate())
 				elif spell.spell_name.to_lower() == "tornado":
@@ -265,7 +264,6 @@ func create_trap():
 		
 func reload_spell():
 	timer_reload_spell.start()
-	progressbar_reload_spell.value = 0
 	take_mana(-spells[spell_currently_index].mana_cost)	
 	
 func take_damage(amount: int):
@@ -282,22 +280,14 @@ func take_heal(amount: int):
 	emit_signal("health_changed", player_current_health)
 	
 func take_mana(amount: int):
-	progressbar_mana.value = clamp(progressbar_mana.value + amount, 0, progressbar_mana.max_value)
-	label_mana.text = str(int(progressbar_mana.value)) + "/" + str(int(progressbar_mana.max_value))
+	player_currently_mana = clamp(player_currently_mana + amount, 0, player_max_mana)
+	label_mana.text = str(int(player_currently_mana)) + "/" + str(int(player_max_mana))
 
 func is_alive() -> bool:
 	return player_current_health > 0
 
 func _on_health_changed(new_health: int):	
 	label_health.text = str(new_health)  # Skalowanie wartości na pasek zdrowia
-
-func _on_timer_reload_spell_timeout() -> void:
-	var value = progressbar_reload_spell.value + timer_reload_spell.wait_time
-	if value >= progressbar_reload_spell.max_value:
-		progressbar_reload_spell.value = progressbar_reload_spell.max_value
-		timer_reload_spell.stop()
-	else:
-		progressbar_reload_spell.value = value
 
 func portal_free() -> void:
 	create_card("card_mana_max")
@@ -358,7 +348,7 @@ func create_card(card_name)->void:
 func remove_card()->void:	
 	match card_list[card_currently_index]:
 		"card_mana_potion": 
-			if progressbar_mana.max_value - progressbar_mana.value > 0.1:
+			if player_max_mana - player_currently_mana > 0.1:
 				take_mana(card_mana_potion_mana_increase)
 			else:
 				return
@@ -368,18 +358,18 @@ func remove_card()->void:
 			else:
 				return			
 		"card_mana_max_increase": 
-			progressbar_mana.max_value +=1
+			player_max_mana +=1
 			take_mana(0)
 		"card_mana_max": 
-			if progressbar_mana.max_value - progressbar_mana.value > 0.1:
-				take_mana(progressbar_mana.max_value)
+			if player_max_mana - player_currently_mana > 0.1:
+				take_mana(player_max_mana)
 			else:
 				return
 		"card_hp_to_mana_sacrifice":
 			if player_current_health - card_hp_to_mana_sacrifice_exchange > 1:
 				var exchange = card_hp_to_mana_sacrifice_exchange
-				if progressbar_mana.value + exchange > progressbar_mana.max_value:
-					exchange = progressbar_mana.max_value - progressbar_mana.value				
+				if player_currently_mana + exchange > player_max_mana:
+					exchange = player_max_mana - player_currently_mana				
 				take_mana(exchange)
 				take_damage(exchange)
 			else:
