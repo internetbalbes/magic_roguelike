@@ -5,7 +5,6 @@ extends CharacterBody3D
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
 @onready var animation_player: AnimationPlayer = $sky_mage_model/AnimationPlayer
-@onready var skeleton_surface: MeshInstance3D = $sky_mage_model/sky_mage_model/Skeleton3D/sky_mage
 @onready var timer_throw: Timer = $timer_throw
 @export var world: Node3D
 @export var player : CharacterBody3D
@@ -49,7 +48,6 @@ var probability_card = 50.0
 var portal: Node3D
 # enemy pray's point
 var target_point_pray = Vector3.ZERO
-var enemy_material = preload("res://sprites/card_hp_potion.png")
 
 func _ready() -> void:	
 	var config = ConfigFile.new()
@@ -65,10 +63,7 @@ func _ready() -> void:
 		var var_scale = config.get_value("enemy_skymage", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
-	config = null
-	var standart_material: StandardMaterial3D = StandardMaterial3D.new()
-	standart_material.albedo_texture = enemy_material
-	skeleton_surface.set_surface_override_material(0, standart_material)	
+	config = null	
 	label_health.value = label_health.max_value
 	animation_player.animation_finished.connect(_on_animation_finished)
 	for modificator in list_modificators:

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bggo2sahi4bcd" path="res://prefabs/enemies/skymage/enemy_skymage.gd" id="1_udblb"]
 [ext_resource type="PackedScene" uid="uid://cjv8bi7lh0qkl" path="res://prefabs/objects/skymage_sphere/skymage_sphere.tscn" id="2_n3man"]
-[ext_resource type="PackedScene" uid="uid://deyqfpsqmll3e" path="res://prefabs/enemies/skymage/sky_mage_model.tscn" id="3_n3man"]
+[ext_resource type="PackedScene" uid="uid://b4hatdxncst5a" path="res://prefabs/enemies/skymage/sky_mage_model.tscn" id="3_n3man"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_udblb"]
 radius = 0.6
@@ -32,6 +32,7 @@ script = ExtResource("1_udblb")
 skymag_sphere = ExtResource("2_n3man")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.111199, -0.171865, 0)
 shape = SubResource("CapsuleShape3D_udblb")
 
 [node name="timer_throw" type="Timer" parent="."]
@@ -78,6 +79,6 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_cqfqn")
 show_percentage = false
 
 [node name="sky_mage_model" parent="." instance=ExtResource("3_n3man")]
-transform = Transform3D(-0.8, 0, 1.20797e-07, 0, 0.8, 0, -1.20797e-07, 0, -0.8, 0, -1, 0)
+transform = Transform3D(-0.1, 0, 1.50996e-08, 0, 0.1, 0, -1.50996e-08, 0, -0.1, -0.213844, -1.24068, 0)
 
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]

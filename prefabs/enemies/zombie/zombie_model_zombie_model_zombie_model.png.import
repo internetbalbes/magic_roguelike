@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dqmw1l4iovyxd"
-path.s3tc="res://.godot/imported/enemy_model_enemy.png-539ba5297048cfdcdfeba9e5272a11d0.s3tc.ctex"
+uid="uid://bm88uqpbvpa4j"
+path.s3tc="res://.godot/imported/zombie_model_zombie_model_zombie_model.png-74a27d43deb13c18c45e540e1fd49a82.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "e456c128e368ecfddd990de2e3dbffab"
+"md5": "288523095d752bbb4fb9287ca8784a18"
 }
 
 [deps]
 
-source_file="res://prefabs/enemies/imp/textures/enemy_model_enemy.png"
-dest_files=["res://.godot/imported/enemy_model_enemy.png-539ba5297048cfdcdfeba9e5272a11d0.s3tc.ctex"]
+source_file="res://prefabs/enemies/zombie/zombie_model_zombie_model_zombie_model.png"
+dest_files=["res://.godot/imported/zombie_model_zombie_model_zombie_model.png-74a27d43deb13c18c45e540e1fd49a82.s3tc.ctex"]
 
 [params]
 

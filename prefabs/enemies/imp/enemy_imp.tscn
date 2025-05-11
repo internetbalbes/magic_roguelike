@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://prefabs/enemies/imp/enemy_imp.gd" id="1_vqrmm"]
 [ext_resource type="PackedScene" uid="uid://s1lydyxgqx5w" path="res://prefabs/objects/imp_trap/enemy_trap.tscn" id="2_5fimp"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/objects/imp_fireball/fireball.tscn" id="3_e782i"]
-[ext_resource type="PackedScene" uid="uid://c2fe0kkm82tfx" path="res://prefabs/enemies/imp/enemy_model.tscn" id="4_6gtxi"]
+[ext_resource type="PackedScene" uid="uid://bsubb1a08d328" path="res://prefabs/enemies/imp/imp_model.tscn" id="4_vqrmm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
 radius = 0.6
@@ -48,9 +48,6 @@ collision_mask = 32
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("CylinderShape3D_yfjof")
 
-[node name="enemy_model" parent="." instance=ExtResource("4_6gtxi")]
-transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, -1, 0)
-
 [node name="timer_throw" type="Timer" parent="."]
 one_shot = true
 
@@ -93,6 +90,9 @@ grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_a7d0n")
 theme_override_styles/fill = SubResource("StyleBoxFlat_aivmq")
 show_percentage = false
+
+[node name="imp_model" parent="." instance=ExtResource("4_vqrmm")]
+transform = Transform3D(-0.1, 0, -8.74228e-09, 0, 0.1, 0, 8.74228e-09, 0, -0.1, -0.193049, -1.30151, 0)
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

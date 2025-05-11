@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bm1w3hfls2q2u"
-path="res://.godot/imported/enemy_enemy.png-13ab0740ddc9e925ca8e6ed78448b897.ctex"
+uid="uid://0o80nvinvtut"
+path="res://.godot/imported/sky_mage.png-1fb2646ef2f2326b1313c35d6a8e6491.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://prefabs/enemies/imp/textures/enemy_enemy.png"
-dest_files=["res://.godot/imported/enemy_enemy.png-13ab0740ddc9e925ca8e6ed78448b897.ctex"]
+source_file="res://prefabs/enemies/skymage/sky_mage.png"
+dest_files=["res://.godot/imported/sky_mage.png-1fb2646ef2f2326b1313c35d6a8e6491.ctex"]
 
 [params]
 

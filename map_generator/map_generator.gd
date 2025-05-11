@@ -1,6 +1,6 @@
 extends Node3D
 
-const CHUNK_SIZE = 7
+const CHUNK_SIZE = 5
 
 var chunk_array = []
 
@@ -23,7 +23,8 @@ func create_chunk():
 	create_path()
 	create_corners()
 	visualize_chunk()
-	create_portal()	
+	create_portal()
+	create_environment()
 	chunks_clearing()	
 	call_deferred("bake_navigation_mesh")
 	transform_chunk()
@@ -90,7 +91,7 @@ func visualize_chunk():
 					current_tile.add_child(created_prefab)	
 				"block":
 					created_prefab = block_prefab.instantiate()
-					created_prefab.position = Vector3(x,0.5,y)
+					created_prefab.position = Vector3(x,-0.375,y)
 					created_prefab.name = "block_" + str(x) + "_" + str(y)
 					current_tile.add_child(created_prefab)
 				"corner":
@@ -143,12 +144,24 @@ func portal_destroyed():
 
 var corner_prefab = load("res://map_generator/prefabs/corner/corner.tscn")
 
+
 func create_corners():
 	for x in range(CHUNK_SIZE):
 		for y in range(CHUNK_SIZE):
 			if chunk_array[x][y].relief == "block":
+				# Проверяем все 4 стороны и задаём угол поворота
 				if x + 1 <= CHUNK_SIZE - 1 and chunk_array[x + 1][y].relief == "ground":
 					chunk_array[x][y].relief = "corner"
+					chunk_array[x][y].corner_y_rotate = 0
+				elif y - 1 >= 0 and chunk_array[x][y - 1].relief == "ground":
+					chunk_array[x][y].relief = "corner"
+					chunk_array[x][y].corner_y_rotate = 90
+				elif x - 1 >= 0 and chunk_array[x - 1][y].relief == "ground":
+					chunk_array[x][y].relief = "corner"
+					chunk_array[x][y].corner_y_rotate = 180
+				elif y + 1 <= CHUNK_SIZE - 1 and chunk_array[x][y + 1].relief == "ground":
+					chunk_array[x][y].relief = "corner"
+					chunk_array[x][y].corner_y_rotate = 270
 					
 	for x in range(CHUNK_SIZE):
 		for y in range(CHUNK_SIZE):
@@ -156,10 +169,14 @@ func create_corners():
 				if x + 1 <= CHUNK_SIZE - 1 and chunk_array[x + 1][y].relief == "ground":
 					chunk_array[x][y].corner_y_rotate = 0
 
-
 func create_corner(x,y,y_rotate):
 	created_prefab = corner_prefab.instantiate()
-	created_prefab.position = Vector3(x,0.5,y)
+	created_prefab.position = Vector3(x,0.0625,y)
 	created_prefab.name = "corner_" + str(x) + "_" + str(y)
 	created_prefab.rotation_degrees.y = y_rotate
 	current_tile.add_child(created_prefab)
+
+func create_environment():
+	for x in range(CHUNK_SIZE):
+		for y in range(CHUNK_SIZE):
+			pass

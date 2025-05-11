@@ -7,9 +7,9 @@ extends CharacterBody3D
 @onready var collision_shape: Shape3D = collision.shape
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
-@onready var animation_player: AnimationPlayer = $enemy_model/AnimationPlayer
-@onready var skeleton_bone_hand: BoneAttachment3D = $enemy_model/enemy_model/Skeleton3D/BoneAttachment3D
-@onready var skeleton_surface: MeshInstance3D = $enemy_model/enemy_model/Skeleton3D/enemy
+@onready var animation_player: AnimationPlayer = $imp_model/AnimationPlayer
+@onready var skeleton_bone_hand: BoneAttachment3D = $imp_model/imp_model/Skeleton3D/BoneAttachment3D
+@onready var skeleton_surface: MeshInstance3D = $imp_model/imp_model/Skeleton3D/imp
 @onready var timer_throw: Timer = $timer_throw
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
@@ -211,7 +211,7 @@ func fireball_create() -> void:
 	fireball = prefabfireball.instantiate()
 	skeleton_bone_hand.add_child(fireball)	
 	fireball.global_position = skeleton_bone_hand.global_position
-	fireball.scale *= 100
+	fireball.scale *= 1000
 	fireball.player = player
 	timer_throw.start()
 	_set_state_enemy(enemystate.THROWING)	
