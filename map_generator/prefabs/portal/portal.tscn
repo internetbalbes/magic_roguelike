@@ -1,57 +1,23 @@
-[gd_scene load_steps=14 format=3 uid="uid://bnas3bkk457tc"]
+[gd_scene load_steps=7 format=3 uid="uid://bnas3bkk457tc"]
 
 [ext_resource type="Script" uid="uid://dw8ixfpdsd6el" path="res://map_generator/prefabs/portal/portal.gd" id="1_4ooq7"]
-[ext_resource type="ArrayMesh" uid="uid://ceg13pmuuquan" path="res://prefabs/objects/portal/portal_portal.res" id="3_fd87k"]
-[ext_resource type="Shader" uid="uid://rtinpy4jblrh" path="res://shaders/fireball.gdshader" id="4_0jtqf"]
-[ext_resource type="Texture2D" uid="uid://cwdl7jkhhmqyh" path="res://sprites/portal_marker.png" id="4_4ooq7"]
-[ext_resource type="Texture2D" uid="uid://b5ti1hogm3u7e" path="res://map_generator/prefabs/portal/pentagram.png" id="5_vue68"]
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_srbon"]
-top_radius = 1.0
-bottom_radius = 1.0
-height = 200.0
-radial_segments = 4
-rings = 0
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_fyhix"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_q81iy"]
-noise = SubResource("FastNoiseLite_fyhix")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_76t5s"]
-render_priority = 1
-shader = ExtResource("4_0jtqf")
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_q81iy")
-shader_parameter/base_color = Color(1, 0, 0, 1)
-shader_parameter/edge_color = Color(1, 0, 0, 1)
-shader_parameter/fire_alpha = 1.0
-shader_parameter/fire_filter = 0.2
-shader_parameter/fire_power = 10.0
-shader_parameter/fire_speed = Vector2(0, 1)
+[ext_resource type="Shader" uid="uid://kld1p7gx1b7b" path="res://map_generator/prefabs/portal/portal.gdshader" id="2_47pc7"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_oq7w4"]
-height = 4.0
-radius = 1.5
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vtomx"]
-transparency = 1
-albedo_texture = ExtResource("5_vue68")
-texture_filter = 4
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_2508x"]
-material = SubResource("StandardMaterial3D_vtomx")
-size = Vector2(10, 10)
+height = 3.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_vue68"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_47pc7"]
+viewport_path = NodePath("subviewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vue68"]
+shader = ExtResource("2_47pc7")
 
 [node name="portal" type="StaticBody3D" groups=["navi", "portal"]]
 collision_layer = 512
 collision_mask = 289
 script = ExtResource("1_4ooq7")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
-mesh = ExtResource("3_fd87k")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.554557, 0)
@@ -62,49 +28,43 @@ shadow_enabled = true
 distance_fade_begin = 1338.73
 distance_fade_shadow = 449.61
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
-mesh = SubResource("CylinderMesh_srbon")
-surface_material_override/0 = SubResource("ShaderMaterial_76t5s")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73127, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 shape = SubResource("CylinderShape3D_oq7w4")
 disabled = true
 
 [node name="timer_create_new_enemy" type="Timer" parent="."]
 
-[node name="marker" type="Sprite3D" parent="."]
-transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 1.5, 0)
-visible = false
-billboard = 1
-no_depth_test = true
-fixed_size = true
-texture_filter = 0
-render_priority = 1
-texture = ExtResource("4_4ooq7")
-
 [node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
-radius = 2.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54346, 0)
+radius = 0.5
 affect_navigation_mesh = true
 
-[node name="pentagram" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-mesh = SubResource("PlaneMesh_2508x")
-
-[node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0)
-light_color = Color(1, 0, 0, 1)
-light_energy = 5.0
-light_volumetric_fog_energy = 5.0
-spot_range = 10.0
-
 [node name="area_observe" type="Area3D" parent="."]
+visible = false
 collision_layer = 16384
 collision_mask = 32
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="area_observe"]
 shape = SubResource("CylinderShape3D_vue68")
+
+[node name="enter" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+texture = SubResource("ViewportTexture_47pc7")
+
+[node name="subviewport" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+size = Vector2i(128, 256)
+
+[node name="ColorRect" type="ColorRect" parent="subviewport"]
+material = SubResource("ShaderMaterial_vue68")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.086, 0.184, 0.529, 1)
 
 [connection signal="timeout" from="timer_create_new_enemy" to="." method="_on_timer_create_new_enemy_timeout"]
 [connection signal="body_entered" from="area_observe" to="." method="_on_area_observe_body_entered"]

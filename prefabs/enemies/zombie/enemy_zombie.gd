@@ -38,7 +38,7 @@ func _ready() -> void:
 		enemy_speed_run = config.get_value("enemy_zombie", "enemy_speed_run", enemy_speed_run)
 		enemy_radius_around_portal = config.get_value("enemy_zombie", "enemy_radius_around_portal", enemy_radius_around_portal)
 		count_segments_around_portal = config.get_value("enemy_zombie", "count_segments_around_portal", count_segments_around_portal)
-		timer_beat.wait_time = config.get_value("enemy_zombie", "time_to_throw", timer_beat.wait_time)
+		timer_beat.wait_time = config.get_value("enemy_zombie", "time_to_beat", timer_beat.wait_time)
 		collision_areaseeing.radius = config.get_value("enemy_zombie", "enemy_area_scan_player", 1.0)
 		label_health.max_value = randi_range(1, config.get_value("enemy_zombie", "enemy_max_health", label_health.max_value))
 		probability_card =  config.get_value("enemy_zombie", "probability_card", probability_card)

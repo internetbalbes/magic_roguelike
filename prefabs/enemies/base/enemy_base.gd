@@ -72,12 +72,10 @@ func take_damage(spell, buf, amount: int):
 			elif buf:
 				_add_buf_to_list(buf)
 
-func _set_portal(object: Node3D, angle: float) ->void:
+func _set_portal(object: Node3D, _angle: float) ->void:
 	portal = object
 	if portal:
-		var x = 2 * cos(deg_to_rad(angle))
-		var z = 2 * sin(deg_to_rad(angle))	
-		global_transform.origin = portal.global_transform.origin + Vector3(x, collision_shape.height/2, z)
+		global_transform.origin = portal.global_transform.origin + Vector3(0, collision_shape.height/2, 0)
 
 func is_alive() -> bool:
 	return label_health.value > 0

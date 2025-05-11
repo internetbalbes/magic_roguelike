@@ -13,6 +13,10 @@ extends StaticBody3D
 var list_enemy : Array
 #generation list new enemies on a map
 var list_new_enemy : Array
+# creating new enemy's time 
+var time_create_new_enemy = 1.0
+# creating new enemy's rest time 
+var time_rest_create_new_enemy = time_create_new_enemy
 #generation count new enemies on a map
 var portal_create_new_enemy_count = 1
 #groupe's size new enemies
@@ -31,12 +35,13 @@ var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies
 var player_in_area: bool = false
 
 signal portal_destroyed()
+signal enemy_appear()
 
 func _ready() -> void:
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:		
 		portal_create_new_enemy_count = config.get_value("portal", "portal_create_new_enemy_count", portal_create_new_enemy_count)
-		timer_create_new_enemy.wait_time = config.get_value("portal", "portal_create_new_enemy_time", 5)
+		time_create_new_enemy = config.get_value("portal", "portal_create_new_enemy_time", 5)
 		portal_create_new_enemy_groupe_count = config.get_value("portal", "portal_create_new_enemy_groupe_count", portal_create_new_enemy_groupe_count)
 		probability_modificator =  config.get_value("portal", "probability_modificator", probability_modificator)
 		probability_modificator_maximum =  config.get_value("portal", "probability_modificator_maximum", probability_modificator_maximum)
@@ -46,6 +51,7 @@ func _ready() -> void:
 			obj.spawn_rate = config.get_value("enemy_spawn_rate", obj.name, obj.spawn_rate)	
 		#config.save("res://settings.cfg")
 	config = null
+	time_rest_create_new_enemy = time_create_new_enemy
 
 func choose_enemy():
 	var total = 0
@@ -75,6 +81,7 @@ func create_enemies(count) -> void:
 		enemy._set_portal(self, angle)
 		angle += angle_shift
 	timer_create_new_enemy.start()
+	emit_signal("enemy_appear", time_rest_create_new_enemy)
 	
 func portal_free() -> void:
 	collision.set_deferred("disabled", true)
@@ -94,26 +101,30 @@ func portal_free() -> void:
 func _get_object_size() -> float:
 	return collision_shape.radius
 
-func _on_timer_create_new_enemy_timeout() -> void:
-	var angle_shift = 330.0 / portal_create_new_enemy_count
-	var angle = randi_range(0, 359)
-	for i in range(0, portal_create_new_enemy_count, 1):		
-		var enemy = create_enemy(choose_enemy())
-		world.add_child(enemy)		
-		enemy._set_portal(self, angle)
-		angle = fmod(angle + angle_shift, 360)
-		if player_in_area && enemy.enemy_type in ["zombie"]:
-			enemy._set_portal(null, 0)
-		else:
-			list_enemy.append(enemy)
-			list_new_enemy.append(enemy)
-			# grups enemy go yo player
-			if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
-				for obj in list_new_enemy:
-					list_enemy.erase(obj)
-					obj._set_portal(null, 0)
-				list_new_enemy.clear()	
-
+func _on_timer_create_new_enemy_timeout() -> void:	
+	time_rest_create_new_enemy -= timer_create_new_enemy.wait_time	
+	if time_rest_create_new_enemy  < 0.1:
+		var angle_shift = 330.0 / portal_create_new_enemy_count
+		var angle = randi_range(0, 359)
+		for i in range(0, portal_create_new_enemy_count, 1):
+			var enemy = create_enemy(choose_enemy())
+			world.add_child(enemy)		
+			enemy._set_portal(self, angle)
+			angle = fmod(angle + angle_shift, 360)
+			if player_in_area && enemy.enemy_type in ["zombie"]:
+				enemy._set_portal(null, 0)
+			else:
+				list_enemy.append(enemy)
+				list_new_enemy.append(enemy)
+				# grups enemy go yo player
+				if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
+					for obj in list_new_enemy:
+						list_enemy.erase(obj)
+						obj._set_portal(null, 0)
+					list_new_enemy.clear()	
+		time_rest_create_new_enemy = time_create_new_enemy
+	emit_signal("enemy_appear", time_rest_create_new_enemy)
+		
 func _on_area_observe_body_entered(_body: Node3D) -> void:
 	player_in_area = true
 	for i in range(list_enemy.size() - 1, -1, -1):

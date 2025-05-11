@@ -32,7 +32,7 @@ script = ExtResource("1_udblb")
 skymag_sphere = ExtResource("2_n3man")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.111199, -0.171865, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.111, 0, 0)
 shape = SubResource("CapsuleShape3D_udblb")
 
 [node name="timer_throw" type="Timer" parent="."]

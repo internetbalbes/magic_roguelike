@@ -301,9 +301,7 @@ func _set_portal(object: Node3D, angle: float) ->void:
 	portal = object
 	if portal:		
 		enemy_angle_to_walk = angle * count_segments_around_portal / 360		
-		var x = 2 * cos(deg_to_rad(angle))
-		var z = 2 * sin(deg_to_rad(angle))	
-		global_transform.origin = portal.global_transform.origin + Vector3(x, collision_shape.height/2, z)
+		global_transform.origin = portal.global_transform.origin + Vector3(0, collision_shape.height/2, 0)
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		area.monitoring = true

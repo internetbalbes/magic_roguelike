@@ -16,6 +16,8 @@ extends CharacterBody3D
 @onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
 @onready var texturerect_card: TextureRect = $interface/texturerect_card
 @onready var coldsteel: Node3D = $coldsteel
+@onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
+@onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -46,10 +48,6 @@ var player_current_health: int = player_max_health
 var time_reload_coldspeel = 1.0
 # speed scroll_container spells
 var spell_currently_index = 1
-# time reload portal
-var time_reload_portal = 10.0
-# currently time reload portal
-var time_currently_reload_portal = time_reload_portal
 # player's max mana 
 var player_max_mana  = 10
 # player's currently mana 
@@ -88,7 +86,6 @@ func _ready() -> void:
 		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
 		timer_reload_spell.wait_time = config.get_value("player", "time_reload_spell", 1.0)
 		time_reload_coldspeel = config.get_value("player", "time_reload_coldspeel", time_reload_coldspeel)		
-		time_reload_portal = config.get_value("player", "time_reload_portal", time_reload_portal)
 		player_max_mana =  config.get_value("player", "player_max_mana", player_max_mana)
 		raycast.target_position.z =  -config.get_value("player", "player_scan_enemy", abs(raycast.target_position.z))
 		# spell waterball
@@ -392,3 +389,10 @@ func _on_timer_reload_coldsteel_timeout() -> void:
 		timer_reload_coldsteel.stop()
 	else:
 		progressbar_reload_coldsteel.value = value	
+
+# enemy's appear count 
+func _set_enemy_appear_count(value):
+	label_enemy_appear_count.text = str(value)
+	
+func enemy_appear(value):
+	label_enemy_appear_time.text = str(int(value))

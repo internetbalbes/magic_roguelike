@@ -51,5 +51,5 @@ void fragment() {
 	vec3 color = effect_color * intensity;
 	
 	ALBEDO = color;
-	ALPHA = clamp(intensity / 20.0, 0.0, 1.0); // transparency
+	ALPHA = clamp(intensity / 50.0, 0.0, 1.0); // transparency
 }

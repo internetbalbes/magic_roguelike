@@ -187,13 +187,11 @@ func _get_object_height() -> float:
 	
 func _set_portal(object: Node3D, angle: float) ->void:
 	portal = object
-	if portal:		
-		var x = 2 * cos(deg_to_rad(angle))
-		var z = 2 * sin(deg_to_rad(angle))	
-		global_transform.origin = object.global_transform.origin + Vector3(x, collision_shape.height/2, z)
+	if portal:			
+		global_transform.origin = object.global_transform.origin + Vector3(0, collision_shape.height/2, 0)
 		var radius = enemy_distance_from_portal + randf_range(1, 10)
-		x = radius * cos(deg_to_rad(angle))
-		z = radius * sin(deg_to_rad(angle))
+		var x = radius * cos(deg_to_rad(angle))
+		var z = radius * sin(deg_to_rad(angle))
 		target_point_pray = global_transform.origin + Vector3(x, 0, z)
 		look_at(target_point_pray, Vector3.UP)
 		_set_state_enemy(enemystate.WALKING_PORTAL)
