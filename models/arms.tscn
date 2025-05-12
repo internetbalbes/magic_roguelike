@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dgrjyyl1u6wda"]
-
-[ext_resource type="PackedScene" uid="uid://xfljkctwgsv2" path="res://models/arms.gltf" id="1_g0n2d"]
-
-[node name="arms" instance=ExtResource("1_g0n2d")]
-
-[node name="Skeleton3D" parent="arms_model" index="0"]
-bones/0/scale = Vector3(1, 1, 1)
-bones/7/scale = Vector3(1, 1, 1)
