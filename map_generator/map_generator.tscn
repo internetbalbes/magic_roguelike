@@ -15,9 +15,11 @@ sky_material = SubResource("ProceduralSkyMaterial_1c4l0")
 [sub_resource type="Environment" id="Environment_nchfj"]
 background_mode = 2
 sky = SubResource("Sky_3n4u5")
-tonemap_mode = 1
-tonemap_white = 16.0
-fog_density = 0.02
+tonemap_mode = 2
+fog_enabled = true
+fog_density = 0.005
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.02
 
 [node name="map_generator" type="NavigationRegion3D"]
 navigation_mesh = SubResource("NavigationMesh_0r6lh")

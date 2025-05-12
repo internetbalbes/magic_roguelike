@@ -31,6 +31,7 @@ curve = SubResource("Curve_e3hyu")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_q5onr"]
 particle_flag_rotate_y = true
+emission_shape_scale = Vector3(0.5, 0.5, 0.5)
 emission_shape = 3
 emission_box_extents = Vector3(5, 0, 5)
 angle_min = 0.100011
@@ -98,8 +99,8 @@ grow_vertical = 2
 [node name="interface" parent="player" instance=ExtResource("10_w7kh3")]
 
 [node name="snowflake" type="GPUParticles3D" parent="player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-amount = 2500
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+amount = 1000
 lifetime = 3.0
 randomness = 0.5
 process_material = SubResource("ParticleProcessMaterial_q5onr")

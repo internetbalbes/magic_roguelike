@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://b65ph5aofnb5w"
-path="res://.godot/imported/Ancial-Regular.otf-e10448f9f658c06783bc7a6d85c781d9.fontdata"
+uid="uid://h4a3vsqgqw4y"
+path="res://.godot/imported/dpcomic.ttf-47164104fbed6e904180aa192c0efc68.fontdata"
 
 [deps]
 
-source_file="res://fonts/Ancial-Regular.otf"
-dest_files=["res://.godot/imported/Ancial-Regular.otf-e10448f9f658c06783bc7a6d85c781d9.fontdata"]
+source_file="res://fonts/dpcomic.ttf"
+dest_files=["res://.godot/imported/dpcomic.ttf-47164104fbed6e904180aa192c0efc68.fontdata"]
 
 [params]
 

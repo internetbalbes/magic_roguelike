@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b5ti1hogm3u7e"
-path.s3tc="res://.godot/imported/pentagram.png-ff57d38695e36a6e177a9726fdf9cd65.s3tc.ctex"
+uid="uid://vg21kbxqa8je"
+path.s3tc="res://.godot/imported/arms.png-632789d681167765b475d4f9290362e2.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map_generator/prefabs/portal/pentagram.png"
-dest_files=["res://.godot/imported/pentagram.png-ff57d38695e36a6e177a9726fdf9cd65.s3tc.ctex"]
+source_file="res://models/arms.png"
+dest_files=["res://.godot/imported/arms.png-632789d681167765b475d4f9290362e2.s3tc.ctex"]
 
 [params]
 
