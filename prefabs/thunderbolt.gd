@@ -58,7 +58,7 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 				
 		if list_lighting_on_enemy.size() > 0:
 			var timer = Timer.new()
-			timer.wait_time = 0.1
+			timer.wait_time = 0.2
 			timer.autostart = true
 			timer.timeout.connect(func():
 				if timer.one_shot:

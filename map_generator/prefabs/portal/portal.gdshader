@@ -38,7 +38,7 @@ float noise(vec2 pos)
 	float s1 = S(pos.x - floor(pos.x));
 	float s2 = S(pos.y - floor(pos.y));
 
-	float f = a + 
+	float f = a +
 			  (b - a) * s1 +
 			  (c - a) * s2 +
 			  (a - b - c + d) * s1 * s2;
@@ -63,22 +63,22 @@ float onoise(in vec2 pos)
 
 vec3 portalTexture(vec2 uv)
 {
-    vec2 uv2 = uv;    
-    uv2 = vec2(length(uv), (atan(uv.y, uv.x) + PI) / 2.0 / PI);    
+    vec2 uv2 = uv;
+    uv2 = vec2(length(uv), (atan(uv.y, uv.x) + PI) / 2.0 / PI);
     uv2.y = fract(uv2.y + uv2.x * 0.3 - TIME * 0.01);
     uv2.x = uv2.x * 1.0 + TIME * 0.5;
     vec3 colors[4] = vec3[4]( vec3(0.086, 0.184, 0.529),
                               vec3(0.161, 0.557, 0.890),
                               vec3(0.110, 0.349, 0.835),
-                              vec3(0.847, 0.921, 0.980));    
-    vec2 k = vec2(10.0);    
+                              vec3(0.847, 0.921, 0.980));
+    vec2 k = vec2(10.0);
     float br1 = onoise(uv2 * k);
-    float br2 = onoise(vec2(uv2.x, uv2.y - 1.0) * k);    
+    float br2 = onoise(vec2(uv2.x, uv2.y - 1.0) * k);
     float br = mix(br1, br2, uv2.y);
 	br = min(0.99, pow(br * 1.5, 2.5));
 	int bri = int(br / 0.25);
 	vec3 col = vec3(br);
-    col = colors[bri];    
+    col = colors[bri];
     return col;
 }
 

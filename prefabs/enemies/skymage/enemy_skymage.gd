@@ -143,7 +143,10 @@ func _set_state_enemy(value)->void:
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")
-			
+
+func take_damage_beat(spell, buf, amount, _position):
+	take_damage(spell, buf, amount)
+				
 func take_damage(spell, buf, amount: int):
 	if state != enemystate.DEATHING:
 		var is_demage = true

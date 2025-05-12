@@ -28,21 +28,21 @@ func action_cold_steel(node: Node3D, pos: Vector3, type: String):
 			var distance = global_position.distance_to(pos)
 			if distance < collision_near_enemy.shape.radius:
 				if node.is_in_group("enemy"):
-					node.take_damage("coldsteel", "", single_steel_damage)
+					node.take_damage_beat("coldsteel", "", single_steel_damage, pos)
 				else:
 					node.portal_free()
 		elif type == "splash":
 			area3d_near_enemy.monitoring = true
 			timer_find_enemy_in_area.start()
 	
-func _check_near_enemy(pos):	
+func _check_near_enemy(pos):
 	var direction_to_enemy = (pos - global_position).normalized()
 	var forward = global_transform.basis.z.normalized() * -1.0  # Z przód w Godot
 	var angle = rad_to_deg(acos(forward.dot(direction_to_enemy)))
-	return angle <= detection_angle_deg_near_enemy / 2			
+	return angle <= detection_angle_deg_near_enemy / 2
 			
 func _on_timer_find_enemy_in_area_timeout() -> void:
-	var enemies_in_area = area3d_near_enemy.get_overlapping_bodies()	
+	var enemies_in_area = area3d_near_enemy.get_overlapping_bodies()
 	for obj in enemies_in_area:
 		if _check_near_enemy(obj.global_position):
 			obj.take_damage("coldsteel", "", splash_steel_damage)

@@ -57,7 +57,7 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if !is_on_floor():
 		return
-	if state == enemystate.DEATHING:
+	elif state == enemystate.DEATHING:
 		pass
 	elif state in [enemystate.BEATING]:
 		# Obracanie wroga w stronę celu	
@@ -101,7 +101,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	super._on_area_3d_body_entered(body)
 	if player_in_area && state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:
 		_set_state_enemy(enemystate.BEATING)
-		
+
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():

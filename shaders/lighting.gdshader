@@ -16,7 +16,7 @@ float hash12(vec2 x) {
 
 vec2 hash22(vec2 uv) {
 	uv = vec2(dot(uv, vec2(127.1, 311.7)),
-			  dot(uv, vec2(269.5, 183.3)));			
+			  dot(uv, vec2(269.5, 183.3)));
 	return 2.0 * fract(sin(uv) * 43758.5453) - 1.0;
 }
 
@@ -49,7 +49,7 @@ void fragment() {
 	float intensity = mix(0.0, 0.5, hash12(vec2(TIME))) / dist;
 
 	vec3 color = effect_color * intensity;
-	
+
 	ALBEDO = color;
-	ALPHA = clamp(intensity / 50.0, 0.0, 1.0); // transparency
+	ALPHA = (1.0 - smoothstep(.0, 0.1, dist)) * clamp(intensity / 20.0, 0.0, 1.0); // transparency
 }

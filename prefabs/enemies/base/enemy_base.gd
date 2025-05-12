@@ -5,6 +5,8 @@ extends CharacterBody3D
 @onready var collision: CollisionShape3D = $CollisionShape3D
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
+@onready var blood_spot: Decal = $blood_spot
+@onready var blood_drop: GPUParticles3D = $blood_drop
 @export var world: Node3D
 @export var player : CharacterBody3D
 
@@ -40,6 +42,8 @@ func _ready() -> void:
 	for modificator in list_modificators:
 		if randi_range(1, 100) < probability_modificator:
 			_add_modificator_to_list(modificator)
+	blood_drop.emitting = false
+	blood_drop.one_shot = true
 
 func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
@@ -53,12 +57,25 @@ func _on_area_3d_body_entered(_body: Node3D) -> void:
 func _on_area_3d_body_exited(_body: Node3D) -> void:
 	player_in_area = false
 
+func take_damage_beat(spell, buf, amount, _position):
+	blood_drop.position = to_local(_position)
+	blood_drop.restart()
+	take_damage(spell, buf, amount)
+		
 func take_damage(spell, buf, amount: int):
 	if is_alive():
 		var is_demage = true
 		match spell:
 			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
 		if is_demage:
+			blood_spot.modulate.a = 1.0
+			blood_spot.visible = true
+			var tween_blood = blood_spot.create_tween()
+			tween_blood.tween_property(blood_spot, "modulate:a", 0.0, 5.0).set_trans(Tween.TRANS_LINEAR)
+			tween_blood.tween_callback(func():
+				blood_spot.visible = false
+			)
+			spawn_blood_on_floor()
 			label_health.value -= amount
 			if !is_alive():
 				collision.set_deferred("disabled", true)
@@ -117,6 +134,23 @@ func find_buf(name_buf)->bool:
 func _on_area_seeing_body_entered(_body: Node3D) -> void:
 	player_in_area = true
 
-
 func _on_area_seeing_body_exited(_body: Node3D) -> void:
 	player_in_area = true
+			
+func spawn_blood_on_floor():
+	var decal = blood_spot.duplicate()		
+	# Ustaw rozmiar decal'a
+	decal.extents = 2.0  # szerokość XZ, wysokość Y		
+	decal.size = Vector3.ONE
+	decal.modulate.a = 1.0
+	# Dodaj do sceny
+	world.add_child(decal)
+	# Ustaw pozycję minimalnie nad podłożem (by uniknąć z-fightingu)
+	decal.global_transform.origin = global_position - Vector3(0.0, _get_object_height() / 2, 0.0) + Vector3.UP * 0.05	
+	# Ustaw rotację, by był równoległy do podłogi (Y-up)
+	decal.rotation_degrees = Vector3(0, randf() * 360.0, 0)  # losowy obrót dla różnorodności
+	decal.visible = true
+	var tween = create_tween()
+	tween.tween_property(decal, "modulate:a", 0.0, 10.0).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_callback(Callable(decal, "queue_free"))	
+		

@@ -58,6 +58,7 @@ func choose_enemy():
 	for obj in list_prefabenemy:
 		total += obj.spawn_rate
 	var rand = randi() % total
+	#rand = 100
 	var sum = 0
 	for obj in list_prefabenemy:
 		sum += obj.spawn_rate
@@ -101,7 +102,7 @@ func portal_free() -> void:
 func _get_object_size() -> float:
 	return collision_shape.radius
 
-func _on_timer_create_new_enemy_timeout() -> void:	
+func _on_timer_create_new_enemy_timeout() -> void:
 	time_rest_create_new_enemy -= timer_create_new_enemy.wait_time	
 	if time_rest_create_new_enemy  < 0.1:
 		var angle_shift = 330.0 / portal_create_new_enemy_count

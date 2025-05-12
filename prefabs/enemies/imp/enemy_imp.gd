@@ -178,6 +178,9 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body == player:
 		player_in_area = false
 
+func take_damage_beat(spell, buf, amount, _position):
+	take_damage(spell, buf, amount)
+	
 func take_damage(spell, buf, amount: int):
 	if state != enemystate.DEATHING:
 		var is_demage = true
