@@ -1,7 +1,5 @@
 extends CharacterBody3D
 
-@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
-@onready var area: Area3D = $area_seeing
 @onready var collision: CollisionShape3D = $CollisionShape3D
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
@@ -10,6 +8,7 @@ extends CharacterBody3D
 @export var world: Node3D
 @export var player : CharacterBody3D
 
+var area: Area3D
 # collision are seeing scan for player
 var collision_areaseeing: Shape3D
 # enemy's collision 
@@ -34,10 +33,12 @@ var portal: Node3D
 var time_stand_still = 0
 
 func _ready() -> void:
-	collision_areaseeing = area.get_node("CollisionShape3D").shape
-	collision_shape = collision.shape
-	area.body_entered.connect(_on_area_3d_body_entered)
-	area.body_exited.connect(_on_area_3d_body_exited)
+	if has_node("area_seeing"):
+		area = get_node("area_seeing")
+		collision_areaseeing = area.get_node("CollisionShape3D").shape
+		area.body_entered.connect(_on_area_3d_body_entered)
+		area.body_exited.connect(_on_area_3d_body_exited)
+	collision_shape = collision.shape			
 	label_health.value = label_health.max_value
 	for modificator in list_modificators:
 		if randi_range(1, 100) < probability_modificator:
@@ -81,7 +82,8 @@ func take_damage(spell, buf, amount: int):
 				collision.set_deferred("disabled", true)
 				if randi_range(1, 100) < probability_card:
 					player.add_card()
-				area.monitoring = false
+				if area:
+					area.monitoring = false
 				if portal:
 					portal.list_enemy.erase(self)
 					portal.list_new_enemy.erase(self)
@@ -150,7 +152,7 @@ func spawn_blood_on_floor():
 	# Ustaw rotację, by był równoległy do podłogi (Y-up)
 	decal.rotation_degrees = Vector3(0, randf() * 360.0, 0)  # losowy obrót dla różnorodności
 	decal.visible = true
-	var tween = create_tween()
+	var tween = decal.create_tween()
 	tween.tween_property(decal, "modulate:a", 0.0, 10.0).set_trans(Tween.TRANS_LINEAR)
 	tween.tween_callback(Callable(decal, "queue_free"))	
 		

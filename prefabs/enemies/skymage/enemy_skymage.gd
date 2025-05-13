@@ -1,13 +1,7 @@
-extends CharacterBody3D
+extends "res://prefabs/enemies/base/enemy_base.gd"
 
-@onready var collision: CollisionShape3D = $CollisionShape3D
-@onready var collision_shape: Shape3D = collision.shape
-@onready var label_health: ProgressBar = $subviewport/progressbar_health
-@onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
 @onready var animation_player: AnimationPlayer = $sky_mage_model/AnimationPlayer
 @onready var timer_throw: Timer = $timer_throw
-@export var world: Node3D
-@export var player : CharacterBody3D
 @export var skymag_sphere : PackedScene
 
 var enemy_type = "skymage"
@@ -26,30 +20,17 @@ enum enemystate {
 var enemy_speed = 0.55
  # distance from portal
 var enemy_distance_from_portal = 10.0
-# point's coordinate enemy's mast pool
-var enemy_pooling_to_point: Vector3 = Vector3.ZERO
-# array of Buf
-var list_buf: Array
-# array of all modificators
-var list_modificators: Array = ["water_resist"]
-# modificators value's probability
-var probability_modificator = 50.0
-# array of enemy modificators
-var enemy_list_modificators: Array
 # skymage sphere's time life
 var skymage_sphere_time_life = 1.0
 # skymage sphere's radius
 var skymage_sphere_radius = 1.0
 # skymage sphere's demage
 var skymage_sphere_damage = 1
-# cards value's probability
-var probability_card = 50.0
-# object portal spawn
-var portal: Node3D
 # enemy pray's point
 var target_point_pray = Vector3.ZERO
 
-func _ready() -> void:	
+func _ready() -> void:
+	super._ready()
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
 		enemy_speed = config.get_value("enemy_skymage", "enemy_speed", enemy_speed)
@@ -64,20 +45,15 @@ func _ready() -> void:
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
 	config = null	
-	label_health.value = label_health.max_value
 	animation_player.animation_finished.connect(_on_animation_finished)
-	for modificator in list_modificators:
-		if randi_range(1, 100) < probability_modificator:
-			_add_modificator_to_list(modificator)
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("tornado").loop = true
 	animation_player.get_animation("pray").loop = true
 
 func _physics_process(delta: float) -> void:
-	if  !is_on_floor():
-		## Ruch w powietrzu (np. grawitacja, opadanie)
-		velocity += get_gravity() * delta		
-		move_and_slide()
+	super._physics_process(delta)
+	if !is_on_floor():
+		return
 	elif state == enemystate.PRAYING:
 		pass		
 	elif state == enemystate.DEATHING:
@@ -106,13 +82,6 @@ func _physics_process(delta: float) -> void:
 			timer_throw.start()
 			_set_state_enemy(enemystate.PRAYING)
 
-func rotate_towards_target(target_pos, delta):
-	var current = global_transform.basis.get_euler()
-	var direction = (global_transform.origin - target_pos).normalized()
-	var target_yaw = atan2(direction.x, direction.z)
-	current.y = lerp_angle(current.y, target_yaw, delta)
-	global_transform.basis = Basis().rotated(Vector3.UP, current.y)
-	
 func _on_animation_finished(_anim_name: String) -> void:
 	if !is_alive():
 		call_deferred("queue_free")
@@ -143,33 +112,12 @@ func _set_state_enemy(value)->void:
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")
-
-func take_damage_beat(spell, buf, amount, _position):
-	take_damage(spell, buf, amount)
-				
+			
 func take_damage(spell, buf, amount: int):
-	if state != enemystate.DEATHING:
-		var is_demage = true
-		match spell:
-			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
-		if is_demage:
-			label_health.value -= amount
-			if !is_alive():
-				collision.set_deferred("disabled", true)
-				if randi_range(1, 100) < probability_card:
-					player.add_card()
-				if !timer_throw.is_stopped():
-					timer_throw.stop()
-				if portal:
-					portal.list_enemy.erase(self)
-					portal.list_new_enemy.erase(self)	
-				$sprite_status.set_deferred("visible", false)
-				_set_state_enemy(enemystate.DEATHING)
-			elif buf:
-				_add_buf_to_list(buf)
-
-func is_alive() -> bool:
-	return label_health.value > 0
+	super.take_damage(spell, buf, amount)
+	if !is_alive():
+		timer_throw.stop()
+		_set_state_enemy(enemystate.DEATHING)
 	
 func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 	if state != enemystate.DEATHING:
@@ -180,45 +128,17 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 		elif target_point_pray == Vector3.ZERO:
 			_set_state_enemy(enemystate.PRAYING)
 		else:
-			_set_state_enemy(enemystate.WALKING_PORTAL)
-					
-func _get_object_size() -> float:
-	return collision_shape.radius
-	
-func _get_object_height() -> float:
-	return collision_shape.height	
+			_set_state_enemy(enemystate.WALKING_PORTAL)	
 	
 func _set_portal(object: Node3D, angle: float) ->void:
-	portal = object
-	if portal:			
-		global_transform.origin = object.global_transform.origin + Vector3(0, collision_shape.height/2, 0)
+	super._set_portal(object, angle)
+	if portal:
 		var radius = enemy_distance_from_portal + randf_range(1, 10)
 		var x = radius * cos(deg_to_rad(angle))
 		var z = radius * sin(deg_to_rad(angle))
 		target_point_pray = global_transform.origin + Vector3(x, 0, z)
 		look_at(target_point_pray, Vector3.UP)
 		_set_state_enemy(enemystate.WALKING_PORTAL)
-
-func _add_buf_to_list(name_buf):
-	if !list_buf.has(name_buf):
-		var icon = TextureRect.new()		
-		if name_buf == "wet":  
-			icon.texture = load("res://sprites/wet_icon.png") as Texture2D
-		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		label_buf.add_child(icon)
-		list_buf.append(name_buf)	
-	
-func _add_modificator_to_list(name_modificator):
-	if !enemy_list_modificators.has(name_modificator):
-		var icon = TextureRect.new()		
-		if name_modificator == "water_resist":  
-			icon.texture = load("res://sprites/water_resist_icon.png") as Texture2D
-		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		label_buf.add_child(icon)
-		enemy_list_modificators.append(name_modificator)
-		
-func find_buf(name_buf)->bool:
-	return list_buf.has(name_buf)
 
 func _on_timer_throw_timeout() -> void:
 	_set_state_enemy(enemystate.THROWING)

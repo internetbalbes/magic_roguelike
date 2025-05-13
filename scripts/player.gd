@@ -18,6 +18,7 @@ extends CharacterBody3D
 @onready var coldsteel: Node3D = $coldsteel
 @onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
+@onready var coldsteal_splash = $Camera3D/coldsteal_splash
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -52,6 +53,12 @@ var spell_currently_index = 1
 var player_max_mana  = 10
 # player's currently mana 
 var player_currently_mana = player_max_mana
+var coldsteal_splash_range_beg = 30.0
+var coldsteal_splash_range_end = 120.0
+var coldsteal_splash_progress = 0.0
+var coldsteal_splash_angle = 0.0
+var coldsteal_splash_position = Vector3(2, -0.5, -1.0)
+var coldsteal_splash_radius = Vector3.ZERO.distance_to(coldsteal_splash_position)
 #list file spels
 var spell_thunderbolt = preload("res://sprites/thunderbolt.png") 
 var spell_waterball = preload("res://sprites/waterball_icon.png")
@@ -118,6 +125,7 @@ func _ready() -> void:
 		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)
 		#config.save("res://settings.cfg")
 	config = null
+	coldsteal_splash.visible = false
 	texturerect_card.visible = false
 	texturerect_card.size = Vector2(card_size.x, card_size.y)
 	var rect = Vector2(8 * card_size.x, card_size.y)
@@ -205,7 +213,8 @@ func _input(event: InputEvent) -> void:
 		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed && timer_reload_coldsteel.is_stopped():
 			timer_reload_coldsteel.start()
 			progressbar_reload_coldsteel.value = 0
-			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")
+			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")			
+			coldsteal_splash.visible = true
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 
@@ -236,7 +245,14 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0, player_speed_walk)
 			velocity.z = move_toward(velocity.z, 0, player_speed_walk)
 			state = playerstate.IDLE
-	move_and_slide()
+	move_and_slide()	
+	if coldsteal_splash.visible:
+		coldsteal_splash_progress += delta 
+		coldsteal_splash_angle = lerp(coldsteal_splash_range_beg, coldsteal_splash_range_end, coldsteal_splash_progress / (progressbar_reload_coldsteel.max_value / 2))
+		var x = cos(deg_to_rad(coldsteal_splash_angle)) * coldsteal_splash_radius
+		var z = sin(deg_to_rad(coldsteal_splash_angle)) * coldsteal_splash_radius
+		coldsteal_splash.position = Vector3(x, coldsteal_splash.position.y, -z)
+		coldsteal_splash.rotate_y(deg_to_rad(5*coldsteal_splash_progress / (progressbar_reload_coldsteel.max_value / 2)))
 
 func _set_spell_currently(index):
 	texturerect_overlay.texture = get_spell_texture(spells[index].spell_name)
@@ -387,8 +403,12 @@ func _on_timer_reload_coldsteel_timeout() -> void:
 	if value >= progressbar_reload_coldsteel.max_value:
 		progressbar_reload_coldsteel.value = progressbar_reload_coldsteel.max_value
 		timer_reload_coldsteel.stop()
-	else:
-		progressbar_reload_coldsteel.value = value	
+	elif value >= progressbar_reload_coldsteel.max_value/2:
+		coldsteal_splash.visible = false
+		coldsteal_splash.position = coldsteal_splash_position
+		coldsteal_splash_progress = 0.0
+		coldsteal_splash.rotation_degrees.y = -90.0
+	progressbar_reload_coldsteel.value = value	
 
 # enemy's appear count 
 func _set_enemy_appear_count(value):

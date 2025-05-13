@@ -1,5 +1,6 @@
 extends "res://prefabs/enemies/base/enemy_base.gd"
 
+@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var animation_player: AnimationPlayer = $zombie_model/AnimationPlayer
 @onready var skeleton_surface: MeshInstance3D = $zombie_model/zombie_model/Skeleton3D/zombie
 @onready var timer_beat: Timer = $timer_beat
@@ -31,7 +32,7 @@ var enemy_angle_to_walk: float = 0
 var zombie_damage = 1.0
 
 func _ready() -> void:
-	super._ready()	
+	super._ready()
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
 		enemy_speed_walk = config.get_value("enemy_zombie", "enemy_speed_walk", enemy_speed_walk)
@@ -48,7 +49,6 @@ func _ready() -> void:
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
 	config = null
-	label_health.value = label_health.max_value
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("run").loop = true
@@ -108,9 +108,6 @@ func take_damage(spell, buf, amount: int):
 		timer_beat.stop()
 		timer_run_to_player.stop()
 		_set_state_enemy(enemystate.DEATHING)
-
-func is_alive() -> bool:
-	return label_health.value > 0
 
 func _on_animation_finished(_anim_name: String) -> void:
 	if !is_alive():
@@ -174,7 +171,6 @@ func _set_state_enemy(value)->void:
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
 		player.take_damage(zombie_damage)	
-
 
 func _on_timer_run_to_player_timeout() -> void:
 	if navigation_agent.target_position.distance_to(player.global_position) > 1.0:

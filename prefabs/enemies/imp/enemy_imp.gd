@@ -1,20 +1,12 @@
-extends CharacterBody3D
+extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
-@onready var area: Area3D = $Area3D
-@onready var collision_area_shape: Shape3D = $Area3D/CollisionShape3D.shape
-@onready var collision: CollisionShape3D = $CollisionShape3D
-@onready var collision_shape: Shape3D = collision.shape
-@onready var label_health: ProgressBar = $subviewport/progressbar_health
-@onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
 @onready var animation_player: AnimationPlayer = $imp_model/AnimationPlayer
 @onready var skeleton_bone_hand: BoneAttachment3D = $imp_model/imp_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $imp_model/imp_model/Skeleton3D/imp
 @onready var timer_throw: Timer = $timer_throw
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
-@export var world: Node3D
-@export var player : CharacterBody3D
 
 var enemy_type = "imp"
 # enemy's initial state
@@ -32,7 +24,7 @@ enum enemystate {
 var enemy_speed_walk = 0.55
  # enemy's walk
 var enemy_speed_run = 2.5
- # cirkle's radius where patrol enemy
+ # circle's radius where patrol enemy
 var enemy_radius_around_portal = 10.0
  # count segmentów in cirkle where patrol enemy
 var count_segments_around_portal = 36 
@@ -42,8 +34,6 @@ var time_to_throw: float = 1
 var time_to_set_trap: float = 2
 # time walk enemy from portal
 var time_after_exit_portal: float = 1
-# flag whith set that player in enemy's area
-var player_in_area: bool = false
 # Node fireball
 var fireball: Area3D
 # Node tram
@@ -58,24 +48,9 @@ var timer_set_trap: Timer = Timer.new()
 var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
-# point's coordinate enemy's mast pool
-var enemy_pooling_to_point: Vector3 = Vector3.ZERO
-# array of Buf
-var list_buf: Array
-# array of all modificators
-var list_modificators: Array = ["water_resist"]
-# modificators value's probability
-var probability_modificator = 50.0
-# array of enemy modificators
-var enemy_list_modificators: Array
-# cards value's probability
-var probability_card = 50.0
-# object portal spawn
-var portal: Node3D
-# enemy time's stand still
-var time_stand_still = 0
 
-func _ready() -> void:	
+func _ready() -> void:
+	super._ready()
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
 		enemy_speed_walk = config.get_value("enemy_imp", "enemy_speed_walk", enemy_speed_walk)
@@ -85,21 +60,17 @@ func _ready() -> void:
 		time_to_throw = config.get_value("enemy_imp", "time_to_throw", time_to_throw)
 		time_to_set_trap = config.get_value("enemy_imp", "time_to_set_trap", time_to_set_trap)		
 		time_after_exit_portal = config.get_value("enemy_imp", "time_after_exit_portal", time_after_exit_portal)
-		collision_area_shape.radius = config.get_value("enemy_imp", "enemy_area_scan_player", enemy_radius_around_portal)
+		collision_areaseeing.radius = config.get_value("enemy_imp", "enemy_area_scan_player", enemy_radius_around_portal)
 		label_health.max_value = randi_range(1, config.get_value("enemy_imp", "enemy_max_health", label_health.max_value))
 		probability_card =  config.get_value("enemy_imp", "probability_card", probability_card)
 		var var_scale = config.get_value("enemy_imp", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
 	config = null
-	label_health.value = label_health.max_value
 	skeleton_bone_hand.bone_name = "mixamorig_RightHand"
 	area.monitoring = false
 	timer_throw.wait_time = time_to_throw
-	animation_player.animation_finished.connect(_on_animation_finished)
-	for modificator in list_modificators:
-		if randi_range(1, 100) < probability_modificator:
-			_add_modificator_to_list(modificator)
+	animation_player.animation_finished.connect(_on_animation_finished)	
 	#set timer set trap
 	timer_set_trap.wait_time = time_to_set_trap
 	timer_set_trap.one_shot = true
@@ -121,10 +92,9 @@ func _ready() -> void:
 	animation_player.get_animation("tornado").loop = true
 
 func _physics_process(delta: float) -> void:
-	if  !is_on_floor():
-		## Ruch w powietrzu (np. grawitacja, opadanie)
-		velocity += get_gravity() * delta		
-		move_and_slide()
+	super._physics_process(delta)
+	if !is_on_floor():
+		return
 	elif state == enemystate.DEATHING:
 		pass
 	elif state == enemystate.TRAPING:
@@ -169,46 +139,18 @@ func _set_point_on_circle(angle) -> Vector3:
 	return portal.global_transform.origin + Vector3(x, 0, z)
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	if body == player:
-		player_in_area = true
-		if state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:	
-			fireball_create()
-		
-func _on_area_3d_body_exited(body: Node3D) -> void:
-	if body == player:
-		player_in_area = false
+	super._on_area_3d_body_entered(body)
+	if state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:	
+		fireball_create()		
 
-func take_damage_beat(spell, buf, amount, _position):
-	take_damage(spell, buf, amount)
-	
 func take_damage(spell, buf, amount: int):
-	if state != enemystate.DEATHING:
-		var is_demage = true
-		match spell:
-			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
-		if is_demage:
-			label_health.value -= amount
-			if !is_alive():
-				collision.set_deferred("disabled", true)
-				if randi_range(1, 100) < probability_card:
-					player.add_card()
-				if !timer_throw.is_stopped():
-					timer_throw.stop()			
-					if is_instance_valid(fireball):
-						fireball.call_deferred("queue_free")
-				area.monitoring = false
-				if portal:
-					portal.list_enemy.erase(self)
-					portal.list_new_enemy.erase(self)
-				$sprite_status.set_deferred("visible", false)
-				_set_state_enemy(enemystate.DEATHING)
-				_timers_delete()
-			else:
-				if buf:
-					_add_buf_to_list(buf)
-
-func is_alive() -> bool:
-	return label_health.value > 0
+	super.take_damage(spell, buf, amount)
+	if !is_alive():
+		timer_throw.stop()			
+		if is_instance_valid(fireball):
+			fireball.call_deferred("queue_free")
+			_set_state_enemy(enemystate.DEATHING)
+		_timers_delete()		
 
 func fireball_create() -> void:
 	fireball = prefabfireball.instantiate()
@@ -253,13 +195,6 @@ func _on_timer_wait_set_trap_timeout() -> void:
 		timer_wait_set_trap.wait_time = 1
 		timer_wait_set_trap.start()
 
-func rotate_towards_target(target_pos, delta):
-	var current = global_transform.basis.get_euler()
-	var direction = (global_transform.origin - target_pos).normalized()
-	var target_yaw = atan2(direction.x, direction.z)
-	current.y = lerp_angle(current.y, target_yaw, delta * 5.0)
-	global_transform.basis = Basis().rotated(Vector3.UP, current.y)
-
 func _on_timer_after_exit_portal_timeout():
 	timer_after_exit_portal.call_deferred("queue_free")
 	area.monitoring = true
@@ -292,19 +227,12 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 				_set_state_enemy(enemystate.WALKING_PORTAL)
 			else:
 				area.monitoring = true
-				_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
-	
-func _get_object_size() -> float:
-	return collision_shape.radius
-	
-func _get_object_height() -> float:
-	return collision_shape.height	
-	
+				_set_state_enemy(enemystate.RUNNING_TO_PLAYER)	
+
 func _set_portal(object: Node3D, angle: float) ->void:
-	portal = object
-	if portal:		
+	super._set_portal(object, angle)
+	if portal:
 		enemy_angle_to_walk = angle * count_segments_around_portal / 360		
-		global_transform.origin = portal.global_transform.origin + Vector3(0, collision_shape.height/2, 0)
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		area.monitoring = true
@@ -344,24 +272,3 @@ func _timers_delete()->void:
 		timer_wait_set_trap.call_deferred("queue_free")
 	if is_instance_valid(timer_set_trap):
 		timer_set_trap.call_deferred("queue_free")
-		
-func _add_buf_to_list(name_buf):
-	if !list_buf.has(name_buf):
-		var icon = TextureRect.new()		
-		if name_buf == "wet":  
-			icon.texture = load("res://sprites/wet_icon.png") as Texture2D
-		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		label_buf.add_child(icon)
-		list_buf.append(name_buf)	
-	
-func _add_modificator_to_list(name_modificator):
-	if !enemy_list_modificators.has(name_modificator):
-		var icon = TextureRect.new()		
-		if name_modificator == "water_resist":  
-			icon.texture = load("res://sprites/water_resist_icon.png") as Texture2D
-		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		label_buf.add_child(icon)
-		enemy_list_modificators.append(name_modificator)
-		
-func find_buf(name_buf)->bool:
-	return list_buf.has(name_buf)

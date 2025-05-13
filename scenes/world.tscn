@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bncskj8iqk8ki"]
+[gd_scene load_steps=25 format=3 uid="uid://bncskj8iqk8ki"]
 
 [ext_resource type="Script" uid="uid://big8vws0m8qju" path="res://scripts/world.gd" id="1_71j4m"]
 [ext_resource type="Script" uid="uid://c2p21m1p41ign" path="res://scripts/player.gd" id="5_7r4gi"]
@@ -11,12 +11,26 @@
 [ext_resource type="PackedScene" uid="uid://cwiarthxnrnrq" path="res://prefabs/interface.tscn" id="10_w7kh3"]
 [ext_resource type="PackedScene" uid="uid://bka2ha4sm0s0a" path="res://prefabs/coldsteel.tscn" id="11_e3hyu"]
 [ext_resource type="Texture2D" uid="uid://dndp80vg8y4ql" path="res://sprites/snowflake.png" id="11_q5onr"]
-[ext_resource type="PackedScene" uid="uid://dsmy40q4il0ne" path="res://models/arms.tscn" id="12_jhx03"]
+[ext_resource type="PackedScene" uid="uid://6nsolo1sntco" path="res://models/arms/arms.tscn" id="12_jhx03"]
 [ext_resource type="PackedScene" uid="uid://bf7ukl85fy8hi" path="res://map_generator/map_generator.tscn" id="12_q5onr"]
+[ext_resource type="Texture2D" uid="uid://co3l4j3kmtp8v" path="res://sprites/slash.png" id="14_dss4m"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_w7kh3"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e3hyu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o8fc1"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.807843, 1, 1, 1)
+albedo_texture = ExtResource("14_dss4m")
+emission_enabled = true
+emission = Color(0, 0.823529, 1, 1)
+refraction_scale = -0.68
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_lakw3"]
+material = SubResource("StandardMaterial3D_o8fc1")
+flip_faces = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xo05s"]
 shader = ExtResource("9_e3hyu")
@@ -70,9 +84,6 @@ world = NodePath("..")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="player"]
 mesh = SubResource("CapsuleMesh_w7kh3")
 
-[node name="arms" parent="player/MeshInstance3D" instance=ExtResource("12_jhx03")]
-transform = Transform3D(-0.1, 0, -8.74228e-09, -5.11683e-09, 0.0810819, 0.0585297, 7.0884e-09, 0.0585297, -0.0810819, 0, 0.510369, 0.224484)
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
 shape = SubResource("CapsuleShape3D_e3hyu")
 
@@ -87,10 +98,18 @@ script = ExtResource("7_4mrxx")
 target_position = Vector3(0, 0, -10)
 collision_mask = 577
 
+[node name="arms" parent="player/Camera3D" instance=ExtResource("12_jhx03")]
+transform = Transform3D(-0.05, 0, -4.37114e-09, 0, 0.05, 0, 4.37114e-09, 0, -0.05, 0, 0.0139811, 0)
+
+[node name="coldsteal_splash" type="MeshInstance3D" parent="player/Camera3D"]
+transform = Transform3D(4.37114e-08, -3.82137e-15, -1, -8.74227e-08, -1, 0, -1, 8.74228e-08, -4.37114e-08, 2, -0.5, -1)
+mesh = SubResource("PlaneMesh_lakw3")
+skeleton = NodePath("../..")
+
 [node name="coldsteel" parent="player" instance=ExtResource("11_e3hyu")]
 
 [node name="timer_reload_coldsteel" type="Timer" parent="player"]
-wait_time = 0.05
+wait_time = 0.1
 
 [node name="abberation_noise_effect" type="ColorRect" parent="player"]
 material = SubResource("ShaderMaterial_xo05s")

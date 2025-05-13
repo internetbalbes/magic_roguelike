@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://6nsolo1sntco"]
+
+[ext_resource type="PackedScene" uid="uid://bbla454n1yta3" path="res://models/arms/arms.gltf" id="1_kgv6p"]
+[ext_resource type="PackedScene" uid="uid://bfg63cfh8yxlh" path="res://models/sword/sword.tscn" id="2_lgsdq"]
+
+[node name="arms" instance=ExtResource("1_kgv6p")]
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="right_arm_model/Skeleton3D" index="1"]
+transform = Transform3D(0.980132, 0.169804, 0.102503, 0.109034, -0.0295687, -0.993598, -0.165686, 0.985034, -0.0474956, -1.02878, -4.44368, 8.15954)
+bone_name = "hand1"
+bone_idx = 5
+
+[node name="sword" parent="right_arm_model/Skeleton3D/BoneAttachment3D" index="0" instance=ExtResource("2_lgsdq")]
+transform = Transform3D(-0.0733722, 0.147142, 0.986391, -0.993395, 0.076713, -0.0853367, -0.0882256, -0.986137, 0.140542, 0.202651, 1.34005, 0.74253)

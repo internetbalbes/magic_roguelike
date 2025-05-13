@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://cgosusbqw7ioc"]
+[gd_scene load_steps=14 format=3 uid="uid://cgosusbqw7ioc"]
 
 [ext_resource type="Script" uid="uid://dsbfpqpdpe6qm" path="res://prefabs/enemies/imp/enemy_imp.gd" id="1_vqrmm"]
 [ext_resource type="PackedScene" uid="uid://s1lydyxgqx5w" path="res://prefabs/objects/imp_trap/enemy_trap.tscn" id="2_5fimp"]
 [ext_resource type="PackedScene" uid="uid://dex8weqw7t7ft" path="res://prefabs/objects/imp_fireball/fireball.tscn" id="3_e782i"]
 [ext_resource type="PackedScene" uid="uid://bsubb1a08d328" path="res://prefabs/enemies/imp/imp_model.tscn" id="4_vqrmm"]
+[ext_resource type="Texture2D" uid="uid://r2cl1qgna2v5" path="res://sprites/blood_decals/blood_decal_0.png" id="5_5fimp"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jhx03"]
 radius = 0.6
@@ -29,6 +30,23 @@ content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(0, 1, 0, 1)
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e782i"]
+particle_flag_align_y = true
+angle_min = 30.0
+angle_max = 60.0
+direction = Vector3(0, 1, -1)
+initial_velocity_min = 3.0
+initial_velocity_max = 6.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iwu4i"]
+albedo_texture = ExtResource("5_5fimp")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6gtxi"]
+material = SubResource("StandardMaterial3D_iwu4i")
+top_radius = 0.01
+bottom_radius = 0.0
+height = 0.05
+
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
 collision_mask = 33
@@ -41,11 +59,11 @@ prefabfireball = ExtResource("3_e782i")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_jhx03")
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="area_seeing" type="Area3D" parent="."]
 collision_layer = 2048
 collision_mask = 32
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area_seeing"]
 shape = SubResource("CylinderShape3D_yfjof")
 
 [node name="timer_throw" type="Timer" parent="."]
@@ -94,6 +112,16 @@ show_percentage = false
 [node name="imp_model" parent="." instance=ExtResource("4_vqrmm")]
 transform = Transform3D(-0.1, 0, -8.74228e-09, 0, 0.1, 0, 8.74228e-09, 0, -0.1, -0.193049, -1.30151, 0)
 
-[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
-[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]
+[node name="blood_spot" type="Decal" parent="."]
+visible = false
+texture_albedo = ExtResource("5_5fimp")
+
+[node name="blood_drop" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 20
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_e782i")
+draw_pass_1 = SubResource("CylinderMesh_6gtxi")
+
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]

@@ -58,7 +58,6 @@ func choose_enemy():
 	for obj in list_prefabenemy:
 		total += obj.spawn_rate
 	var rand = randi() % total
-	#rand = 100
 	var sum = 0
 	for obj in list_prefabenemy:
 		sum += obj.spawn_rate

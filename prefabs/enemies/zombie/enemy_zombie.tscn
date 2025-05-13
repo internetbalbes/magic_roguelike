@@ -34,11 +34,11 @@ direction = Vector3(0, 1, -1)
 initial_velocity_min = 3.0
 initial_velocity_max = 6.0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iwu4i"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ki3et"]
 albedo_texture = ExtResource("3_ki3et")
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_2t44d"]
-material = SubResource("StandardMaterial3D_iwu4i")
+material = SubResource("StandardMaterial3D_ki3et")
 top_radius = 0.01
 bottom_radius = 0.0
 height = 0.05
@@ -103,7 +103,6 @@ show_percentage = false
 [node name="area_seeing" type="Area3D" parent="."]
 collision_layer = 2048
 collision_mask = 32
-monitoring = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="area_seeing"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.270813, 0)
