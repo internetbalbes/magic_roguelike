@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwuna3hfok8r5"]
+
+[ext_resource type="PackedScene" uid="uid://c14fhkt6rj0qp" path="res://models/player_model/player_model.gltf" id="1_c8l5m"]
+
+[node name="player_model" instance=ExtResource("1_c8l5m")]
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="player_model/Skeleton3D" index="1"]
+bone_name = "mixamorig_RightHand"
+bone_idx = 22

@@ -57,6 +57,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 multimesh = SubResource("MultiMesh_ptkwc")
 
 [node name="grass" type="MultiMeshInstance3D" parent="."]
+visible = false
 multimesh = SubResource("MultiMesh_x8qhu")
 
 [node name="bushes" type="MultiMeshInstance3D" parent="."]

@@ -1,18 +1,17 @@
 [gd_scene load_steps=12 format=3 uid="uid://nosnghoo6f8h"]
 
-[ext_resource type="Texture2D" uid="uid://ceuhxtsi4l3sq" path="res://map_generator/prefabs/block/block.png" id="1_ylewg"]
+[ext_resource type="Texture2D" uid="uid://d1ejeekud1om3" path="res://map_generator/prefabs/ground/ground.png" id="1_lwnx0"]
 [ext_resource type="ArrayMesh" uid="uid://dy7f6yj16s5dl" path="res://map_generator/prefabs/ground/grass/grass_grass.res" id="2_dng0u"]
 [ext_resource type="ArrayMesh" uid="uid://bkjqjww3m0lu7" path="res://map_generator/prefabs/ground/tree/tree10/tree10.res" id="3_0vbmw"]
 [ext_resource type="ArrayMesh" uid="uid://bqenqdy7716oy" path="res://map_generator/prefabs/ground/bush/bush08.res" id="4_lwnx0"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dng0u"]
-albedo_texture = ExtResource("1_ylewg")
-uv1_scale = Vector3(20, 20, 20)
-uv1_triplanar = true
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_omn1n"]
+albedo_texture = ExtResource("1_lwnx0")
+uv1_scale = Vector3(80, 80, 80)
 texture_filter = 4
 
 [sub_resource type="PrismMesh" id="PrismMesh_3n4u5"]
-material = SubResource("StandardMaterial3D_dng0u")
+material = SubResource("StandardMaterial3D_omn1n")
 left_to_right = 0.0
 size = Vector3(1, 0.125, 1)
 
@@ -49,6 +48,7 @@ skeleton = NodePath("../..")
 shape = SubResource("BoxShape3D_3n4u5")
 
 [node name="grass" type="MultiMeshInstance3D" parent="."]
+visible = false
 multimesh = SubResource("MultiMesh_0vbmw")
 
 [node name="trees" type="MultiMeshInstance3D" parent="."]

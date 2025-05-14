@@ -93,11 +93,15 @@ anchor_bottom = 0.758
 offset_bottom = -1.024
 
 [node name="mana_cost" type="Label" parent="spells"]
-layout_mode = 0
-offset_left = 143.0
-offset_top = 33.0
-offset_right = 183.0
-offset_bottom = 98.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.625
+anchor_top = 0.18
+anchor_right = 0.891
+anchor_bottom = 0.641
+offset_top = -0.0399742
+offset_right = -0.0480042
+offset_bottom = -0.047905
 label_settings = ExtResource("1_6qr8u")
 
 [node name="hp" type="PanelContainer" parent="."]
@@ -173,3 +177,19 @@ grow_vertical = 0
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="tutorial" type="Label" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -480.0
+offset_bottom = -525.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "WASD - \"Movement\"
+LMB - \"Cast spell\" or \"Use card\"
+RMB - \"Melee attack\"
+Wheel click - \"Spell choice\" or \"Deck\"
+Wheel button - \"Change card from deck\"
+"
+label_settings = ExtResource("1_6qr8u")

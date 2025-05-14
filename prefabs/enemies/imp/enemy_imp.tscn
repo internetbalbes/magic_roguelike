@@ -95,6 +95,7 @@ theme_override_constants/separation = 0
 alignment = 1
 
 [node name="progressbar_health" type="ProgressBar" parent="subviewport"]
+visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -113,12 +114,13 @@ show_percentage = false
 transform = Transform3D(-0.1, 0, -8.74228e-09, 0, 0.1, 0, 8.74228e-09, 0, -0.1, -0.193049, -1.30151, 0)
 
 [node name="blood_spot" type="Decal" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.157623, -0.00292969)
 visible = false
 texture_albedo = ExtResource("5_5fimp")
 
 [node name="blood_drop" type="GPUParticles3D" parent="."]
 emitting = false
-amount = 20
+amount = 50
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_e782i")

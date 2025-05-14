@@ -1,25 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://bf7ukl85fy8hi"]
+[gd_scene load_steps=7 format=3 uid="uid://bf7ukl85fy8hi"]
 
 [ext_resource type="Script" uid="uid://bbmrlwrnbbul8" path="res://map_generator/map_generator.gd" id="1_1c4l0"]
+[ext_resource type="Texture2D" uid="uid://b6tfb1f5jhv5m" path="res://sprites/skybox/skybox.png" id="2_3n4u5"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_0r6lh"]
 geometry_parsed_geometry_type = 1
 geometry_source_geometry_mode = 1
 geometry_source_group_name = &"navi"
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1c4l0"]
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nchfj"]
+panorama = ExtResource("2_3n4u5")
 
 [sub_resource type="Sky" id="Sky_3n4u5"]
-sky_material = SubResource("ProceduralSkyMaterial_1c4l0")
+sky_material = SubResource("PanoramaSkyMaterial_nchfj")
 
 [sub_resource type="Environment" id="Environment_nchfj"]
 background_mode = 2
 sky = SubResource("Sky_3n4u5")
-tonemap_mode = 2
-fog_enabled = true
-fog_density = 0.005
+tonemap_mode = 4
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.02
 
 [node name="map_generator" type="NavigationRegion3D"]
 navigation_mesh = SubResource("NavigationMesh_0r6lh")

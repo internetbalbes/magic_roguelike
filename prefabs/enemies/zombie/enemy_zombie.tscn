@@ -86,6 +86,7 @@ theme_override_constants/separation = 0
 alignment = 1
 
 [node name="progressbar_health" type="ProgressBar" parent="subviewport"]
+visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -116,7 +117,7 @@ texture_albedo = ExtResource("3_ki3et")
 
 [node name="blood_drop" type="GPUParticles3D" parent="."]
 emitting = false
-amount = 20
+amount = 50
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_ki3et")
