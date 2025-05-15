@@ -1,5 +1,8 @@
 extends CharacterBody3D
 
+const SWORD_SPLASH_TRAIL_MAX_POINTS = 100
+const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
+
 @onready var camera = $Camera3D
 @onready var raycast = $Camera3D/RayCast3D
 @onready var image_pointcatch = $interface/aim
@@ -18,7 +21,10 @@ extends CharacterBody3D
 @onready var coldsteel: Node3D = $coldsteel
 @onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
-@onready var coldsteal_splash = $Camera3D/coldsteal_splash
+@onready var label_enemy_appear_spawn = $interface/enemy_appear/enemy_spawn
+@onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
+@onready var sword_splash_tip = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D/sword/tip
+@onready var sword_splash_trail = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D/sword/trailmesh
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -34,7 +40,7 @@ var state = playerstate.IDLE
 enum playerstate {
 	IDLE,	# state idle
 	WALKING,	# state mowing
-	JUMPING	# state jumping	
+	JUMPING	# state jumping		
 }
 var player_max_health: int = 5
 # player's speed normal
@@ -53,12 +59,6 @@ var spell_currently_index = 1
 var player_max_mana  = 10
 # player's currently mana 
 var player_currently_mana = player_max_mana
-var coldsteal_splash_range_beg = 30.0
-var coldsteal_splash_range_end = 120.0
-var coldsteal_splash_progress = 0.0
-var coldsteal_splash_angle = 0.0
-var coldsteal_splash_position = Vector3(2, -0.5, -1.0)
-var coldsteal_splash_radius = Vector3.ZERO.distance_to(coldsteal_splash_position)
 #list file spels
 var spell_thunderbolt = preload("res://sprites/thunderbolt.png") 
 var spell_waterball = preload("res://sprites/waterball_icon.png")
@@ -80,6 +80,7 @@ var card_list_animation : Array
 var card_mana_potion_mana_increase = 2
 var card_hp_potion_hp_increase = 2
 var card_hp_to_mana_sacrifice_exchange = 2
+var sword_splash_points: Array[Vector3] = []
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -125,7 +126,8 @@ func _ready() -> void:
 		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)
 		#config.save("res://settings.cfg")
 	config = null
-	coldsteal_splash.visible = false
+	animation_player.animation_finished.connect(_on_animation_finished)
+	sword_splash_trail.visible = false	
 	texturerect_card.visible = false
 	texturerect_card.size = Vector2(card_size.x, card_size.y)
 	var rect = Vector2(8 * card_size.x, card_size.y)
@@ -213,8 +215,8 @@ func _input(event: InputEvent) -> void:
 		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed && timer_reload_coldsteel.is_stopped():
 			timer_reload_coldsteel.start()
 			progressbar_reload_coldsteel.value = 0
-			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")			
-			coldsteal_splash.visible = true
+			sword_splash_trail.visible = true
+			animation_player.play("melee")
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 
@@ -222,7 +224,7 @@ func _physics_process(delta: float) -> void:
 	# find collide with object
 	if raycast.is_colliding():
 		var collider = raycast.get_collider()
-		if collider && collider.get_groups().size() > 0 && collider.get_groups()[0] in ["portal", "enemy"]:
+		if collider && (collider.is_in_group("portal") || collider.is_in_group("enemy")):
 			image_pointcatch.modulate = Color(1, 0, 0)  # RGB (czerwony)
 		else:
 			image_pointcatch.modulate = Color(1, 1, 1)  # RGB (white)
@@ -232,7 +234,7 @@ func _physics_process(delta: float) -> void:
 		# Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta
 		state = playerstate.JUMPING		
-	else:
+	else:		
 		if Input.is_action_pressed("jump"):
 			velocity.y = player_jump_velocity			
 		var input_dir = Input.get_vector("left", "right", "forward", "back")
@@ -245,15 +247,35 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0, player_speed_walk)
 			velocity.z = move_toward(velocity.z, 0, player_speed_walk)
 			state = playerstate.IDLE
-	move_and_slide()	
-	if coldsteal_splash.visible:
-		coldsteal_splash_progress += delta 
-		coldsteal_splash_angle = lerp(coldsteal_splash_range_beg, coldsteal_splash_range_end, coldsteal_splash_progress / (progressbar_reload_coldsteel.max_value / 2))
-		var x = cos(deg_to_rad(coldsteal_splash_angle)) * coldsteal_splash_radius
-		var z = sin(deg_to_rad(coldsteal_splash_angle)) * coldsteal_splash_radius
-		coldsteal_splash.position = Vector3(x, coldsteal_splash.position.y, -z)
-		coldsteal_splash.rotate_y(deg_to_rad(5*coldsteal_splash_progress / (progressbar_reload_coldsteel.max_value / 2)))
+	move_and_slide()
+	if sword_splash_trail.visible:
+		var tip_pos = sword_splash_tip.global_transform.origin
+		if sword_splash_points.size() > 0:
+			var distance = sword_splash_points[sword_splash_points.size()-1].distance_to(tip_pos)
+			if distance > 0.1:
+				sword_splash_points.append(tip_pos)
+				if sword_splash_points.size() > 2:
+					if sword_splash_points.size() > SWORD_SPLASH_TRAIL_MAX_POINTS:
+						sword_splash_points.pop_front()
+					sword_splash_trail.mesh.clear_surfaces()
+					sword_splash_trail.mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
+					for i in range(sword_splash_points.size() - 1):
+						var current = sword_splash_points[i]
+						var next = sword_splash_points[i + 1]
+						var direction = (next - current).normalized()
+						var normal = direction.cross(Vector3.UP).normalized() * SWORD_SPLASH_TRAIL_WIDTH
+						sword_splash_trail.mesh.surface_add_vertex(current + normal)
+						sword_splash_trail.mesh.surface_add_vertex(current - normal)
+					sword_splash_trail.mesh.surface_end()
+		else:
+			sword_splash_points.append(tip_pos)
 
+func _on_animation_finished(_anim_name: String) -> void:
+	if is_alive():
+		if _anim_name == "melee":
+			sword_splash_points.clear()
+			sword_splash_trail.visible = false
+			
 func _set_spell_currently(index):
 	texturerect_overlay.texture = get_spell_texture(spells[index].spell_name)
 	label_mana_cost.text = str(int(spells[index].mana_cost))
@@ -263,8 +285,7 @@ func create_spell(prefab: Node3D):
 	prefab.player = self	
 	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point(), abs(raycast.target_position.z))
 	world.add_child(prefab)
-	prefab.global_transform.origin = raycast.global_transform.origin
-	prefab.global_transform.basis = raycast.global_transform.basis
+	prefab._set_global_transform(raycast.global_transform)
 	reload_spell()
 	
 func create_trap():
@@ -285,6 +306,7 @@ func take_damage(amount: int):
 		player_current_health = clamp(player_current_health, 0, player_max_health)
 		emit_signal("health_changed", player_current_health)
 		if !is_alive():
+			animation_player.stop()
 			get_tree().call_deferred("reload_current_scene")
 
 func take_heal(amount: int):
@@ -402,17 +424,18 @@ func _on_timer_reload_coldsteel_timeout() -> void:
 	var value = progressbar_reload_coldsteel.value + timer_reload_coldsteel.wait_time
 	if value >= progressbar_reload_coldsteel.max_value:
 		progressbar_reload_coldsteel.value = progressbar_reload_coldsteel.max_value
-		timer_reload_coldsteel.stop()
-	elif value >= progressbar_reload_coldsteel.max_value/2:
-		coldsteal_splash.visible = false
-		coldsteal_splash.position = coldsteal_splash_position
-		coldsteal_splash_progress = 0.0
-		coldsteal_splash.rotation_degrees.y = -90.0
-	progressbar_reload_coldsteel.value = value	
+		timer_reload_coldsteel.stop()		
+	else:
+		if progressbar_reload_coldsteel.value > progressbar_reload_coldsteel.max_value / 2:
+			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")		
+		progressbar_reload_coldsteel.value = value	
 
 # enemy's appear count 
 func _set_enemy_appear_count(value):
 	label_enemy_appear_count.text = str(value)
 	
-func enemy_appear(value):
+func enemy_appear_time(value):
 	label_enemy_appear_time.text = str(int(value))
+
+func enemy_appear_spawn(value):
+	label_enemy_appear_spawn.text = str(int(value))

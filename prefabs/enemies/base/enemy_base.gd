@@ -62,21 +62,21 @@ func take_damage_beat(spell, buf, amount, _position):
 	blood_drop.position = to_local(_position)
 	blood_drop.restart()
 	take_damage(spell, buf, amount)
+	blood_spot.modulate.a = 1.0
+	blood_spot.visible = true
+	var tween_blood = blood_spot.create_tween()
+	tween_blood.tween_property(blood_spot, "modulate:a", 0.0, 5.0).set_trans(Tween.TRANS_LINEAR)
+	tween_blood.tween_callback(func():
+		blood_spot.visible = false
+	)
+	spawn_blood_on_floor()
 		
 func take_damage(spell, buf, amount: int):
 	if is_alive():
 		var is_demage = true
 		match spell:
 			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
-		if is_demage:
-			blood_spot.modulate.a = 1.0
-			blood_spot.visible = true
-			var tween_blood = blood_spot.create_tween()
-			tween_blood.tween_property(blood_spot, "modulate:a", 0.0, 5.0).set_trans(Tween.TRANS_LINEAR)
-			tween_blood.tween_callback(func():
-				blood_spot.visible = false
-			)
-			spawn_blood_on_floor()
+		if is_demage:			
 			label_health.value -= amount
 			if !is_alive():
 				collision.set_deferred("disabled", true)
@@ -142,8 +142,7 @@ func _on_area_seeing_body_exited(_body: Node3D) -> void:
 func spawn_blood_on_floor():
 	var decal = blood_spot.duplicate()		
 	# Ustaw rozmiar decal'a
-	decal.extents = 2.0  # szerokość XZ, wysokość Y		
-	decal.size = Vector3.ONE
+	decal.size = 2 * Vector3.ONE
 	decal.modulate.a = 1.0
 	# Dodaj do sceny
 	world.add_child(decal)

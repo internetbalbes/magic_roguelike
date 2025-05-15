@@ -131,8 +131,14 @@ func _physics_process(delta: float) -> void:
 					navigation_agent.target_position = _set_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
 					enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
 			else:
-				navigation_agent.target_position = player.global_position
+				navigation_agent.target_position = _get_point_on_circle_around_player()
 
+func _get_point_on_circle_around_player() -> Vector3:
+	var angle = deg_to_rad(randf_range(0.0, 180.0))
+	var x = 3 * cos(angle)
+	var z = 3 * sin(angle)		
+	return player.global_position - Vector3(x, 0, z)
+	
 func _set_point_on_circle(angle) -> Vector3:
 	var x = enemy_radius_around_portal * cos(angle)
 	var z = enemy_radius_around_portal * sin(angle)		
@@ -239,7 +245,7 @@ func _set_portal(object: Node3D, angle: float) ->void:
 		if state == enemystate.WALKING_PORTAL:
 			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
 			_timers_delete()
-			navigation_agent.target_position = player.global_position
+			navigation_agent.target_position = _get_point_on_circle_around_player()
 	
 func _set_state_enemy(value)->void:
 	match value:

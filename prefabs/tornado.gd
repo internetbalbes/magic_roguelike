@@ -57,11 +57,15 @@ func _physics_process(delta: float) -> void:
 		if global_position.distance_to(player.global_position) > max_distance_to_demage:
 			call_deferred("queue_free")
 
+func _set_global_transform(value):
+	global_transform.origin = value.origin
+	global_transform.basis = value.basis
+
 # collider's param node: target's node, target's position, max distance fly spell
 func set_collider(node: Node3D, pos: Vector3, max_distance: float):
 	collider = node
 	collider_position = pos
-	max_distance_to_demage = max_distance		
+	max_distance_to_demage = max_distance
 
 func _on_timer_remove_object_timeout() -> void:
 	for obj in enemies_in_tornado:
@@ -77,8 +81,8 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 		var angle = 0
 		for obj in enemies_in_tornado:
 			var x = cos(deg_to_rad(angle))
-			var z = sin(deg_to_rad(angle))		
-			if is_instance_valid(obj):				
+			var z = sin(deg_to_rad(angle))
+			if is_instance_valid(obj):
 				obj._set_position_freeze(collider_position + Vector3(x, 0, z), true)
 			angle += angle_shift	
 	body_tornado.visible = true

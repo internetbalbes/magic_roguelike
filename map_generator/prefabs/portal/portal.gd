@@ -13,6 +13,8 @@ extends StaticBody3D
 var list_enemy : Array
 #generation list new enemies on a map
 var list_new_enemy : Array
+# count enemy appear spawn
+var count_enemy_appear_spawn = 0
 # creating new enemy's time 
 var time_create_new_enemy = 1.0
 # creating new enemy's rest time 
@@ -34,8 +36,10 @@ var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies
 						]
 var player_in_area: bool = false
 
-signal portal_destroyed()
-signal enemy_appear()
+signal portal_before_destroyed()
+signal portal_after_destroyed()
+signal enemy_appear_time()
+signal enemy_appear_spawn()
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -58,6 +62,7 @@ func choose_enemy():
 	for obj in list_prefabenemy:
 		total += obj.spawn_rate
 	var rand = randi() % total
+	#rand = 100
 	var sum = 0
 	for obj in list_prefabenemy:
 		sum += obj.spawn_rate
@@ -81,9 +86,20 @@ func create_enemies(count) -> void:
 		enemy._set_portal(self, angle)
 		angle += angle_shift
 	timer_create_new_enemy.start()
-	emit_signal("enemy_appear", time_rest_create_new_enemy)
+	emit_signal("enemy_appear_spawn", count_enemy_appear_spawn)
+	emit_signal("enemy_appear_time", time_rest_create_new_enemy)
+	
+func append_enemies(list) -> void:
+	if list.size() > 0:
+		var angle_shift = 330.0 / list.size()
+		var angle = 0
+		for enemy in list:
+			list_enemy.append(enemy)	
+			enemy._set_portal(self, angle)
+			angle += angle_shift
 	
 func portal_free() -> void:
+	emit_signal("portal_before_destroyed")
 	collision.set_deferred("disabled", true)
 	for obj in list_enemy:
 		obj._set_portal(null, 0)
@@ -92,11 +108,12 @@ func portal_free() -> void:
 	list_enemy.clear()
 	list_new_enemy.clear()
 	timer_create_new_enemy.stop()
-	if is_instance_valid(player):
+	emit_signal("enemy_appear_spawn", count_enemy_appear_spawn)
+	if is_instance_valid(player):		
 		player.portal_free()
 	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
 	area_observe.monitoring = false
-	emit_signal("portal_destroyed")
+	emit_signal("portal_after_destroyed")
 	
 func _get_object_size() -> float:
 	return collision_shape.radius
@@ -123,7 +140,9 @@ func _on_timer_create_new_enemy_timeout() -> void:
 						obj._set_portal(null, 0)
 					list_new_enemy.clear()	
 		time_rest_create_new_enemy = time_create_new_enemy
-	emit_signal("enemy_appear", time_rest_create_new_enemy)
+		count_enemy_appear_spawn += 1
+		emit_signal("enemy_appear_spawn", count_enemy_appear_spawn)
+	emit_signal("enemy_appear_time", time_rest_create_new_enemy)
 		
 func _on_area_observe_body_entered(_body: Node3D) -> void:
 	player_in_area = true

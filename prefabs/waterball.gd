@@ -49,6 +49,10 @@ func _physics_process(delta: float) -> void:
 		if global_position.distance_to(player.global_position) > max_distance_to_demage:
 			call_deferred("queue_free")
 
+func _set_global_transform(value):
+	global_transform.origin = value.origin
+	global_transform.basis = value.basis
+	
 # collider's param node: target's node, target's position, max distance fly spell
 func set_collider(node: Node3D, pos: Vector3, max_distance: float):
 	collider = node

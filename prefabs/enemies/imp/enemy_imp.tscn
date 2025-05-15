@@ -111,11 +111,12 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_aivmq")
 show_percentage = false
 
 [node name="imp_model" parent="." instance=ExtResource("4_vqrmm")]
-transform = Transform3D(-0.1, 0, -8.74228e-09, 0, 0.1, 0, 8.74228e-09, 0, -0.1, -0.193049, -1.30151, 0)
+transform = Transform3D(-0.1, 0, -8.74228e-09, 0, 0.1, 0, 8.74228e-09, 0, -0.1, -0.0355282, -1.25659, 0)
 
 [node name="blood_spot" type="Decal" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.157623, -0.00292969)
 visible = false
+size = Vector3(1, 0.5, 1)
 texture_albedo = ExtResource("5_5fimp")
 
 [node name="blood_drop" type="GPUParticles3D" parent="."]

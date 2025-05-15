@@ -7,6 +7,8 @@ extends Node3D
 var portal_create_enemy_count = 4
 #count enemy increase after reload portal
 var portal_reload_enemy_increase = 1
+# list teleport enemy
+var list_teleport_enemy_after_portal_destroyed = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -21,18 +23,27 @@ func _ready() -> void:
 	var player_coordinate = map_generator.find_block_free()
 	#player_coordinate = map_generator.created_portal.global_position + Vector3(1, 0, 10)
 	player.set_deferred("global_position", Vector3(player_coordinate.x, player_coordinate.y + player.collision_shape.height/2, player_coordinate.z))
+	portal_create_enemy_count +=portal_reload_enemy_increase
 	portal_update()	
-	
-func portal_destroyed():
-	portal_create_enemy_count+=portal_reload_enemy_increase	
+
+func portal_before_destroyed():
+	for obj in map_generator.created_portal.list_enemy:
+		if obj.enemy_type == "skymage":
+			list_teleport_enemy_after_portal_destroyed.append(obj)
+		
+func portal_after_destroyed():		
 	map_generator.portal_destroyed()
 	portal_update()
 
 func portal_update():
-	map_generator.created_portal.connect("portal_destroyed", portal_destroyed)
+	map_generator.created_portal.connect("portal_before_destroyed", portal_before_destroyed)	
+	map_generator.created_portal.connect("portal_after_destroyed", portal_after_destroyed)
 	map_generator.created_portal.world = self
 	map_generator.created_portal.player = player
-	map_generator.created_portal.call_deferred("create_enemies", portal_create_enemy_count)
+	map_generator.created_portal.call_deferred("create_enemies", portal_create_enemy_count - portal_reload_enemy_increase)
 	map_generator.created_portal.collision.set_deferred("disabled", false)
-	map_generator.created_portal.connect("enemy_appear", player.enemy_appear)	
+	map_generator.created_portal.connect("enemy_appear_time", player.enemy_appear_time)
+	map_generator.created_portal.connect("enemy_appear_spawn", player.enemy_appear_spawn)
 	player._set_enemy_appear_count(portal_create_enemy_count)
+	map_generator.created_portal.append_enemies(list_teleport_enemy_after_portal_destroyed)
+	list_teleport_enemy_after_portal_destroyed.clear()

@@ -1,6 +1,6 @@
 extends Node3D
 
-const CHUNK_SIZE = 5
+const CHUNK_SIZE = 4
 
 var chunk_array = []
 

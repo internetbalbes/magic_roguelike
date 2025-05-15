@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://r2cl1qgna2v5" path="res://sprites/blood_decals/blood_decal_0.png" id="3_ki3et"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_h2fwl"]
+height = 2.75
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_vle1j"]
 viewport_path = NodePath("subviewport")
@@ -56,6 +57,7 @@ wait_time = 1.5
 one_shot = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.140621, 0)
 shape = SubResource("CapsuleShape3D_h2fwl")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
@@ -113,6 +115,7 @@ shape = SubResource("CylinderShape3D_yyepq")
 
 [node name="blood_spot" type="Decal" parent="."]
 visible = false
+size = Vector3(1, 0.5, 1)
 texture_albedo = ExtResource("3_ki3et")
 
 [node name="blood_drop" type="GPUParticles3D" parent="."]

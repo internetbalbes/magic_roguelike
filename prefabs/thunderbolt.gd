@@ -25,7 +25,10 @@ func _ready()->void:
 	area3d_thunderbolt_circle.monitoring = true
 	lighting.visible = false
 	timer_find_enemy_in_area.start()
-	
+
+func _set_global_transform(_value):
+	pass
+
 # collider's param node: target's node, target's position, max distance fly spell
 func set_collider(node: Node3D, pos: Vector3, _max_distance: float):
 	collider = node
