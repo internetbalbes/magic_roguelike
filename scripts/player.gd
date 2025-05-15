@@ -23,8 +23,6 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
 @onready var label_enemy_appear_spawn = $interface/enemy_appear/enemy_spawn
 @onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
-@onready var sword_splash_tip = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D/sword/tip
-@onready var sword_splash_trail = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D/sword/trailmesh
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -80,7 +78,7 @@ var card_list_animation : Array
 var card_mana_potion_mana_increase = 2
 var card_hp_potion_hp_increase = 2
 var card_hp_to_mana_sacrifice_exchange = 2
-var sword_splash_points: Array[Vector3] = []
+var sword_splash_animation_time = 0.0
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -126,8 +124,7 @@ func _ready() -> void:
 		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)
 		#config.save("res://settings.cfg")
 	config = null
-	animation_player.animation_finished.connect(_on_animation_finished)
-	sword_splash_trail.visible = false	
+	sword_splash_animation_time = 1.16 / animation_player.speed_scale
 	texturerect_card.visible = false
 	texturerect_card.size = Vector2(card_size.x, card_size.y)
 	var rect = Vector2(8 * card_size.x, card_size.y)
@@ -147,7 +144,7 @@ func _ready() -> void:
 	_set_spell_currently(spell_currently_index)
 	player_currently_mana = player_max_mana
 	take_mana(player_max_mana)
-	progressbar_reload_coldsteel.step = 0.1
+	progressbar_reload_coldsteel.step = 0.05
 	progressbar_reload_coldsteel.value = time_reload_coldspeel
 	progressbar_reload_coldsteel.max_value = time_reload_coldspeel	
 	_on_health_changed(player_max_health)
@@ -215,7 +212,6 @@ func _input(event: InputEvent) -> void:
 		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed && timer_reload_coldsteel.is_stopped():
 			timer_reload_coldsteel.start()
 			progressbar_reload_coldsteel.value = 0
-			sword_splash_trail.visible = true
 			animation_player.play("melee")
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
@@ -247,34 +243,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0, player_speed_walk)
 			velocity.z = move_toward(velocity.z, 0, player_speed_walk)
 			state = playerstate.IDLE
-	move_and_slide()
-	if sword_splash_trail.visible:
-		var tip_pos = sword_splash_tip.global_transform.origin
-		if sword_splash_points.size() > 0:
-			var distance = sword_splash_points[sword_splash_points.size()-1].distance_to(tip_pos)
-			if distance > 0.1:
-				sword_splash_points.append(tip_pos)
-				if sword_splash_points.size() > 2:
-					if sword_splash_points.size() > SWORD_SPLASH_TRAIL_MAX_POINTS:
-						sword_splash_points.pop_front()
-					sword_splash_trail.mesh.clear_surfaces()
-					sword_splash_trail.mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
-					for i in range(sword_splash_points.size() - 1):
-						var current = sword_splash_points[i]
-						var next = sword_splash_points[i + 1]
-						var direction = (next - current).normalized()
-						var normal = direction.cross(Vector3.UP).normalized() * SWORD_SPLASH_TRAIL_WIDTH
-						sword_splash_trail.mesh.surface_add_vertex(current + normal)
-						sword_splash_trail.mesh.surface_add_vertex(current - normal)
-					sword_splash_trail.mesh.surface_end()
-		else:
-			sword_splash_points.append(tip_pos)
-
-func _on_animation_finished(_anim_name: String) -> void:
-	if is_alive():
-		if _anim_name == "melee":
-			sword_splash_points.clear()
-			sword_splash_trail.visible = false
+	move_and_slide()	
 			
 func _set_spell_currently(index):
 	texturerect_overlay.texture = get_spell_texture(spells[index].spell_name)
@@ -424,11 +393,15 @@ func _on_timer_reload_coldsteel_timeout() -> void:
 	var value = progressbar_reload_coldsteel.value + timer_reload_coldsteel.wait_time
 	if value >= progressbar_reload_coldsteel.max_value:
 		progressbar_reload_coldsteel.value = progressbar_reload_coldsteel.max_value
-		timer_reload_coldsteel.stop()		
+		timer_reload_coldsteel.stop()
+		coldsteel.action_cold_steel_cutoff_off(false)
 	else:
-		if progressbar_reload_coldsteel.value > progressbar_reload_coldsteel.max_value / 2:
-			coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")		
-		progressbar_reload_coldsteel.value = value	
+		if value > 0.5 / animation_player.speed_scale && value < 0.7 / animation_player.speed_scale:
+			if !coldsteel.is_action_cold_steel_cutoff():
+				coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")
+		else:
+			coldsteel.action_cold_steel_cutoff_off(false)
+		progressbar_reload_coldsteel.value = value
 
 # enemy's appear count 
 func _set_enemy_appear_count(value):

@@ -1,12 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bwuna3hfok8r5"]
+[gd_scene load_steps=3 format=3 uid="uid://bwuna3hfok8r5"]
 
 [ext_resource type="PackedScene" uid="uid://c14fhkt6rj0qp" path="res://models/player_model/player_model.gltf" id="1_c8l5m"]
 [ext_resource type="PackedScene" uid="uid://bfg63cfh8yxlh" path="res://models/sword/sword.tscn" id="2_lb3h5"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lb3h5"]
-albedo_color = Color(0.380392, 1, 1, 1)
-
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_p3qmc"]
 
 [node name="player_model" instance=ExtResource("1_c8l5m")]
 
@@ -88,16 +83,9 @@ bones/39/rotation = Quaternion(0.260413, -0.185787, 0.0807116, 0.944009)
 bones/40/position = Vector3(6.96178e-05, 124.93, 3.05171e-05)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="player_model/Skeleton3D" index="1"]
-transform = Transform3D(0.0149983, -0.653209, 0.757029, 0.534197, 0.64524, 0.546167, -0.845227, 0.396211, 0.35862, -482.585, -34.1281, -1128.46)
+transform = Transform3D(0.0149979, -0.65321, 0.757029, 0.534198, 0.645239, 0.546168, -0.845226, 0.396212, 0.35862, -482.586, -34.1284, -1128.46)
 bone_name = "mixamorig_RightHand"
 bone_idx = 22
 
 [node name="sword" parent="player_model/Skeleton3D/BoneAttachment3D" index="0" instance=ExtResource("2_lb3h5")]
 transform = Transform3D(5.08304, 149.602, -5.20805, -99.58, 6.99561, -7.87849, -7.61471, 8.37996, 99.553, -212.578, 80.0658, 0.633114)
-
-[node name="trailmesh" type="MeshInstance3D" parent="player_model/Skeleton3D/BoneAttachment3D/sword" index="1"]
-material_override = SubResource("StandardMaterial3D_lb3h5")
-mesh = SubResource("ImmediateMesh_p3qmc")
-
-[node name="tip" type="Marker3D" parent="player_model/Skeleton3D/BoneAttachment3D/sword" index="2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.3229, 1.49012e-08)

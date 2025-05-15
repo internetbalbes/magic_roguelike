@@ -32,7 +32,7 @@ func _ready()->void:
 		#config.save("res://settings.cfg")
 	config = null
 	if collider:
-		if collider.get_groups().size() > 0 && collider.is_in_group("enemy"):
+		if collider.is_in_group("enemy"):
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
 		else:
 			min_distance_to_object = 1.0
@@ -79,11 +79,12 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 	if count_enemies > 0:
 		var angle_shift = 330.0 / count_enemies
 		var angle = 0
+		var _collider_position = Vector3(collider_position.x, 0.0, collider_position.z)
 		for obj in enemies_in_tornado:
 			var x = cos(deg_to_rad(angle))
 			var z = sin(deg_to_rad(angle))
 			if is_instance_valid(obj):
-				obj._set_position_freeze(collider_position + Vector3(x, 0, z), true)
+				obj._set_position_freeze(_collider_position + Vector3(x, 0, z), true)
 			angle += angle_shift	
 	body_tornado.visible = true
 	timer_remove_object.wait_time = player_tornado_time_life

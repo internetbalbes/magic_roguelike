@@ -4,12 +4,14 @@ extends Node3D
 @onready var collision_near_enemy  = $area3d_near_enemy/CollisionShape3D
 @onready var area3d_near_enemy  = $area3d_near_enemy
 @onready var timer_find_enemy_in_area = $timer_find_enemy_in_area
+@onready var sprite_cutoff_air = $sprite_cutoff_air
 @export var player : CharacterBody3D
 
 # sektor wykrywania (np. 60 stopni)
 var detection_angle_deg_near_enemy = 40.0
 var single_steel_damage = 1
 var splash_steel_damage = 1
+var action_cold_steel_cutoff = false
 
 func _ready()->void:
 	var config = ConfigFile.new()
@@ -21,8 +23,10 @@ func _ready()->void:
 		#config.save("res://settings.cfg")
 	config = null
 	area3d_near_enemy.monitoring = false
+	sprite_cutoff_air.visible = false
 	
 func action_cold_steel(node: Node3D, pos: Vector3, type: String):
+	sprite_cutoff_air.visible = true
 	if node && (node.is_in_group("enemy") || node.is_in_group("portal")):
 		if type == "single":
 			var distance = global_position.distance_to(pos)
@@ -47,3 +51,9 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 		if _check_near_enemy(obj.global_position):
 			obj.take_damage("coldsteel", "", splash_steel_damage)
 	area3d_near_enemy.emitting = false
+
+func is_action_cold_steel_cutoff():
+	return sprite_cutoff_air.visible
+
+func action_cold_steel_cutoff_off(value):
+	sprite_cutoff_air.visible = value

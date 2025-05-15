@@ -1,5 +1,7 @@
 shader_type canvas_item;
 
+uniform float glow_strength = 1.0;
+
 vec2 hash22(vec2 p)
 {
 	vec3 p3 = fract(vec3(p.xyx) * vec3(.1031, .1030, .0973));
@@ -93,10 +95,8 @@ void fragment()
 {
     // Normalized pixel coordinates (from 0 to 1)
     vec2 uv = (UV - .5) / .4;
-
     // Time varying pixel color
     vec3 col = portalTexture(uv);
+    COLOR = vec4(col, circle(UV, 1. )) * glow_strength;
 
-    // Output to screen
-    COLOR = vec4(col, circle(UV, 1. ));
 }

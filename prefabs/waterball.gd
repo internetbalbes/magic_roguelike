@@ -30,7 +30,7 @@ func _ready()->void:
 		#config.save("res://settings.cfg")
 	config = null
 	if collider && collider.get_groups().size() > 0:
-		if collider.get_groups()[0] == "portal" || collider.get_groups()[0] == "enemy":
+		if collider.is_in_group("portal") || collider.is_in_group("enemy"):
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
 	body_waterball.emitting = false
 	area3d_waterball_circle.monitoring = false
