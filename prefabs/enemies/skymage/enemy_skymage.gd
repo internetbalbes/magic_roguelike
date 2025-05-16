@@ -1,6 +1,7 @@
 extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var animation_player: AnimationPlayer = $sky_mage_model/AnimationPlayer
+@onready var sphere_guard: Area3D = $sphere
 @onready var timer_throw: Timer = $timer_throw
 @export var skymag_sphere : PackedScene
 
@@ -20,12 +21,6 @@ enum enemystate {
 var enemy_speed = 0.55
  # distance from portal
 var enemy_distance_from_portal = 10.0
-# skymage sphere's time life
-var skymage_sphere_time_life = 1.0
-# skymage sphere's radius
-var skymage_sphere_radius = 1.0
-# skymage sphere's demage
-var skymage_sphere_damage = 1
 # enemy pray's point
 var target_point_pray = Vector3.ZERO
 
@@ -38,13 +33,12 @@ func _ready() -> void:
 		timer_throw.wait_time = config.get_value("enemy_skymage", "time_to_throw", 5.0)
 		label_health.max_value = randi_range(1, config.get_value("enemy_skymage", "enemy_max_health", label_health.max_value))
 		probability_card =  config.get_value("enemy_skymage", "probability_card", probability_card)		
-		skymage_sphere_time_life = config.get_value("enemy_skymage_sphere", "skymage_sphere_time_life", skymage_sphere_time_life)
-		skymage_sphere_radius = config.get_value("enemy_skymage_sphere", "skymage_sphere_radius", skymage_sphere_radius)
-		skymage_sphere_damage = config.get_value("enemy_skymage_sphere", "skymage_sphere_damage", skymage_sphere_damage)	
 		var var_scale = config.get_value("enemy_skymage", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
 		#config.save("res://settings.cfg")
-	config = null	
+	config = null
+	sphere_guard.player = player
+	sphere_guard.scale = scale
 	animation_player.animation_finished.connect(_on_animation_finished)
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("tornado").loop = true
@@ -54,10 +48,6 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if !is_on_floor():
 		return
-	elif state == enemystate.PRAYING:
-		pass		
-	elif state == enemystate.DEATHING:
-		pass
 	elif state in [enemystate.THROWING]:
 		rotate_towards_target(player.global_transform.origin, delta)
 	elif state == enemystate.POOLING_TO_POINT:
@@ -85,10 +75,10 @@ func _physics_process(delta: float) -> void:
 func _on_animation_finished(_anim_name: String) -> void:
 	if !is_alive():
 		call_deferred("queue_free")
-	elif target_point_pray == Vector3.ZERO:		
+	elif target_point_pray == Vector3.ZERO:
 		var sphere = skymag_sphere.instantiate()
 		sphere.player = player
-		sphere._set_param(skymage_sphere_time_life, skymage_sphere_radius, skymage_sphere_damage)
+		sphere.magic_type = "attack"
 		world.add_child(sphere)
 		timer_throw.start()
 		_set_state_enemy(enemystate.PRAYING)

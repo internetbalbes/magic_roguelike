@@ -73,7 +73,7 @@ func create_enemy(prefab_scene)->Node:
 	var enemy = prefab_scene.instantiate()
 	enemy.player = player
 	enemy.world = world
-	enemy.probability_modificator = probability_modificator		
+	enemy.probability_modificator = probability_modificator
 	return enemy
 
 func create_enemies(count) -> void:

@@ -20,7 +20,10 @@ var enemy_pooling_to_point: Vector3 = Vector3.ZERO
 # array of Buf
 var list_buf: Array
 # array of all modificators
-var list_modificators: Array = ["water_resist"]
+var list_modificators = {
+	"water_resist": {"texture": load("res://sprites/water_resist_icon.png")},
+	"magic_resist": {"texture": load("res://sprites/water_resist_icon.png")}
+}
 # modificators value's probability
 var probability_modificator = 50.0
 # array of enemy modificators
@@ -29,8 +32,6 @@ var enemy_list_modificators: Array
 var probability_card = 50.0
 # object portal spawn
 var portal: Node3D
-# enemy time's stand still
-var time_stand_still = 0
 
 func _ready() -> void:
 	if has_node("area_seeing"):
@@ -40,9 +41,9 @@ func _ready() -> void:
 		area.body_exited.connect(_on_area_3d_body_exited)
 	collision_shape = collision.shape			
 	label_health.value = label_health.max_value
-	for modificator in list_modificators:
-		if randi_range(1, 100) < probability_modificator:
-			_add_modificator_to_list(modificator)
+	if randi_range(1, 100) < probability_modificator:
+		var keys = list_modificators.keys()
+		_add_modificator_to_list(keys[randi_range(0, keys.size()-1)])
 	blood_drop.emitting = false
 	blood_drop.one_shot = true
 
@@ -74,9 +75,11 @@ func take_damage_beat(spell, buf, amount, _position):
 func take_damage(spell, buf, amount: int):
 	if is_alive():
 		var is_demage = true
-		match spell:
-			"waterball": is_demage = !enemy_list_modificators.has("water_resist")
-		if is_demage:			
+		if enemy_list_modificators.size() > 0 || spell != "coldsteal":
+			if !enemy_list_modificators.has("magic_resist"):
+				match spell:
+					"waterball": is_demage = !enemy_list_modificators.has("water_resist")
+		if is_demage:
 			label_health.value -= amount
 			if !is_alive():
 				collision.set_deferred("disabled", true)
@@ -122,13 +125,11 @@ func _add_buf_to_list(name_buf):
 		list_buf.append(name_buf)	
 	
 func _add_modificator_to_list(name_modificator):
-	if !enemy_list_modificators.has(name_modificator):
-		var icon = TextureRect.new()		
-		if name_modificator == "water_resist":  
-			icon.texture = load("res://sprites/water_resist_icon.png") as Texture2D
-		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		label_buf.add_child(icon)
-		enemy_list_modificators.append(name_modificator)
+	var icon = TextureRect.new()
+	icon.texture = list_modificators[name_modificator].texture
+	icon.stretch_mode = TextureRect.STRETCH_KEEP	
+	label_buf.add_child(icon)
+	enemy_list_modificators.append(name_modificator)
 		
 func find_buf(name_buf)->bool:
 	return list_buf.has(name_buf)

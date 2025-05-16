@@ -30,6 +30,7 @@ var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
 var zombie_damage = 1.0
+var prev_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	super._ready()
@@ -70,35 +71,36 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()		
 	elif state in [enemystate.WALKING_PORTAL,  enemystate.RUNNING_TO_PLAYER]:
 		# Sprawdzamy, czy agent ma jakąś ścieżkę do celu
-		if not navigation_agent.is_navigation_finished() && time_stand_still < 3:
+		if not navigation_agent.is_navigation_finished():
 			var next_position = navigation_agent.get_next_path_position()
 			# Obracanie wroga w stronę celu
-			#look_at(next_position, Vector3.UP)
-			rotate_towards_target(next_position, delta)
+			if (next_position - prev_position).length() > 0.1:
+				rotate_towards_target(next_position, delta)
+				prev_position = next_position
 			# Obliczanie wektora kierunku
 			var direction = (next_position - global_transform.origin).normalized()
 			# Poruszanie wroga w kierunku celu
 			velocity = direction * enemy_speed
 			move_and_slide()
-			time_stand_still += delta
 			#global_transform.origin = global_transform.origin + move_vector
 		else:
-			time_stand_still = 0 
 			if state in [enemystate.WALKING_PORTAL]:
-				if portal && (navigation_agent.is_navigation_finished() || velocity.length() < 0.1):
+				if portal && (navigation_agent.is_navigation_finished()):
 					# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
-					navigation_agent.target_position = _set_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
+					navigation_agent.target_position = _get_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
 					enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
 			else:
 				navigation_agent.target_position = _get_point_on_circle_around_player()
 
 func _get_point_on_circle_around_player() -> Vector3:
+	prev_position = Vector3.ZERO
 	var angle = deg_to_rad(randf_range(0.0, 180.0))
 	var x = 2 * cos(angle)
 	var z = 2 * sin(angle)		
 	return player.global_position - Vector3(x, 0, z)
 
-func _set_point_on_circle(angle) -> Vector3:
+func _get_point_on_circle(angle) -> Vector3:
+	prev_position = Vector3.ZERO
 	var x = enemy_radius_around_portal * cos(angle)
 	var z = enemy_radius_around_portal * sin(angle)		
 	return portal.global_transform.origin + Vector3(x, 0, z)

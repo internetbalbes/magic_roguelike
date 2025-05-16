@@ -50,7 +50,6 @@ script = ExtResource("1_udblb")
 skymag_sphere = ExtResource("2_n3man")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.111, 0, 0)
 shape = SubResource("CapsuleShape3D_udblb")
 
 [node name="timer_throw" type="Timer" parent="."]
@@ -112,5 +111,8 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_fy4vl")
 draw_pass_1 = SubResource("CylinderMesh_fs8ve")
+
+[node name="sphere" parent="." instance=ExtResource("2_n3man")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.241, 0)
 
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]
