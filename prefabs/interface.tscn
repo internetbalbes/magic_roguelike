@@ -1,25 +1,26 @@
-[gd_scene load_steps=6 format=3 uid="uid://cwiarthxnrnrq"]
+[gd_scene load_steps=7 format=3 uid="uid://cwiarthxnrnrq"]
 
 [ext_resource type="LabelSettings" uid="uid://r0okgjw03rxk" path="res://fonts/new_label_settings.tres" id="1_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://c1aatrrpdac3e" path="res://sprites/mana_bar.png" id="1_vet5l"]
 [ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://sprites/target.png" id="2_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://c88p7yf6477x1" path="res://sprites/hp_bar.png" id="4_2jqyn"]
 [ext_resource type="Texture2D" uid="uid://b80mj4r30tbw8" path="res://sprites/book.png" id="4_7spvn"]
+[ext_resource type="Theme" uid="uid://it6mrl3rvdob" path="res://fonts/new_theme.tres" id="4_hbh6n"]
 
 [node name="interface" type="CanvasLayer"]
 
 [node name="mana" type="PanelContainer" parent="."]
 anchors_preset = -1
-anchor_top = 0.822
-anchor_right = 0.063
-anchor_bottom = 0.91
-offset_left = 96.0
-offset_top = 32.16
-offset_right = 111.36
-offset_bottom = 64.8
+anchor_left = 0.075
+anchor_top = 0.867
+anchor_right = 0.15
+anchor_bottom = 1.0
+offset_top = -0.240051
+theme = ExtResource("4_hbh6n")
 
 [node name="mana_bar" type="TextureRect" parent="mana"]
 layout_mode = 2
+theme = ExtResource("4_hbh6n")
 texture = ExtResource("1_vet5l")
 
 [node name="labelmana" type="Label" parent="mana"]
@@ -112,6 +113,7 @@ anchor_right = 0.063
 anchor_bottom = 1.0
 offset_top = -31.2
 offset_right = 15.36
+theme = ExtResource("4_hbh6n")
 
 [node name="hp" type="Label" parent="hp"]
 z_index = 1
@@ -144,49 +146,34 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("2_6qr8u")
 
-[node name="enemy_appear" type="Panel" parent="."]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+[node name="enemy_appear" type="HBoxContainer" parent="."]
+anchors_preset = -1
+anchor_left = 0.846
+anchor_top = 0.928
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -76.0
-offset_top = -195.0
+offset_left = 0.119995
+offset_top = -0.160034
 grow_horizontal = 0
 grow_vertical = 0
+theme = ExtResource("4_hbh6n")
 
 [node name="enemy_count" type="Label" parent="enemy_appear"]
 z_index = 1
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 65.0
-grow_horizontal = 2
+layout_mode = 2
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="enemy_spawn" type="Label" parent="enemy_appear"]
 z_index = 1
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 66.0
-offset_bottom = 131.0
-grow_horizontal = 2
+layout_mode = 2
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="enemy_time" type="Label" parent="enemy_appear"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -65.0
-grow_horizontal = 2
-grow_vertical = 0
+layout_mode = 2
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -195,8 +182,10 @@ vertical_alignment = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -480.0
-offset_bottom = -525.0
+offset_left = 246.0
+offset_top = 18.0
+offset_right = -234.0
+offset_bottom = -507.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "WASD - \"Movement\"
@@ -206,3 +195,5 @@ Wheel click - \"Spell choice\" or \"Deck\"
 Wheel button - \"Change card from deck\"
 "
 label_settings = ExtResource("1_6qr8u")
+horizontal_alignment = 1
+vertical_alignment = 1

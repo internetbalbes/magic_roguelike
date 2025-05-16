@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwdl7jkhhmqyh"
-path.s3tc="res://.godot/imported/portal_marker.png-77c4aba50852ead2a1726a99ee8c4836.s3tc.ctex"
+uid="uid://b5dd7513r6xxv"
+path.s3tc="res://.godot/imported/trap.png-0889f7a1fd4a25814b8b6b1b69613fa6.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://sprites/portal_marker.png"
-dest_files=["res://.godot/imported/portal_marker.png-77c4aba50852ead2a1726a99ee8c4836.s3tc.ctex"]
+source_file="res://sprites/trap.png"
+dest_files=["res://.godot/imported/trap.png-0889f7a1fd4a25814b8b6b1b69613fa6.s3tc.ctex"]
 
 [params]
 

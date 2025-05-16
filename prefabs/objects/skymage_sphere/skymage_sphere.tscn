@@ -1,16 +1,15 @@
 [gd_scene load_steps=6 format=3 uid="uid://cjv8bi7lh0qkl"]
 
 [ext_resource type="Script" uid="uid://dhamoh8xc2db2" path="res://prefabs/objects/skymage_sphere/skymage_sphere.gd" id="1_jb1su"]
-[ext_resource type="Shader" uid="uid://dvce4qqgyt5lb" path="res://prefabs/objects/skymage_sphere/skymage_sphere.gdshader" id="2_3yhly"]
+[ext_resource type="Texture2D" uid="uid://b5dd7513r6xxv" path="res://sprites/trap.png" id="2_jb1su"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jb1su"]
-render_priority = 0
-shader = ExtResource("2_3yhly")
-shader_parameter/color = Color(0.2, 0.3, 0.8, 1)
-shader_parameter/emission_energy = 5.0
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3yhly"]
+transparency = 1
+albedo_texture = ExtResource("2_jb1su")
+texture_filter = 4
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_3yhly"]
-material = SubResource("ShaderMaterial_jb1su")
+material = SubResource("StandardMaterial3D_3yhly")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_tfd3p"]
 height = 1.0

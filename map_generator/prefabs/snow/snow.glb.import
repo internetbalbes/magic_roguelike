@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://mu0r2morpw61"
-path="res://.godot/imported/corner_connector.glb-51334b7b1b40b88bcd2add91f433980e.scn"
+uid="uid://bgswllng24pfu"
+path="res://.godot/imported/snow.glb-825df8adafcfde57a86965c19e636527.scn"
 
 [deps]
 
-source_file="res://map_generator/prefabs/corner_connector/corner_connector.glb"
-dest_files=["res://.godot/imported/corner_connector.glb-51334b7b1b40b88bcd2add91f433980e.scn"]
+source_file="res://map_generator/prefabs/snow/snow.glb"
+dest_files=["res://.godot/imported/snow.glb-825df8adafcfde57a86965c19e636527.scn"]
 
 [params]
 
@@ -34,13 +34,13 @@ animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={
 "meshes": {
-"corner_connector_corner_connector": {
+"snow_snow": {
 "generate/lightmap_uv": 0,
 "generate/lods": 0,
 "generate/shadow_meshes": 0,
 "lods/normal_merge_angle": 60.0,
 "save_to_file/enabled": true,
-"save_to_file/path": "res://map_generator/prefabs/corner_connector/corner_connector_corner_connector.res"
+"save_to_file/path": "res://map_generator/prefabs/snow/snow_snow.res"
 }
 }
 }
