@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://nosnghoo6f8h"]
 
-[ext_resource type="Texture2D" uid="uid://d1ejeekud1om3" path="res://map_generator/prefabs/ground/ground.png" id="1_lwnx0"]
+[ext_resource type="Texture2D" uid="uid://d1ejeekud1om3" path="res://sprites/textures/snow.png" id="1_lwnx0"]
 [ext_resource type="ArrayMesh" uid="uid://bkjqjww3m0lu7" path="res://map_generator/prefabs/ground/tree/tree10/tree10.res" id="3_0vbmw"]
 [ext_resource type="ArrayMesh" uid="uid://bqenqdy7716oy" path="res://map_generator/prefabs/ground/bush/bush08.res" id="4_lwnx0"]
 

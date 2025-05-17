@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://d34v32rs5ljno" path="res://map_generator/prefabs/portal/portal_model.tscn" id="4_ac6d7"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ac6d7"]
-height = 10.0
-radius = 6.0
+height = 5.0
+radius = 3.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_vue68"]
 
@@ -27,7 +27,7 @@ shader_parameter/emission_energy = 10.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_vue68"]
 material = SubResource("ShaderMaterial_ac6d7")
-size = Vector2(15, 15)
+size = Vector2(13, 13)
 
 [node name="portal" type="StaticBody3D" groups=["navi", "portal"]]
 collision_layer = 512
@@ -35,19 +35,12 @@ collision_mask = 289
 script = ExtResource("1_4ooq7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 shape = SubResource("CylinderShape3D_ac6d7")
 disabled = true
 
 [node name="timer_create_new_enemy" type="Timer" parent="."]
 
-[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54346, 0)
-radius = 0.5
-affect_navigation_mesh = true
-
 [node name="area_observe" type="Area3D" parent="."]
-visible = false
 collision_layer = 16384
 collision_mask = 32
 
@@ -55,13 +48,12 @@ collision_mask = 32
 shape = SubResource("CylinderShape3D_vue68")
 
 [node name="enter" type="Sprite3D" parent="."]
-transform = Transform3D(-1.20206e-07, 0, -2.75, 0, 2.75, 0, 2.75, 0, -1.20206e-07, 0, 4.69866, 0)
+transform = Transform3D(-9.83506e-08, 0, -2.25, 0, 2.25, 0, 2.25, 0, -9.83506e-08, -0.356073, 5.54256, -0.714948)
 texture = SubResource("ViewportTexture_47pc7")
 
 [node name="subviewport" type="SubViewport" parent="."]
 disable_3d = true
 transparent_bg = true
-anisotropic_filtering_level = 4
 
 [node name="ColorRect" type="ColorRect" parent="subviewport"]
 material = SubResource("ShaderMaterial_vue68")
@@ -72,11 +64,14 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="border" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.0987156, 4.712, 0)
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -0.256073, 5.37565, -0.715352)
 mesh = SubResource("PlaneMesh_vue68")
 
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
+radius = 5.0
+
 [node name="portal_model" parent="." instance=ExtResource("4_ac6d7")]
-transform = Transform3D(-1.74846e-07, 0, -4, 0, 4, 0, 4, 0, -1.74846e-07, 0, -2, 0)
+transform = Transform3D(-2.18557e-08, 0, 0.5, 0, 0.5, 0, -0.5, 0, -2.18557e-08, 0, 11.6239, -0.734839)
 
 [connection signal="timeout" from="timer_create_new_enemy" to="." method="_on_timer_create_new_enemy_timeout"]
 [connection signal="body_entered" from="area_observe" to="." method="_on_area_observe_body_entered"]

@@ -1,5 +1,14 @@
 extends Node3D
 
+const ENVIRONMENT_OBJECTS = {
+	"tree10" = {
+		"prefab_path" = "res://map_generator/prefabs/ground/tree/tree10/tree_10.tscn",
+		"amount_per_tile" = 5,
+		"amount_per_chunk" = 0,
+		"scale" = 0.05
+	}
+}
+
 const CHUNK_SIZE = 4
 
 var chunk_array = []
@@ -24,7 +33,7 @@ func create_chunk():
 	create_corners()
 	visualize_chunk()
 	create_portal()
-	create_environment()
+	create_barrier()
 	chunks_clearing()	
 	call_deferred("bake_navigation_mesh")
 	transform_chunk()
@@ -88,7 +97,8 @@ func visualize_chunk():
 					created_prefab = ground_prefab.instantiate()
 					created_prefab.position = Vector3(x,0,y)
 					created_prefab.name = "ground"
-					current_tile.add_child(created_prefab)	
+					current_tile.add_child(created_prefab)
+					create_environment(x,y)
 				"block":
 					created_prefab = block_prefab.instantiate()
 					created_prefab.position = Vector3(x,-0.375,y)
@@ -140,10 +150,10 @@ func find_block_free():
 
 func portal_destroyed():
 	created_portal.queue_free()
+	current_barrier.queue_free()
 	create_chunk()
 
 var corner_prefab = load("res://map_generator/prefabs/corner/corner.tscn")
-
 
 func create_corners():
 	for x in range(CHUNK_SIZE):
@@ -176,7 +186,31 @@ func create_corner(x,y,y_rotate):
 	created_prefab.rotation_degrees.y = y_rotate
 	current_tile.add_child(created_prefab)
 
-func create_environment():
-	for x in range(CHUNK_SIZE):
-		for y in range(CHUNK_SIZE):
-			pass
+var environment_object
+var object_data
+var random_chunk_array_index = Vector2i()
+
+func create_environment(x,y):
+	for object in ENVIRONMENT_OBJECTS:
+		object_data = ENVIRONMENT_OBJECTS[object]
+		environment_object = load(object_data["prefab_path"])
+		
+		if chunk_array[x][y].relief == "ground" and Vector2i(x,y) != Vector2i(CHUNK_SIZE-1,last_y_list[-1]):
+			for a in object_data["amount_per_tile"]:
+				created_prefab = environment_object.instantiate()
+				created_prefab.position = Vector3(randf_range(x-0.5,x+0.5),0,randf_range(y-0.5,y+0.5))
+				created_prefab.name = object + "_" + str(created_prefab.position.x) + "_" + str(created_prefab.position.y)
+				created_prefab.scale *= object_data["scale"]
+				current_tile.add_child(created_prefab)		
+
+
+var barrier_prefab = load("res://map_generator/prefabs/barrier/barrier.tscn")
+var current_barrier
+	
+func create_barrier():
+	created_prefab = barrier_prefab.instantiate()
+	created_prefab.position = Vector3(CHUNK_SIZE-1,0.5,last_y_list[-1])
+	created_prefab.name = "barrier"
+	current_barrier = created_prefab
+	current_tile.add_child(created_prefab)		
+	

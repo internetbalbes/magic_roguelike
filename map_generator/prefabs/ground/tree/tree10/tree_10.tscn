@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhktfm0beg2bg"]
+
+[ext_resource type="ArrayMesh" uid="uid://bkjqjww3m0lu7" path="res://map_generator/prefabs/ground/tree/tree10/tree10.res" id="1_64vju"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xo05s"]
+size = Vector3(0.75, 10, 0.75)
+
+[node name="tree10" type="StaticBody3D" groups=["navi"]]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_64vju")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.61714, 0)
+shape = SubResource("BoxShape3D_xo05s")

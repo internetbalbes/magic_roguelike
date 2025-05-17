@@ -17,6 +17,7 @@ sky_material = SubResource("PanoramaSkyMaterial_nchfj")
 [sub_resource type="Environment" id="Environment_nchfj"]
 background_mode = 2
 sky = SubResource("Sky_3n4u5")
+sky_rotation = Vector3(0, 0.523599, 0)
 tonemap_mode = 4
 volumetric_fog_enabled = true
 

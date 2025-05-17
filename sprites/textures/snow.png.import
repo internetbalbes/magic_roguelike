@@ -2,20 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0xkr5fh0vcup"
-path.s3tc="res://.godot/imported/dead_tree_Bark1M.png-f35c5e159b0d8c39ce707e5627d2de3d.s3tc.ctex"
+uid="uid://d1ejeekud1om3"
+path.s3tc="res://.godot/imported/snow.png-810567537b65e4fc18e1ba53429257c8.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
-generator_parameters={
-"md5": "3dff7d2529b4ed3aa78064a5e4df79ed"
-}
 
 [deps]
 
-source_file="res://map_generator/prefabs/ground/tree/dead/dead_tree_Bark1M.png"
-dest_files=["res://.godot/imported/dead_tree_Bark1M.png-f35c5e159b0d8c39ce707e5627d2de3d.s3tc.ctex"]
+source_file="res://sprites/textures/snow.png"
+dest_files=["res://.godot/imported/snow.png-810567537b65e4fc18e1ba53429257c8.s3tc.ctex"]
 
 [params]
 

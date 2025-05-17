@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://brq1fhqhqp156"]
 
-[ext_resource type="Texture2D" uid="uid://ceuhxtsi4l3sq" path="res://map_generator/prefabs/block/block.png" id="1_yciv2"]
+[ext_resource type="Texture2D" uid="uid://d1ejeekud1om3" path="res://sprites/textures/snow.png" id="1_yciv2"]
 [ext_resource type="ArrayMesh" uid="uid://bkjqjww3m0lu7" path="res://map_generator/prefabs/ground/tree/tree10/tree10.res" id="2_ptkwc"]
 [ext_resource type="ArrayMesh" uid="uid://bqenqdy7716oy" path="res://map_generator/prefabs/ground/bush/bush08.res" id="4_3j1on"]
 
@@ -34,8 +34,6 @@ buffer = PackedFloat32Array(0.0123746, -0.00242048, 0.0283198, 0.164078, -0.0038
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_qncar")
-
-[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_im0tn")

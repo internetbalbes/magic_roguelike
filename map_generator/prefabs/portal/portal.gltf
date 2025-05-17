@@ -15,12 +15,12 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"portal"
+			"name":"portal_model"
 		}
 	],
 	"meshes":[
 		{
-			"name":"portal",
+			"name":"portal_model",
 			"primitives":[
 				{
 					"attributes":{
@@ -37,67 +37,67 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":78,
+			"count":762,
 			"max":[
-				2.151218891143799,
-				4.439917087554932,
-				1
+				16.48857307434082,
+				5.650332927703857,
+				3.187405824661255
 			],
 			"min":[
-				-2.151218891143799,
-				-1,
-				-1.0830960273742676
+				-16.48857307434082,
+				-14.286384582519531,
+				-1.8179049491882324
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":78,
+			"count":762,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":78,
+			"count":762,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":120,
+			"count":1170,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":936,
+			"byteLength":9144,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":936,
-			"byteOffset":936,
+			"byteLength":9144,
+			"byteOffset":9144,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":624,
-			"byteOffset":1872,
+			"byteLength":6096,
+			"byteOffset":18288,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":240,
-			"byteOffset":2496,
+			"byteLength":2340,
+			"byteOffset":24384,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":2736,
+			"byteLength":26724,
 			"uri":"portal.bin"
 		}
 	]
