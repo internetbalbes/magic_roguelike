@@ -8,7 +8,6 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
 
-var enemy_type = "imp"
 # enemy's initial state
 var state = enemystate.WALKING_PORTAL
 # enemy's state
@@ -48,7 +47,6 @@ var timer_set_trap: Timer = Timer.new()
 var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
-var prev_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	super._ready()
@@ -110,9 +108,7 @@ func _physics_process(delta: float) -> void:
 		if not navigation_agent.is_navigation_finished():
 			var next_position = navigation_agent.get_next_path_position()
 			# Obracanie wroga w stronę celu
-			if (next_position - prev_position).length() > 0.1:
-				rotate_towards_target(next_position, delta)
-				prev_position = next_position
+			rotate_towards_target(next_position, delta)
 			# Obliczanie wektora kierunku
 			var direction = (next_position - global_transform.origin).normalized()
 			# Poruszanie wroga w kierunku celu
@@ -129,14 +125,12 @@ func _physics_process(delta: float) -> void:
 				navigation_agent.target_position = _get_point_on_circle_around_player()
 
 func _get_point_on_circle_around_player() -> Vector3:
-	prev_position = Vector3.ZERO
 	var angle = deg_to_rad(randf_range(0.0, 180.0))
 	var x = 3 * cos(angle)
 	var z = 3 * sin(angle)		
 	return player.global_position - Vector3(x, 0, z)
 	
 func _get_point_on_circle(angle) -> Vector3:
-	prev_position = Vector3.ZERO
 	var x = enemy_radius_around_portal * cos(angle)
 	var z = enemy_radius_around_portal * sin(angle)		
 	return portal.global_transform.origin + Vector3(x, 0, z)

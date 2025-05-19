@@ -30,10 +30,11 @@ var probability_modificator_maximum=50
 # modificators value's increase= probability
 var probability_modificator_increase=1
 # list enemy's prefab
-var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies/imp/enemy_imp.tscn"), "spawn_rate": 0},
-						{"name": "skymage", "prefab": preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"), "spawn_rate": 0},
-						{"name": "zombie", "prefab": preload("res://prefabs/enemies/zombie/enemy_zombie.tscn"), "spawn_rate": 0}
+var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies/imp/enemy_imp.tscn"), "spawn_rate": 0, "enemy_config": "enemy_imp"},
+						{"name": "skymage", "prefab": preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"), "spawn_rate": 0, "enemy_config": "enemy_skymage"},
+						{"name": "zombie", "prefab": preload("res://prefabs/enemies/zombie/enemy_zombie.tscn"), "spawn_rate": 0, "enemy_config": "enemy_zombie"}
 						]
+var boss_prefab = {"name": "boss", "prefab": preload("res://prefabs/enemies/boss/enemy_boss.tscn"), "spawn_rate": 0, "enemy_config": "enemy_boss"}
 var player_in_area: bool = false
 
 signal portal_before_destroyed()
@@ -62,17 +63,19 @@ func choose_enemy():
 	for obj in list_prefabenemy:
 		total += obj.spawn_rate
 	var rand = randi() % total
-	#rand = 100
+	rand = 100
 	var sum = 0
 	for obj in list_prefabenemy:
 		sum += obj.spawn_rate
 		if rand <= sum:
-			return obj.prefab
+			return obj
 			
-func create_enemy(prefab_scene)->Node:
-	var enemy = prefab_scene.instantiate()
+func create_enemy(enemy_param)->Node:
+	var enemy = enemy_param.prefab.instantiate()
 	enemy.player = player
 	enemy.world = world
+	enemy.enemy_type = enemy_param.name
+	enemy.enemy_config = enemy_param.enemy_config
 	enemy.probability_modificator = probability_modificator
 	return enemy
 
@@ -112,7 +115,11 @@ func portal_free() -> void:
 	if is_instance_valid(player):		
 		player.portal_free()
 	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
-	area_observe.monitoring = false
+	area_observe.monitoring = false	
+	var boss_enemy = create_enemy(boss_prefab)
+	world.add_child(boss_enemy)
+	boss_enemy._set_portal(self, 0)	
+	boss_enemy._set_portal(null, 0)	
 	emit_signal("portal_after_destroyed")
 	
 func _get_object_size() -> float:

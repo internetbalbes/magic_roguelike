@@ -5,7 +5,6 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var timer_throw: Timer = $timer_throw
 @export var skymag_sphere : PackedScene
 
-var enemy_type = "skymage"
 # enemy's initial state
 var state = enemystate.WALKING_PORTAL
 # enemy's state
@@ -24,7 +23,7 @@ var enemy_distance_from_portal = 10.0
 # enemy pray's point
 var target_point_pray = Vector3.ZERO
 
-func _ready() -> void:
+func _ready() -> void:	
 	super._ready()
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
@@ -126,7 +125,7 @@ func _set_portal(object: Node3D, angle: float) ->void:
 		var radius = enemy_distance_from_portal + randf_range(1, 10)
 		var x = radius * cos(deg_to_rad(angle))
 		var z = radius * sin(deg_to_rad(angle))
-		target_point_pray = global_transform.origin + Vector3(x, 0, z)
+		target_point_pray = global_transform.origin + Vector3(x, -_get_object_height() / 2.0, z)
 		look_at(target_point_pray, Vector3.UP)
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 

@@ -81,11 +81,12 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 		var angle = 0
 		var _collider_position = Vector3(collider_position.x, 0.0, collider_position.z)
 		for obj in enemies_in_tornado:
-			var x = cos(deg_to_rad(angle))
-			var z = sin(deg_to_rad(angle))
-			if is_instance_valid(obj):
-				obj._set_position_freeze(_collider_position + Vector3(x, 0, z), true)
-			angle += angle_shift	
+			if obj.object_is_freezed():
+				var x = cos(deg_to_rad(angle))
+				var z = sin(deg_to_rad(angle))
+				if is_instance_valid(obj):
+					obj._set_position_freeze(_collider_position + Vector3(x, 0, z), true)
+				angle += angle_shift				
 	body_tornado.visible = true
 	timer_remove_object.wait_time = player_tornado_time_life
 	timer_remove_object.start()

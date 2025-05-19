@@ -22,7 +22,9 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
 @onready var label_enemy_appear_spawn = $interface/enemy_appear/enemy_spawn
+@onready var label_hp_bar = $interface/hp/hp_bar
 @onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
+@onready var timer_walk_slowing: Timer = $timer_walk_slowing
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -79,6 +81,9 @@ var card_mana_potion_mana_increase = 2
 var card_hp_potion_hp_increase = 2
 var card_hp_to_mana_sacrifice_exchange = 2
 var sword_splash_animation_time = 0.0
+var player_speed_walk_slowing = 1.0
+var player_label_hp = preload("res://sprites/hp_bar.png")
+var player_label_hp_damage = preload("res://sprites/hp_bar_damage.png")
 
 # Sygnalizacja zmiany zdrowia
 signal health_changed(new_health)
@@ -94,6 +99,8 @@ func _ready() -> void:
 		time_reload_coldspeel = config.get_value("player", "time_reload_coldspeel", time_reload_coldspeel)		
 		player_max_mana =  config.get_value("player", "player_max_mana", player_max_mana)
 		raycast.target_position.z =  -config.get_value("player", "player_scan_enemy", abs(raycast.target_position.z))
+		player_speed_walk_slowing = config.get_value("player", "player_speed_walk_slowing", player_speed_walk_slowing)
+		timer_walk_slowing.wait_time = config.get_value("player", "player_speed_time_slowing", timer_walk_slowing.wait_time)
 		# spell waterball
 		var mana_cost = config.get_value("spells", "waterball_spell_mana_cost", 1)
 		var damage = config.get_value("spells", "waterball_spell_damage", 1)
@@ -268,15 +275,24 @@ func create_trap():
 func reload_spell():
 	timer_reload_spell.start()
 	take_mana(-spells[spell_currently_index].mana_cost)	
+
+func label_hp_damage():
+	label_hp_bar.texture = player_label_hp_damage
+	await get_tree().create_timer(1.0).timeout
+	label_hp_bar.texture = player_label_hp
 	
 func take_damage(amount: int):
 	if player_current_health > 0:
 		player_current_health -= amount
 		player_current_health = clamp(player_current_health, 0, player_max_health)
 		emit_signal("health_changed", player_current_health)
+		await label_hp_damage()
 		if !is_alive():
 			animation_player.stop()
 			get_tree().call_deferred("reload_current_scene")
+		elif timer_walk_slowing.is_stopped():
+			player_speed_walk *= player_speed_walk_slowing
+			timer_walk_slowing.start()	
 
 func take_heal(amount: int):
 	player_current_health += amount
@@ -373,7 +389,7 @@ func remove_card()->void:
 			if player_current_health - card_hp_to_mana_sacrifice_exchange > 1:
 				var exchange = card_hp_to_mana_sacrifice_exchange
 				if player_currently_mana + exchange > player_max_mana:
-					exchange = player_max_mana - player_currently_mana				
+					exchange = player_max_mana - player_currently_mana
 				take_mana(exchange)
 				take_damage(exchange)
 			else:
@@ -412,3 +428,6 @@ func enemy_appear_time(value):
 
 func enemy_appear_spawn(value):
 	label_enemy_appear_spawn.text = str(int(value))
+
+func _on_timer_walk_slowing_timeout() -> void:
+	player_speed_walk /= player_speed_walk_slowing
