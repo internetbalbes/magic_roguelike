@@ -1,0 +1,63 @@
+[gd_scene load_steps=3 format=3 uid="uid://c54e6d825ut5x"]
+
+[ext_resource type="PackedScene" uid="uid://ynmd1jniyxy8" path="res://prefabs/enemies/kishi/kishi_model.gltf" id="1_e00xw"]
+[ext_resource type="PackedScene" uid="uid://d3kvooy184nmp" path="res://prefabs/enemies/kishi/sword/sword.gltf" id="2_dwc05"]
+
+[node name="kishi_model" instance=ExtResource("1_e00xw")]
+
+[node name="Skeleton3D" parent="kishi_model" index="0"]
+bones/0/position = Vector3(4.98913, 14.5008, -1339.89)
+bones/0/rotation = Quaternion(-0.669095, -0.0996964, 0.0917452, 0.730722)
+bones/1/position = Vector3(1.43051e-06, 144.655, -4.076)
+bones/1/rotation = Quaternion(0.186072, 0.0374049, 0.00675639, 0.981801)
+bones/2/position = Vector3(1.81198e-05, 168.831, 2.86102e-06)
+bones/2/rotation = Quaternion(0.0321927, 0.0112466, -0.0066706, 0.999396)
+bones/3/position = Vector3(-9.29832e-06, 192.949, 3.71933e-05)
+bones/3/rotation = Quaternion(0.0321273, 0.0118893, -0.00667643, 0.999391)
+bones/4/position = Vector3(3.8147e-06, 217.068, -2.559e-05)
+bones/4/rotation = Quaternion(-0.0963598, 0.0116745, 0.0188966, 0.995099)
+bones/5/position = Vector3(1.14441e-05, 145.66, 25.2362)
+bones/5/rotation = Quaternion(-0.124247, 0.0642148, -0.036875, 0.989484)
+bones/6/position = Vector3(-6.79493e-06, 333.305, 57.7467)
+bones/7/position = Vector3(81.9348, 171.45, -0.282396)
+bones/7/rotation = Quaternion(-0.705342, -0.354352, 0.441348, -0.426778)
+bones/8/position = Vector3(-0.000172855, 186.626, 0.000236623)
+bones/8/rotation = Quaternion(0.458971, -0.0695109, 0.278971, 0.840648)
+bones/9/position = Vector3(2.65228e-05, 344.083, 2.44806e-05)
+bones/9/rotation = Quaternion(-0.0337688, -0.0350198, 0.357779, 0.932538)
+bones/10/position = Vector3(-4.91738e-05, 347.666, 0.000158399)
+bones/10/rotation = Quaternion(-2.26273e-08, -7.05768e-09, 9.46602e-09, 1)
+bones/11/position = Vector3(-81.9348, 171.506, -2.28688)
+bones/11/rotation = Quaternion(0.695482, -0.392157, 0.351364, 0.48894)
+bones/12/position = Vector3(-5.02808e-05, 186.626, -1.12139e-05)
+bones/12/rotation = Quaternion(0.417882, 0.035818, -0.379532, 0.82465)
+bones/13/position = Vector3(7.4367e-06, 344.287, 1.68025e-06)
+bones/13/rotation = Quaternion(-0.137926, 0.0841195, -0.450175, 0.878204)
+bones/14/position = Vector3(-0.000133619, 347.747, 8.00882e-05)
+bones/14/rotation = Quaternion(7.82893e-08, 9.8662e-09, 8.44011e-09, 1)
+bones/15/position = Vector3(114.25, -80.1716, -18.0749)
+bones/15/rotation = Quaternion(0.0485264, 0.280812, 0.95397, -0.0934398)
+bones/16/position = Vector3(-6.53526e-05, 572.198, 2.9132e-05)
+bones/16/rotation = Quaternion(-0.281182, -0.0361145, 0.0017002, 0.958973)
+bones/17/position = Vector3(2.79768e-05, 572.673, 6.83874e-05)
+bones/17/rotation = Quaternion(0.458939, 0.0876127, -0.09178, 0.879361)
+bones/18/position = Vector3(4.89459e-06, 292.233, -3.22284e-06)
+bones/18/rotation = Quaternion(0.352726, 0.136708, -0.0614604, 0.923644)
+bones/19/position = Vector3(8.10631e-06, 128.187, -1.90748e-06)
+bones/20/position = Vector3(-114.25, -80.1716, -13.1432)
+bones/20/rotation = Quaternion(-0.105867, 0.132967, 0.978843, 0.113922)
+bones/21/position = Vector3(-2.37307e-05, 572.19, 2.37694e-05)
+bones/21/rotation = Quaternion(-0.294645, 0.0577773, 0.0201639, 0.953645)
+bones/22/position = Vector3(-1.41045e-05, 572.697, -2.05089e-05)
+bones/22/rotation = Quaternion(0.582531, -0.0737693, 0.112812, 0.801555)
+bones/23/position = Vector3(-4.17067e-05, 290.998, -2.84191e-05)
+bones/23/rotation = Quaternion(0.3592, -0.140014, 0.0568115, 0.920948)
+bones/24/position = Vector3(7.15257e-06, 128.382, -0.000257015)
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="kishi_model/Skeleton3D" index="1"]
+transform = Transform3D(0.352659, 0.350025, 0.867821, 0.436453, 0.75882, -0.483424, -0.827731, 0.549247, 0.114835, -154.971, 545.927, -1334.13)
+bone_name = "mixamorig_RightHand"
+bone_idx = 14
+
+[node name="sword" parent="kishi_model/Skeleton3D/BoneAttachment3D" index="0" instance=ExtResource("2_dwc05")]
+transform = Transform3D(14.3225, 46.0503, 13.1999, -44.8446, 8.04336, 20.5976, 16.8471, -17.7391, 43.6062, -260.681, -27.3222, 177.067)

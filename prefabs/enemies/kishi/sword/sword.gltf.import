@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bbkf84bsheub1"
-path="res://.godot/imported/zombie_model.glb-2ee862beef5f3141686ea0249b0ad5c6.scn"
+uid="uid://d3kvooy184nmp"
+path="res://.godot/imported/sword.gltf-cb62227fa6be2df3dc3eee55d8cc6b8a.scn"
 
 [deps]
 
-source_file="res://prefabs/enemies/zombie/zombie_model.glb"
-dest_files=["res://.godot/imported/zombie_model.glb-2ee862beef5f3141686ea0249b0ad5c6.scn"]
+source_file="res://prefabs/enemies/kishi/sword/sword.gltf"
+dest_files=["res://.godot/imported/sword.gltf-cb62227fa6be2df3dc3eee55d8cc6b8a.scn"]
 
 [params]
 
@@ -34,4 +34,4 @@ animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={}
 gltf/naming_version=1
-gltf/embedded_image_handling=1
+gltf/embedded_image_handling=3

@@ -1,7 +1,7 @@
 extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
-@onready var boss_model: Node3D = $MeshInstance3D
+@onready var boss_model: Node3D = $kishi_model
 @onready var timer_beat: Timer = $timer_beat
 @onready var timer_run_to_player: Timer = $timer_run_to_player
 

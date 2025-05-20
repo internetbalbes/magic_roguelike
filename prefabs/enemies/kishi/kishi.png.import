@@ -2,20 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmfk87rjbiwe0"
-path.s3tc="res://.godot/imported/zombie_model_zombie_model.png-ed7d35f6498046674fbca5865928c16f.s3tc.ctex"
+uid="uid://s40f8cfr2y6g"
+path.s3tc="res://.godot/imported/kishi.png-18bff39fd0ea7172614ccc5e39867f36.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
-generator_parameters={
-"md5": "53f125e0736fb881b42e6f9b8da624ea"
-}
 
 [deps]
 
-source_file="res://prefabs/enemies/zombie/zombie_model_zombie_model.png"
-dest_files=["res://.godot/imported/zombie_model_zombie_model.png-ed7d35f6498046674fbca5865928c16f.s3tc.ctex"]
+source_file="res://prefabs/enemies/kishi/kishi.png"
+dest_files=["res://.godot/imported/kishi.png-18bff39fd0ea7172614ccc5e39867f36.s3tc.ctex"]
 
 [params]
 
