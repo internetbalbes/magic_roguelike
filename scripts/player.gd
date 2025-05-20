@@ -276,22 +276,17 @@ func reload_spell():
 	timer_reload_spell.start()
 	take_mana(-spells[spell_currently_index].mana_cost)	
 
-func label_hp_damage():
-	label_hp_bar.texture = player_label_hp_damage
-	await get_tree().create_timer(1.0).timeout
-	label_hp_bar.texture = player_label_hp
-	
 func take_damage(amount: int):
 	if player_current_health > 0:
 		player_current_health -= amount
 		player_current_health = clamp(player_current_health, 0, player_max_health)
 		emit_signal("health_changed", player_current_health)
-		await label_hp_damage()
 		if !is_alive():
 			animation_player.stop()
 			get_tree().call_deferred("reload_current_scene")
 		elif timer_walk_slowing.is_stopped():
 			player_speed_walk *= player_speed_walk_slowing
+			label_hp_bar.texture = player_label_hp_damage
 			timer_walk_slowing.start()	
 
 func take_heal(amount: int):
@@ -430,4 +425,5 @@ func enemy_appear_spawn(value):
 	label_enemy_appear_spawn.text = str(int(value))
 
 func _on_timer_walk_slowing_timeout() -> void:
+	label_hp_bar.texture = player_label_hp
 	player_speed_walk /= player_speed_walk_slowing

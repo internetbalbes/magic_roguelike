@@ -64,6 +64,7 @@ func _ready() -> void:
 		probability_card =  config.get_value("enemy_imp", "probability_card", probability_card)
 		var var_scale = config.get_value("enemy_imp", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
+		navigation_agent.path_height_offset = -var_scale
 		#config.save("res://settings.cfg")
 	config = null
 	skeleton_bone_hand.bone_name = "mixamorig_RightHand"

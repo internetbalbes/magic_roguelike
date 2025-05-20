@@ -1,6 +1,7 @@
 extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var animation_player: AnimationPlayer = $sky_mage_model/AnimationPlayer
+@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var sphere_guard: Area3D = $sphere
 @onready var timer_throw: Timer = $timer_throw
 @export var skymag_sphere : PackedScene
@@ -34,10 +35,10 @@ func _ready() -> void:
 		probability_card =  config.get_value("enemy_skymage", "probability_card", probability_card)		
 		var var_scale = config.get_value("enemy_skymage", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
+		navigation_agent.path_height_offset = -var_scale		
 		#config.save("res://settings.cfg")
 	config = null
 	sphere_guard.player = player
-	sphere_guard.scale = scale
 	animation_player.animation_finished.connect(_on_animation_finished)
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("tornado").loop = true
@@ -54,18 +55,16 @@ func _physics_process(delta: float) -> void:
 		# Poruszanie wroga w kierunku celu
 		velocity = direction * enemy_speed
 		move_and_slide()		
-	elif state in [enemystate.WALKING_PORTAL]:
-		# Sprawdzamy, czy agent ma jakąś ścieżkę do celu
-		if global_position.distance_to(target_point_pray) > 0.5:
-			# Obliczamy wektor kierunku do punktu
-			var direction = target_point_pray - global_position
-			# Znormalizuj wektor kierunku
-			if direction.length() > 0:
-				direction = direction.normalized()
-			# Poruszanie wroga w kierunku celu			
-			velocity.x = direction.x *  enemy_speed
-			velocity.z = direction.z *  enemy_speed
-			move_and_slide()	
+	elif state in [enemystate.WALKING_PORTAL]:		
+		if not navigation_agent.is_navigation_finished():
+			var next_position = navigation_agent.get_next_path_position()
+			# Obracanie wroga w stronę celu			
+			rotate_towards_target(next_position, delta)
+			# Obliczanie wektora kierunku
+			var direction = (next_position - global_transform.origin).normalized()
+			# Poruszanie wroga w kierunku celu
+			velocity = direction * enemy_speed
+			move_and_slide()
 		else:
 			target_point_pray = Vector3.ZERO
 			timer_throw.start()
@@ -125,8 +124,8 @@ func _set_portal(object: Node3D, angle: float) ->void:
 		var radius = enemy_distance_from_portal + randf_range(1, 10)
 		var x = radius * cos(deg_to_rad(angle))
 		var z = radius * sin(deg_to_rad(angle))
-		target_point_pray = global_transform.origin + Vector3(x, -_get_object_height() / 2.0, z)
-		look_at(target_point_pray, Vector3.UP)
+		target_point_pray = global_transform.origin + Vector3(x, 0, z)
+		navigation_agent.target_position = target_point_pray
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 
 func _on_timer_throw_timeout() -> void:

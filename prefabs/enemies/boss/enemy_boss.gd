@@ -1,7 +1,9 @@
 extends "res://prefabs/enemies/base/enemy_base.gd"
 
+
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var boss_model: Node3D = $kishi_model
+@onready var animation_player: AnimationPlayer = $kishi_model/AnimationPlayer
 @onready var timer_beat: Timer = $timer_beat
 @onready var timer_run_to_player: Timer = $timer_run_to_player
 
@@ -29,12 +31,15 @@ func _ready() -> void:
 		probability_card =  config.get_value("enemy_boss", "probability_card", probability_card)
 		probability_modificator =  config.get_value("enemy_boss", "probability_modificator", probability_modificator)
 		boss_damage = config.get_value("enemy_boss", "boss_damage", 1)
+		collision_areaseeing.radius = config.get_value("enemy_boss", "enemy_area_scan_player", 1.0)		
 		var var_scale = config.get_value("enemy_boss", "enemy_transform_scale",  1.0)
-		boss_model.scale *= var_scale
-		collision_areaseeing.radius = config.get_value("enemy_boss", "enemy_area_scan_player", 1.0)
+		scale = Vector3(var_scale, var_scale, var_scale)
+		navigation_agent.path_height_offset = -var_scale
 		#config.save("res://settings.cfg")
 	config = null
-
+	animation_player.animation_finished.connect(_on_animation_finished)	
+	animation_player.get_animation("run").loop = true
+	
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	
 	if !is_on_floor():
@@ -70,12 +75,6 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	super._on_area_3d_body_entered(body)
 	_set_state_enemy(enemystate.BEATING)
 
-func _on_area_3d_body_exited(_body: Node3D) -> void:
-	super._on_area_3d_body_exited(_body)
-	target_position = player.global_position
-	navigation_agent.target_position = _get_point_on_circle_around_player()
-	_set_state_enemy(enemystate.RUNNING_TO_PLAYER)	
-	
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():
@@ -83,6 +82,14 @@ func take_damage(spell, buf, amount: int):
 		timer_run_to_player.stop()
 		_set_state_enemy(enemystate.DEATHING)
 
+func _on_animation_finished(_anim_name: String) -> void:
+	if !is_alive():
+		call_deferred("queue_free")
+	elif player_in_area:
+		_set_state_enemy(enemystate.BEATING)
+	else:
+		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
+		
 func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
@@ -106,16 +113,19 @@ func _set_state_enemy(value)->void:
 	match value:
 		enemystate.RUNNING_TO_PLAYER:
 			state = enemystate.RUNNING_TO_PLAYER
+			animation_player.play("run")
 			timer_run_to_player.start()
 		enemystate.BEATING:
 			state = enemystate.BEATING
+			animation_player.play("melee")
 			timer_beat.start()
 			timer_run_to_player.stop()
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
+			animation_player.play("tornado")
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
-			call_deferred("queue_free")
+			animation_player.play("death")
 
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:

@@ -4,8 +4,6 @@ extends CharacterBody3D
 @onready var label_health: ProgressBar = $subviewport/progressbar_health
 @onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
 @onready var sprite_status: Sprite3D = $sprite_status
-@onready var blood_spot: Decal = $blood_spot
-@onready var blood_drop: GPUParticles3D = $blood_drop
 @export var world: Node3D
 @export var player : CharacterBody3D
 
@@ -35,7 +33,8 @@ var probability_card = 50.0
 var portal: Node3D
 var size_blood_on_floor : Vector3 = Vector3.ONE
 var enemy_config = ""
-var enemy_type = "boss"
+var enemy_type = ""
+var enemy_effect : Node3D
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -53,8 +52,6 @@ func _ready() -> void:
 	if randi_range(1, 100) < probability_modificator:
 		var keys = list_modificators.keys()
 		_add_modificator_to_list(keys[randi_range(0, keys.size()-1)])
-	blood_drop.emitting = false
-	blood_drop.one_shot = true
 
 func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
@@ -68,23 +65,33 @@ func _on_area_3d_body_entered(_body: Node3D) -> void:
 func _on_area_3d_body_exited(_body: Node3D) -> void:
 	player_in_area = false
 
+func get_enemy_effect():
+	if !enemy_effect:
+		enemy_effect = load("res://prefabs/enemies/base/enemy_effect.tscn").instantiate()
+		add_child(enemy_effect)
+		enemy_effect.deathing.emitting = false
+		enemy_effect.deathing.one_shot = true
+		enemy_effect.blood_drop.emitting = false
+		enemy_effect.blood_drop.one_shot = true		
+	return enemy_effect
+
 func take_damage_beat(spell, buf, amount, _position):
-	blood_drop.position = to_local(_position)
-	blood_drop.restart()
+	get_enemy_effect().blood_drop.position = to_local(_position)
+	enemy_effect.blood_drop.restart()
 	take_damage(spell, buf, amount)
-	blood_spot.modulate.a = 1.0
-	blood_spot.visible = true
-	var tween_blood = blood_spot.create_tween()
-	tween_blood.tween_property(blood_spot, "modulate:a", 0.0, 5.0).set_trans(Tween.TRANS_LINEAR)
+	enemy_effect.blood_spot.modulate.a = 1.0
+	enemy_effect.blood_spot.visible = true
+	var tween_blood = enemy_effect.blood_spot.create_tween()
+	tween_blood.tween_property(enemy_effect.blood_spot, "modulate:a", 0.0, 5.0).set_trans(Tween.TRANS_LINEAR)
 	tween_blood.tween_callback(func():
-		blood_spot.visible = false
+		enemy_effect.blood_spot.visible = false
 	)
 	spawn_blood_on_floor()
 		
 func take_damage(spell, buf, amount: int):
 	if is_alive():
 		var is_demage = true
-		if enemy_list_modificators.size() > 0 || spell != "coldsteal":
+		if enemy_list_modificators.size() > 0 && spell != "coldsteel":
 			if !enemy_list_modificators.has("magic_resist"):
 				match spell:
 					"waterball": is_demage = !enemy_list_modificators.has("water_resist")
@@ -93,6 +100,7 @@ func take_damage(spell, buf, amount: int):
 		if is_demage:
 			label_health.value -= amount
 			if !is_alive():
+				await action_effect_deathing()
 				collision.set_deferred("disabled", true)
 				if randi_range(1, 100) < probability_card:
 					player.add_card()
@@ -104,7 +112,13 @@ func take_damage(spell, buf, amount: int):
 				$sprite_status.set_deferred("visible", false)
 			elif buf:
 				_add_buf_to_list(buf)
-
+ 
+func action_effect_deathing():
+	enemy_effect.deathing.reparent(world)
+	enemy_effect.deathing.emitting = true
+	await get_tree().create_timer(enemy_effect.deathing.lifetime).timeout
+	enemy_effect.deathing.queue_free()
+	
 func _set_portal(object: Node3D, _angle: float) ->void:
 	portal = object
 	if portal:
@@ -157,7 +171,7 @@ func _on_area_seeing_body_exited(_body: Node3D) -> void:
 	player_in_area = false
 			
 func spawn_blood_on_floor():
-	var decal = blood_spot.duplicate()		
+	var decal = enemy_effect.blood_spot.duplicate()		
 	# Ustaw rozmiar decal'a
 	decal.size = size_blood_on_floor
 	decal.modulate.a = 1.0

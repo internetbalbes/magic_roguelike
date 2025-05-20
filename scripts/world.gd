@@ -21,7 +21,7 @@ func _ready() -> void:
 	config = null
 	map_generator.create_chunk()
 	var player_coordinate = map_generator.find_block_free()
-	player_coordinate = map_generator.created_portal.global_position + Vector3(1, 0, 10)
+	#splayer_coordinate = map_generator.created_portal.global_position + Vector3(1, 0, 10)
 	player.set_deferred("global_position", Vector3(player_coordinate.x, player_coordinate.y + player.collision_shape.height/2, player_coordinate.z))	
 	portal_update()	
 
@@ -40,7 +40,6 @@ func portal_update():
 	map_generator.created_portal.world = self
 	map_generator.created_portal.player = player
 	map_generator.created_portal.call_deferred("create_enemies", portal_create_enemy_count)
-	map_generator.created_portal.collision.set_deferred("disabled", false)
 	map_generator.created_portal.connect("enemy_appear_time", player.enemy_appear_time)
 	map_generator.created_portal.connect("enemy_appear_spawn", player.enemy_appear_spawn)
 	portal_create_enemy_count +=portal_reload_enemy_increase

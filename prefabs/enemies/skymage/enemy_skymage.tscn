@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://cwgxrnu3lbe5c"]
+[gd_scene load_steps=8 format=3 uid="uid://cwgxrnu3lbe5c"]
 
 [ext_resource type="Script" uid="uid://bggo2sahi4bcd" path="res://prefabs/enemies/skymage/enemy_skymage.gd" id="1_udblb"]
 [ext_resource type="PackedScene" uid="uid://cjv8bi7lh0qkl" path="res://prefabs/objects/skymage_sphere/skymage_sphere.tscn" id="2_n3man"]
 [ext_resource type="PackedScene" uid="uid://b4hatdxncst5a" path="res://prefabs/enemies/skymage/sky_mage_model.tscn" id="3_n3man"]
-[ext_resource type="Texture2D" uid="uid://r2cl1qgna2v5" path="res://sprites/blood_decals/blood_decal_0.png" id="4_8fur8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_udblb"]
 radius = 0.6
@@ -26,23 +25,6 @@ content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(0, 1, 0, 1)
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fy4vl"]
-particle_flag_align_y = true
-angle_min = 30.0
-angle_max = 60.0
-direction = Vector3(0, 1, -1)
-initial_velocity_min = 3.0
-initial_velocity_max = 6.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqfqn"]
-albedo_texture = ExtResource("4_8fur8")
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_fs8ve"]
-material = SubResource("StandardMaterial3D_cqfqn")
-top_radius = 0.01
-bottom_radius = 0.0
-height = 0.05
-
 [node name="enemy" type="CharacterBody3D" groups=["enemy"]]
 collision_layer = 64
 collision_mask = 33
@@ -50,14 +32,13 @@ script = ExtResource("1_udblb")
 skymag_sphere = ExtResource("2_n3man")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 shape = SubResource("CapsuleShape3D_udblb")
 
 [node name="timer_throw" type="Timer" parent="."]
 one_shot = true
 
 [node name="sprite_status" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12925, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57929, 0)
 billboard = 1
 no_depth_test = true
 texture_filter = 0
@@ -98,21 +79,11 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_cqfqn")
 show_percentage = false
 
 [node name="sky_mage_model" parent="." instance=ExtResource("3_n3man")]
-transform = Transform3D(-0.1, 0, 1.50996e-08, 0, 0.1, 0, -1.50996e-08, 0, -0.1, -0.214, 0, 0)
-
-[node name="blood_spot" type="Decal" parent="."]
-visible = false
-size = Vector3(2, 0.5, 2)
-texture_albedo = ExtResource("4_8fur8")
-
-[node name="blood_drop" type="GPUParticles3D" parent="."]
-emitting = false
-amount = 50
-one_shot = true
-explosiveness = 1.0
-process_material = SubResource("ParticleProcessMaterial_fy4vl")
-draw_pass_1 = SubResource("CylinderMesh_fs8ve")
+transform = Transform3D(-0.1, 0, 1.50996e-08, 0, 0.1, 0, -1.50996e-08, 0, -0.1, -0.214, -1.25, 0)
 
 [node name="sphere" parent="." instance=ExtResource("2_n3man")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, 0)
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
 [connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]

@@ -5,8 +5,9 @@
 [ext_resource type="Shader" uid="uid://cdtvrf4ek7xyu" path="res://map_generator/prefabs/portal/portal_border.gdshader" id="3_55nrf"]
 [ext_resource type="PackedScene" uid="uid://d34v32rs5ljno" path="res://map_generator/prefabs/portal/portal_model.tscn" id="4_ac6d7"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ac6d7"]
-size = Vector3(1, 12, 12)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ac6d7"]
+height = 0.5
+radius = 6.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_vue68"]
 
@@ -33,9 +34,8 @@ collision_mask = 289
 script = ExtResource("1_4ooq7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 6, 0)
-shape = SubResource("BoxShape3D_ac6d7")
-disabled = true
+transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, 0, -4.37114e-08, -1, -1, -4.37114e-08, 1.91069e-15, 0, 6, 0)
+shape = SubResource("CylinderShape3D_ac6d7")
 
 [node name="timer_create_new_enemy" type="Timer" parent="."]
 

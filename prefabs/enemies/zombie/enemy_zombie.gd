@@ -45,9 +45,8 @@ func _ready() -> void:
 		probability_card =  config.get_value("enemy_zombie", "probability_card", probability_card)
 		probability_modificator =  config.get_value("enemy_zombie", "probability_modificator", probability_modificator)
 		zombie_damage = config.get_value("enemy_zombie", "zombie_damage", 1)
-		var var_scale = config.get_value("enemy_zombie", "enemy_transform_scale",  1.0)
-		#zombi_model.scale *= var_scale
 		collision_areaseeing.radius = config.get_value("enemy_zombie", "enemy_area_scan_player", 1.0)
+		var var_scale = config.get_value("enemy_zombie", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)
 		navigation_agent.path_height_offset = -var_scale
 		#config.save("res://settings.cfg")
@@ -99,7 +98,7 @@ func _get_point_on_circle(radius, angle) -> Vector3:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	super._on_area_3d_body_entered(body)
-	if player_in_area && state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:
+	if state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:
 		_set_state_enemy(enemystate.BEATING)
 
 func take_damage(spell, buf, amount: int):
