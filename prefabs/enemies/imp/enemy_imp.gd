@@ -146,7 +146,7 @@ func take_damage(spell, buf, amount: int):
 		timer_throw.stop()			
 		if is_instance_valid(fireball):
 			fireball.call_deferred("queue_free")
-			_set_state_enemy(enemystate.DEATHING)
+		_set_state_enemy(enemystate.DEATHING)
 		_timers_delete()		
 
 func fireball_create() -> void:
@@ -159,7 +159,7 @@ func fireball_create() -> void:
 	_set_state_enemy(enemystate.THROWING)	
 
 func _on_animation_finished(_anim_name: String) -> void:
-	if !is_alive():
+	if state == enemystate.DEATHING:
 		call_deferred("queue_free")
 	elif player_in_area:
 		fireball_create()

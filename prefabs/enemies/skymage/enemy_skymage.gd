@@ -70,7 +70,7 @@ func _physics_process(delta: float) -> void:
 			_set_state_enemy(enemystate.PRAYING)
 
 func _on_animation_finished(_anim_name: String) -> void:
-	if !is_alive():
+	if state == enemystate.DEATHING:
 		call_deferred("queue_free")
 	elif target_point_pray == Vector3.ZERO:
 		var sphere = skymag_sphere.instantiate()

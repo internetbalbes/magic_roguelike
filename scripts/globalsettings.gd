@@ -16,16 +16,16 @@ var enemy_param = {
 		"enemy_pivot_rotation_speed": 1.0
 	},
 	"zombie": {
-		"label_health_max_value": 3
+		"label_health_max_value": 0
 	},
 	"imp": {
-		"label_health_max_value": 3
+		"label_health_max_value": 0
 	},
 	"boss": {
-		"label_health_max_value": 3
+		"label_health_max_value": 0
 	},
 	"skymage": {
-		"label_health_max_value": 3
+		"label_health_max_value": 0
 	}	
 }
 
@@ -35,5 +35,8 @@ func _ready() -> void:
 	if config.load("res://settings.cfg") == OK:
 		enemy_param["common"]["enemy_pivot_rotation_speed"] = config.get_value("enemy_common", "enemy_pivot_rotation_speed", enemy_param["common"]["enemy_pivot_rotation_speed"])
 		enemy_param["zombie"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_zombie", "enemy_max_health", enemy_param["zombie"]["label_health_max_value"]))
+		enemy_param["imp"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_imp", "enemy_max_health", enemy_param["imp"]["label_health_max_value"]))
+		enemy_param["boss"]["label_health_max_value"] = config.get_value("enemy_boss", "enemy_max_health", enemy_param["boss"]["label_health_max_value"])
+		enemy_param["skymage"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_skymage", "enemy_max_health", enemy_param["skymage"]["label_health_max_value"]))		
 		#config.save("res://settings.cfg")
 	config = null

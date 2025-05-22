@@ -109,7 +109,7 @@ func take_damage(spell, buf, amount: int):
 			if !is_alive():
 				if enemy_pivot_modificator:
 					enemy_pivot_modificator.get_parent().visible = false
-				await action_effect_deathing()
+				call_deferred("action_effect_deathing")
 				collision.set_deferred("disabled", true)
 				if randi_range(1, 100) < probability_card:
 					player.add_card()
