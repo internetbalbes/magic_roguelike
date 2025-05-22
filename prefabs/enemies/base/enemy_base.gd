@@ -107,7 +107,8 @@ func take_damage(spell, buf, amount: int):
 		if is_demage:
 			label_health_value -= amount
 			if !is_alive():
-				enemy_pivot_modificator.get_parent().visible = false
+				if enemy_pivot_modificator:
+					enemy_pivot_modificator.get_parent().visible = false
 				await action_effect_deathing()
 				collision.set_deferred("disabled", true)
 				if randi_range(1, 100) < probability_card:

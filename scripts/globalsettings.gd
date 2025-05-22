@@ -26,8 +26,7 @@ var enemy_param = {
 	},
 	"skymage": {
 		"label_health_max_value": 3
-	},
-	
+	}	
 }
 
 # Called when the node enters the scene tree for the first time.
