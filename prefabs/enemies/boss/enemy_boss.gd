@@ -27,7 +27,6 @@ func _ready() -> void:
 	if config.load("res://settings.cfg") == OK:
 		enemy_speed = config.get_value("enemy_boss", "enemy_speed", enemy_speed)
 		timer_beat.wait_time = config.get_value("enemy_boss", "time_to_beat", timer_beat.wait_time)
-		label_health.max_value = randi_range(1, config.get_value("enemy_boss", "enemy_max_health", label_health.max_value))
 		probability_card =  config.get_value("enemy_boss", "probability_card", probability_card)
 		probability_modificator =  config.get_value("enemy_boss", "probability_modificator", probability_modificator)
 		boss_damage = config.get_value("enemy_boss", "boss_damage", 1)

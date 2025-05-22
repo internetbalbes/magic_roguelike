@@ -31,7 +31,6 @@ func _ready() -> void:
 		enemy_speed = config.get_value("enemy_skymage", "enemy_speed", enemy_speed)
 		enemy_distance_from_portal = config.get_value("enemy_skymage", "enemy_distance_from_portal", enemy_distance_from_portal)
 		timer_throw.wait_time = config.get_value("enemy_skymage", "time_to_throw", 5.0)
-		label_health.max_value = randi_range(1, config.get_value("enemy_skymage", "enemy_max_health", label_health.max_value))
 		probability_card =  config.get_value("enemy_skymage", "probability_card", probability_card)		
 		var var_scale = config.get_value("enemy_skymage", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)

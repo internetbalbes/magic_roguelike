@@ -14,6 +14,10 @@ config/name="magic roguelike"
 run/main_scene="uid://bncskj8iqk8ki"
 config/features=PackedStringArray("4.4", "Forward Plus")
 
+[autoload]
+
+Globalsettings="*res://scripts/globalsettings.gd"
+
 [display]
 
 window/size/viewport_width=1280

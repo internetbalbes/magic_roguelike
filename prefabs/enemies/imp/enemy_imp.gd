@@ -60,7 +60,6 @@ func _ready() -> void:
 		time_to_set_trap = config.get_value("enemy_imp", "time_to_set_trap", time_to_set_trap)		
 		time_after_exit_portal = config.get_value("enemy_imp", "time_after_exit_portal", time_after_exit_portal)
 		collision_areaseeing.radius = config.get_value("enemy_imp", "enemy_area_scan_player", enemy_radius_around_portal)
-		label_health.max_value = randi_range(1, config.get_value("enemy_imp", "enemy_max_health", label_health.max_value))
 		probability_card =  config.get_value("enemy_imp", "probability_card", probability_card)
 		var var_scale = config.get_value("enemy_imp", "enemy_transform_scale",  1.0)
 		scale = Vector3(var_scale, var_scale, var_scale)

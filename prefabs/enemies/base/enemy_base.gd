@@ -1,12 +1,12 @@
 extends CharacterBody3D
 
 @onready var collision: CollisionShape3D = $CollisionShape3D
-@onready var label_health: ProgressBar = $subviewport/progressbar_health
-@onready var label_buf: HBoxContainer = $subviewport/hboxcontainer_status
-@onready var sprite_status: Sprite3D = $sprite_status
 @export var world: Node3D
 @export var player : CharacterBody3D
 
+var enemy_pivot: Node3D
+var enemy_pivot_modificator: Node3D
+var enemy_pivot_buf: Node3D
 var area: Area3D
 # collision are seeing scan for player
 var collision_areaseeing: Shape3D
@@ -18,11 +18,6 @@ var player_in_area: bool = false
 var enemy_pooling_to_point: Vector3 = Vector3.ZERO
 # array of Buf
 var list_buf: Array
-# array of all modificators
-var list_modificators = {
-	"water_resist": {"texture": load("res://sprites/water_resist_icon.png")},
-	"magic_resist": {"texture": load("res://sprites/magic_resist_icon.png")}
-}
 # modificators value's probability
 var probability_modificator = 50.0
 # array of enemy modificators
@@ -35,6 +30,7 @@ var size_blood_on_floor : Vector3 = Vector3.ONE
 var enemy_config = ""
 var enemy_type = ""
 var enemy_effect : Node3D
+var label_health_value = 0
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -46,11 +42,13 @@ func _ready() -> void:
 		area = get_node("area_seeing")
 		collision_areaseeing = area.get_node("CollisionShape3D").shape
 		area.body_entered.connect(_on_area_3d_body_entered)
-		area.body_exited.connect(_on_area_3d_body_exited)
+		area.body_exited.connect(_on_area_3d_body_exited)	
 	collision_shape = collision.shape
-	label_health.value = label_health.max_value
+	label_health_value = Globalsettings.enemy_param[enemy_type]["label_health_max_value"]
+	#_add_modificator_to_list("water_resist")
+	#_add_buf_to_list("wet")
 	if randi_range(1, 100) < probability_modificator:
-		var keys = list_modificators.keys()
+		var keys = Globalsettings.enemy_list_modificators.keys()
 		_add_modificator_to_list(keys[randi_range(0, keys.size()-1)])
 
 func _physics_process(delta: float) -> void:
@@ -58,12 +56,21 @@ func _physics_process(delta: float) -> void:
 		## Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta		
 		move_and_slide()
-	
+
 func _on_area_3d_body_entered(_body: Node3D) -> void:
 	player_in_area = true
 		
 func _on_area_3d_body_exited(_body: Node3D) -> void:
 	player_in_area = false
+	
+func create_enemy_pivot():
+	if !enemy_pivot:
+		enemy_pivot = load("res://prefabs/enemies/base/enemy_pivot.tscn").instantiate()
+		add_child(enemy_pivot)
+		enemy_pivot_modificator = enemy_pivot.get_node("modificator")
+		enemy_pivot_modificator.visible = false
+		enemy_pivot_buf =  enemy_pivot.get_node("buf")
+		enemy_pivot_buf.visible = false	
 
 func get_enemy_effect():
 	if !enemy_effect:
@@ -72,7 +79,7 @@ func get_enemy_effect():
 		enemy_effect.deathing.emitting = false
 		enemy_effect.deathing.one_shot = true
 		enemy_effect.blood_drop.emitting = false
-		enemy_effect.blood_drop.one_shot = true		
+		enemy_effect.blood_drop.one_shot = true
 	return enemy_effect
 
 func take_damage_beat(spell, buf, amount, _position):
@@ -98,8 +105,9 @@ func take_damage(spell, buf, amount: int):
 			else:
 				is_demage = false
 		if is_demage:
-			label_health.value -= amount
+			label_health_value -= amount
 			if !is_alive():
+				enemy_pivot_modificator.get_parent().visible = false
 				await action_effect_deathing()
 				collision.set_deferred("disabled", true)
 				if randi_range(1, 100) < probability_card:
@@ -109,12 +117,11 @@ func take_damage(spell, buf, amount: int):
 				if portal:
 					portal.list_enemy.erase(self)
 					portal.list_new_enemy.erase(self)
-				$sprite_status.set_deferred("visible", false)
 			elif buf:
 				_add_buf_to_list(buf)
  
 func action_effect_deathing():
-	enemy_effect.deathing.reparent(world)
+	get_enemy_effect().deathing.reparent(world)
 	enemy_effect.deathing.emitting = true
 	await get_tree().create_timer(enemy_effect.deathing.lifetime).timeout
 	enemy_effect.deathing.queue_free()
@@ -125,7 +132,7 @@ func _set_portal(object: Node3D, _angle: float) ->void:
 		global_transform.origin = portal.global_transform.origin + Vector3(0, collision_shape.height/2, 0)
 
 func is_alive() -> bool:
-	return label_health.value > 0
+	return label_health_value > 0
 
 func rotate_towards_target(target_pos, delta):
 	var current = global_transform.basis.get_euler()
@@ -144,18 +151,22 @@ func _get_object_height() -> float:
 		
 func _add_buf_to_list(name_buf):
 	if !list_buf.has(name_buf):
-		var icon = TextureRect.new()
-		if name_buf == "wet":  
-			icon.texture = load("res://sprites/wet_icon.png") as Texture2D
-		icon.stretch_mode = TextureRect.STRETCH_KEEP	
-		label_buf.add_child(icon)
+		create_enemy_pivot()
+		var node_buf = enemy_pivot_buf.duplicate()
+		node_buf.mesh.material.albedo_texture =  Globalsettings.enemy_list_bufs[name_buf].texture
+		node_buf.mesh.material.emission_texture =  Globalsettings.enemy_list_bufs[name_buf].texture
+		node_buf.visible = true
+		node_buf.position.y = _get_object_height() / 2 * 1.1
+		enemy_pivot.add_child(node_buf)
 		list_buf.append(name_buf)	
 	
 func _add_modificator_to_list(name_modificator):
-	var icon = TextureRect.new()
-	icon.texture = list_modificators[name_modificator].texture
-	icon.stretch_mode = TextureRect.STRETCH_KEEP	
-	label_buf.add_child(icon)
+	create_enemy_pivot()
+	var node_modificator = enemy_pivot_modificator.duplicate()
+	node_modificator.mesh.material.albedo_texture =  Globalsettings.enemy_list_modificators[name_modificator].texture
+	node_modificator.mesh.material.emission_texture =  Globalsettings.enemy_list_modificators[name_modificator].texture	
+	node_modificator.visible = true
+	enemy_pivot.add_child(node_modificator)
 	enemy_list_modificators.append(name_modificator)
 		
 func find_buf(name_buf)->bool:

@@ -5,4 +5,7 @@
 [resource]
 transparency = 1
 albedo_texture = ExtResource("1_icq04")
+emission_enabled = true
+emission = Color(0.960784, 0.211765, 0.972549, 1)
+emission_energy_multiplier = 5.33
 texture_filter = 4

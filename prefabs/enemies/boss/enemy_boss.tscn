@@ -1,27 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://can3f0g0u7hl4"]
+[gd_scene load_steps=5 format=3 uid="uid://can3f0g0u7hl4"]
 
 [ext_resource type="Script" uid="uid://dvtb6b2442tky" path="res://prefabs/enemies/boss/enemy_boss.gd" id="1_x35jq"]
 [ext_resource type="PackedScene" uid="uid://c54e6d825ut5x" path="res://prefabs/enemies/kishi/kishi_model.tscn" id="3_fkwwb"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mmqd8"]
 height = 2.7
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_wcryj"]
-viewport_path = NodePath("subviewport")
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_efbew"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-bg_color = Color(1, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rj7n6"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-bg_color = Color(0, 1, 0, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_dxomk"]
 height = 3.23816
@@ -39,47 +22,6 @@ one_shot = true
 shape = SubResource("CapsuleShape3D_mmqd8")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-
-[node name="sprite_status" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
-billboard = 1
-no_depth_test = true
-texture_filter = 0
-texture = SubResource("ViewportTexture_wcryj")
-
-[node name="subviewport" type="SubViewport" parent="."]
-disable_3d = true
-transparent_bg = true
-handle_input_locally = false
-canvas_item_default_texture_filter = 0
-size = Vector2i(128, 48)
-
-[node name="hboxcontainer_status" type="HBoxContainer" parent="subviewport"]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -64.0
-offset_right = 64.0
-offset_bottom = 32.0
-grow_horizontal = 2
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="progressbar_health" type="ProgressBar" parent="subviewport"]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -32.0
-offset_top = -16.0
-offset_right = 32.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/background = SubResource("StyleBoxFlat_efbew")
-theme_override_styles/fill = SubResource("StyleBoxFlat_rj7n6")
-show_percentage = false
 
 [node name="area_seeing" type="Area3D" parent="."]
 collision_layer = 2048
