@@ -2,20 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b07wh0ch8le02"
-path.s3tc="res://.godot/imported/enemy_model_enemy.png-66c4a250bcf0aa833ae79259a3834f92.s3tc.ctex"
+uid="uid://bkjo87slikg1m"
+path.s3tc="res://.godot/imported/well.png-a65c39c09629ee5bc91343357dabc306.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
-generator_parameters={
-"md5": "e456c128e368ecfddd990de2e3dbffab"
-}
 
 [deps]
 
-source_file="res://prefabs/enemies/imp/enemy_model_enemy.png"
-dest_files=["res://.godot/imported/enemy_model_enemy.png-66c4a250bcf0aa833ae79259a3834f92.s3tc.ctex"]
+source_file="res://map_generator/prefabs/well/well.png"
+dest_files=["res://.godot/imported/well.png-a65c39c09629ee5bc91343357dabc306.s3tc.ctex"]
 
 [params]
 

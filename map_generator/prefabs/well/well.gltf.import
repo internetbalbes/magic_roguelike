@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d0d3esowyxxv0"
-path="res://.godot/imported/imp_model.gltf-531e3b02a5f4a751bfe4a7f0f31b951b.scn"
+uid="uid://1tq601nm76ls"
+path="res://.godot/imported/well.gltf-a7d563218b538a9a79fa5052069a4c94.scn"
 
 [deps]
 
-source_file="res://prefabs/enemies/imp/imp_model.gltf"
-dest_files=["res://.godot/imported/imp_model.gltf-531e3b02a5f4a751bfe4a7f0f31b951b.scn"]
+source_file="res://map_generator/prefabs/well/well.gltf"
+dest_files=["res://.godot/imported/well.gltf-a7d563218b538a9a79fa5052069a4c94.scn"]
 
 [params]
 

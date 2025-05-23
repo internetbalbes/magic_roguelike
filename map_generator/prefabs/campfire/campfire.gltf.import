@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d0d3esowyxxv0"
-path="res://.godot/imported/imp_model.gltf-531e3b02a5f4a751bfe4a7f0f31b951b.scn"
+uid="uid://kqjbie8fftt3"
+path="res://.godot/imported/campfire.gltf-f295b33bec3abe297b8c61abd2b272af.scn"
 
 [deps]
 
-source_file="res://prefabs/enemies/imp/imp_model.gltf"
-dest_files=["res://.godot/imported/imp_model.gltf-531e3b02a5f4a751bfe4a7f0f31b951b.scn"]
+source_file="res://map_generator/prefabs/campfire/campfire.gltf"
+dest_files=["res://.godot/imported/campfire.gltf-f295b33bec3abe297b8c61abd2b272af.scn"]
 
 [params]
 
@@ -34,4 +34,4 @@ animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={}
 gltf/naming_version=1
-gltf/embedded_image_handling=3
+gltf/embedded_image_handling=2

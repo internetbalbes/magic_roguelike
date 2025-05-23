@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxm20d8x3pl5h"
-path.s3tc="res://.godot/imported/imp_model-imp_model.png-630be97787d077445c53bf839f5cc985.s3tc.ctex"
+uid="uid://bo1koybus4ei3"
+path.s3tc="res://.godot/imported/akaki-akaki.png-0ef75c4c3abe3dd0bfc214cc1e99fd66.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://prefabs/enemies/imp/imp_model-imp_model.png"
-dest_files=["res://.godot/imported/imp_model-imp_model.png-630be97787d077445c53bf839f5cc985.s3tc.ctex"]
+source_file="res://prefabs/enemies/imp/akaki-akaki.png"
+dest_files=["res://.godot/imported/akaki-akaki.png-0ef75c4c3abe3dd0bfc214cc1e99fd66.s3tc.ctex"]
 
 [params]
 

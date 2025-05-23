@@ -6,6 +6,18 @@ const ENVIRONMENT_OBJECTS = {
 		"amount_per_tile" = 5,
 		"amount_per_chunk" = 0,
 		"scale" = 0.05
+	},
+	"well" = {
+		"prefab_path" = "res://map_generator/prefabs/well/well.tscn",
+		"amount_per_tile" = 1,
+		"amount_per_chunk" = 0,
+		"scale" = 0.03
+	},
+	"campfire" = {
+		"prefab_path" = "res://map_generator/prefabs/campfire/campfire.tscn",
+		"amount_per_tile" = 1,
+		"amount_per_chunk" = 0,
+		"scale" = 0.02
 	}
 }
 
@@ -106,6 +118,8 @@ func visualize_chunk():
 					current_tile.add_child(created_prefab)
 				"corner":
 					create_corner(x,y,chunk_array[x][y].corner_y_rotate)
+				"corner_connector":
+					create_corner_connector(x,y,chunk_array[x][y].corner_y_rotate)	
 							
 func create_chunk_prefab():
 	created_prefab = chunk_prefab.instantiate()
@@ -172,12 +186,6 @@ func create_corners():
 				elif y + 1 <= CHUNK_SIZE - 1 and chunk_array[x][y + 1].relief == "ground":
 					chunk_array[x][y].relief = "corner"
 					chunk_array[x][y].corner_y_rotate = 270
-					
-	for x in range(CHUNK_SIZE):
-		for y in range(CHUNK_SIZE):
-			if chunk_array[x][y].relief == "corner":
-				if x + 1 <= CHUNK_SIZE - 1 and chunk_array[x + 1][y].relief == "ground":
-					chunk_array[x][y].corner_y_rotate = 0
 
 func create_corner(x,y,y_rotate):
 	created_prefab = corner_prefab.instantiate()
@@ -185,7 +193,16 @@ func create_corner(x,y,y_rotate):
 	created_prefab.name = "corner_" + str(x) + "_" + str(y)
 	created_prefab.rotation_degrees.y = y_rotate
 	current_tile.add_child(created_prefab)
+	
+var corner_connector_prefab = load("res://map_generator/prefabs/corner_connector/corner_connector.tscn")
 
+func create_corner_connector(x,y,y_rotate):
+	created_prefab = corner_connector_prefab.instantiate()
+	created_prefab.position = Vector3(x,0.0625,y)
+	created_prefab.name = "corner_connector_" + str(x) + "_" + str(y)
+	created_prefab.rotation_degrees.y = y_rotate
+	current_tile.add_child(created_prefab)
+	
 var environment_object
 var object_data
 var random_chunk_array_index = Vector2i()
