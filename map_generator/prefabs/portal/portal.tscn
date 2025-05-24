@@ -72,7 +72,7 @@ radius = 3.0
 affect_navigation_mesh = true
 
 [node name="portal_model" parent="." instance=ExtResource("4_ac6d7")]
-transform = Transform3D(-2.18557e-08, 0, 0.5, 0, 0.5, 0, -0.5, 0, -2.18557e-08, 0, 12.4, 0)
+transform = Transform3D(-2.18557e-08, 0, 0.5, 0, 0.5, 0, -0.5, 0, -2.18557e-08, 0, 13.0402, 0)
 
 [node name="GPUParticlesAttractorSphere3D" type="GPUParticlesAttractorSphere3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)

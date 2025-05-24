@@ -39,7 +39,7 @@ float fbm ( in vec2 _st) {
 
 void fragment() {
 	vec2 st = UV * 5.0;
-	vec3 color = vec3(1.0);
+	vec3 color = vec3(0.0);
 
 	vec2 q = vec2(1.);
 	q.x = fbm( st + 0.00 * TIME);

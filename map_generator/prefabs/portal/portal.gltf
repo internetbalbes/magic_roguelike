@@ -15,12 +15,25 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"portal_model"
+			"name":"portal"
+		}
+	],
+	"materials":[
+		{
+			"alphaMode":"BLEND",
+			"doubleSided":true,
+			"name":"portal",
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":0
+				},
+				"metallicFactor":0
+			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"portal_model",
+			"name":"portal",
 			"primitives":[
 				{
 					"attributes":{
@@ -28,76 +41,96 @@
 						"NORMAL":1,
 						"TEXCOORD_0":2
 					},
-					"indices":3
+					"indices":3,
+					"material":0
 				}
 			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"portal",
+			"uri":"portal.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":762,
+			"count":888,
 			"max":[
-				16.48857307434082,
-				5.650332927703857,
-				3.187405824661255
+				23.939781188964844,
+				5.4102983474731445,
+				2.6306397914886475
 			],
 			"min":[
-				-16.48857307434082,
-				-14.286384582519531,
-				-1.8179049491882324
+				-23.939781188964844,
+				-37.3969841003418,
+				-14.413216590881348
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":762,
+			"count":888,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":762,
+			"count":888,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":1170,
+			"count":1332,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":9144,
+			"byteLength":10656,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":9144,
-			"byteOffset":9144,
+			"byteLength":10656,
+			"byteOffset":10656,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":6096,
-			"byteOffset":18288,
+			"byteLength":7104,
+			"byteOffset":21312,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2340,
-			"byteOffset":24384,
+			"byteLength":2664,
+			"byteOffset":28416,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9728,
+			"minFilter":9984
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":26724,
+			"byteLength":31080,
 			"uri":"portal.bin"
 		}
 	]
