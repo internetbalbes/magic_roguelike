@@ -35,5 +35,5 @@ transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74
 mesh = SubResource("PlaneMesh_kns2i")
 
 [node name="buf" type="MeshInstance3D" parent="."]
-transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0, 0.5, 0)
+transform = Transform3D(-1, -8.9407e-08, 1.77636e-15, 0, -4.37114e-08, -1, 8.9407e-08, -1, 4.37114e-08, 0, 0.80377, 0)
 mesh = SubResource("PlaneMesh_wmki3")

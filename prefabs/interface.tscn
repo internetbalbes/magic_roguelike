@@ -62,12 +62,12 @@ size_flags_vertical = 10
 [node name="progressbar_reload_coldsteel" type="ProgressBar" parent="."]
 z_index = 1
 anchors_preset = -1
-anchor_top = 0.875
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -134.0
-offset_right = -1152.0
-offset_bottom = -208.0
+offset_left = 920.0
+offset_top = 551.0
+offset_right = -936.0
+offset_bottom = -513.0
 grow_horizontal = 2
 grow_vertical = 2
 show_percentage = false
@@ -77,8 +77,8 @@ layout_mode = 3
 anchor_top = 0.642
 anchor_right = 0.1
 anchor_bottom = 0.819
-offset_top = 33.76
-offset_bottom = 34.3199
+offset_top = 148.64
+offset_bottom = 149.2
 
 [node name="book" type="TextureRect" parent="spells"]
 layout_mode = 2
@@ -102,9 +102,10 @@ anchor_left = 0.625
 anchor_top = 0.18
 anchor_right = 0.891
 anchor_bottom = 0.641
-offset_top = -0.0399742
-offset_right = -0.0480042
-offset_bottom = -0.047905
+offset_left = -51.0
+offset_top = -0.509579
+offset_right = -51.048
+offset_bottom = -0.517509
 label_settings = ExtResource("1_6qr8u")
 
 [node name="hp" type="PanelContainer" parent="."]
@@ -148,13 +149,16 @@ size_flags_vertical = 4
 texture = ExtResource("2_6qr8u")
 
 [node name="enemy_appear" type="HBoxContainer" parent="."]
+layout_direction = 3
 anchors_preset = -1
 anchor_left = 0.846
 anchor_top = 0.928
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.119995
-offset_top = -0.160034
+offset_left = -1623.88
+offset_top = -0.23999
+offset_right = -1624.0
+offset_bottom = -0.0799561
 grow_horizontal = 0
 grow_vertical = 0
 theme = ExtResource("4_hbh6n")
@@ -183,20 +187,19 @@ vertical_alignment = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 246.0
-offset_top = 18.0
-offset_right = -234.0
-offset_bottom = -507.0
+offset_left = 6.0
+offset_top = -123.0
+offset_right = -474.0
+offset_bottom = -648.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "WASD - \"Movement\"
-LMB - \"Cast spell\" or \"Use card\"
-RMB - \"Melee attack\"
+RMB - \"Cast spell\" or \"Use card\"
+LMB - \"Melee attack\"
 Wheel click - \"Spell choice\" or \"Deck\"
 Wheel button - \"Change card from deck\"
 "
 label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="card_hint" type="Label" parent="."]
