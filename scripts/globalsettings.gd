@@ -27,7 +27,7 @@ var enemy_param = {
 		"enemy_speed_run": 0.0,
 		"time_to_beat": 0.0,
 		"probability_card": 0.0,
-		"zombie_damage": 0.0,
+		"damage": 0.0,
 		"enemy_area_scan_player": 0.0,
 		"enemy_transform_scale": 0.0	
 	},
@@ -51,7 +51,7 @@ var enemy_param = {
 		"time_to_beat": 0,
 		"probability_card": 0,
 		"probability_modificator": 0,
-		"boss_damage": 0,
+		"damage": 0,
 		"enemy_area_scan_player": 0,
 		"enemy_transform_scale": 0,
 	},
@@ -88,7 +88,7 @@ func _ready() -> void:
 		enemy_param["zombie"]["enemy_speed_run"] = config.get_value("enemy_zombie", "enemy_speed_run", enemy_param["zombie"]["enemy_speed_run"])
 		enemy_param["zombie"]["time_to_beat"] = config.get_value("enemy_zombie", "time_to_beat", enemy_param["zombie"]["time_to_beat"])
 		enemy_param["zombie"]["probability_card"] = config.get_value("enemy_zombie", "probability_card", enemy_param["zombie"]["probability_card"])
-		enemy_param["zombie"]["zombie_damage"] = config.get_value("enemy_zombie", "zombie_damage", enemy_param["zombie"]["zombie_damage"])
+		enemy_param["zombie"]["damage"] = config.get_value("enemy_zombie", "damage", enemy_param["zombie"]["damage"])
 		enemy_param["zombie"]["enemy_area_scan_player"] = config.get_value("enemy_zombie", "enemy_area_scan_player", enemy_param["zombie"]["enemy_area_scan_player"])
 		enemy_param["zombie"]["enemy_transform_scale"] = config.get_value("enemy_zombie", "enemy_transform_scale",  enemy_param["zombie"]["enemy_transform_scale"])
 		
@@ -113,7 +113,7 @@ func _ready() -> void:
 		enemy_param["boss"]["enemy_speed"] = config.get_value("enemy_boss", "enemy_speed", enemy_param["boss"]["enemy_speed"])
 		enemy_param["boss"]["time_to_beat"] = config.get_value("enemy_boss", "time_to_beat", enemy_param["boss"]["time_to_beat"])
 		enemy_param["boss"]["probability_card"] =  config.get_value("enemy_boss", "probability_card", enemy_param["boss"]["probability_card"])
-		enemy_param["boss"]["boss_damage"] = config.get_value("enemy_boss", "boss_damage", enemy_param["boss"]["boss_damage"])
+		enemy_param["boss"]["damage"] = config.get_value("enemy_boss", "damage", enemy_param["boss"]["damage"])
 		enemy_param["boss"]["enemy_area_scan_player"] = config.get_value("enemy_boss", "enemy_area_scan_player", enemy_param["boss"]["enemy_area_scan_player"])
 		enemy_param["boss"]["enemy_transform_scale"] = config.get_value("enemy_boss", "enemy_transform_scale", enemy_param["boss"]["enemy_transform_scale"])
 		

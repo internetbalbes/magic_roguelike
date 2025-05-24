@@ -118,7 +118,7 @@ func _set_state_enemy(value)->void:
 
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
-		player.take_damage(Globalsettings.enemy_param[enemy_type]["boss_damage"])	
+		player.take_damage(Globalsettings.enemy_param[enemy_type]["damage"])	
 
 func _on_timer_run_to_player_timeout() -> void:
 	if target_position.distance_to(player.global_position) > 0.5:

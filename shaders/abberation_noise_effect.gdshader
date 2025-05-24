@@ -10,7 +10,6 @@ float random(vec2 st) {
 }
 
 void fragment() {
-	
 	// Chromatic aberration offsets
 	vec2 offset = vec2(0.001 * aberration_strength);
 	float r = texture(screen_texture, UV + offset).r;
