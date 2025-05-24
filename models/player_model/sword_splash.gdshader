@@ -26,13 +26,13 @@ void fragment() {
 
     // Odległość od linii pionowej w środku
     float dist = abs(UV.x - 0.5);
-    
+
     // Tylko w pobliżu linii – wpływ maleje wraz z oddaleniem
     float influence = smoothstep(0.1, 0.0, dist);
-    
+
     // Animowany noise przesuwający UV
     float n = noise(vec2(UV.y * 1.0, TIME * time_speed));
-    
+
     // Przemieszczamy UV ekranu na podstawie noise i influence
     vec2 offset = vec2((n - 0.9), 0.5) * noise_strength * influence;
     vec4 distorted = texture(screen_texture, uv + offset);

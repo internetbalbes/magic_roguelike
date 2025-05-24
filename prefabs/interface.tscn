@@ -33,9 +33,9 @@ vertical_alignment = 1
 [node name="texturerect_card" type="TextureRect" parent="."]
 z_index = 1
 offset_left = 218.0
-offset_top = 462.0
+offset_top = 461.0
 offset_right = 1280.0
-offset_bottom = 592.0
+offset_bottom = 591.0
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -44,8 +44,9 @@ anchor_top = 0.823
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 0.399994
-offset_top = -0.559998
+offset_top = -1.56
 offset_right = -83.0
+offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -197,3 +198,10 @@ Wheel button - \"Change card from deck\"
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="card_hint" type="Label" parent="."]
+offset_left = 217.0
+offset_top = 407.0
+offset_right = 218.0
+offset_bottom = 437.0
+label_settings = ExtResource("1_6qr8u")

@@ -17,39 +17,17 @@ enum enemystate {
 	POOLING_TO_POINT,	# state pooling to point
 	DEATHING	# state deathing
 }
-# enemy's run
-var enemy_speed_walk = 0.55
- # enemy's walk
-var enemy_speed_run = 2.5
- # cirkle's radius where patrol enemy
-var enemy_radius_around_portal = 10.0
- # count segmentów in cirkle where patrol enemy
-var count_segments_around_portal = 36 
-# enemy's speed walk or run
-var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
-var zombie_damage = 1.0
 var target_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	super._ready()
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		enemy_speed_walk = config.get_value("enemy_zombie", "enemy_speed_walk", enemy_speed_walk)
-		enemy_speed_run = config.get_value("enemy_zombie", "enemy_speed_run", enemy_speed_run)
-		enemy_radius_around_portal = config.get_value("enemy_zombie", "enemy_radius_around_portal", enemy_radius_around_portal)
-		count_segments_around_portal = config.get_value("enemy_zombie", "count_segments_around_portal", count_segments_around_portal)
-		timer_beat.wait_time = config.get_value("enemy_zombie", "time_to_beat", timer_beat.wait_time)
-		probability_card =  config.get_value("enemy_zombie", "probability_card", probability_card)
-		probability_modificator =  config.get_value("enemy_zombie", "probability_modificator", probability_modificator)
-		zombie_damage = config.get_value("enemy_zombie", "zombie_damage", 1)
-		collision_areaseeing.radius = config.get_value("enemy_zombie", "enemy_area_scan_player", 1.0)
-		var var_scale = config.get_value("enemy_zombie", "enemy_transform_scale",  1.0)
-		scale = Vector3(var_scale, var_scale, var_scale)
-		navigation_agent.path_height_offset = -var_scale
-		#config.save("res://settings.cfg")
-	config = null		
+	timer_beat.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_beat"]
+	collision_areaseeing.radius = Globalsettings.enemy_param[enemy_type]["enemy_area_scan_player"]
+	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
+	scale = Vector3(var_scale, var_scale, var_scale)
+	navigation_agent.path_height_offset = -var_scale
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("run").loop = true
@@ -81,8 +59,8 @@ func _physics_process(delta: float) -> void:
 			#global_transform.origin = global_transform.origin + move_vector
 		elif state in [enemystate.WALKING_PORTAL] && portal && (navigation_agent.is_navigation_finished()):
 			# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
-			navigation_agent.target_position = _get_point_on_circle(enemy_radius_around_portal, enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))			
-			enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
+			navigation_agent.target_position = _get_point_on_circle( Globalsettings.enemy_param[enemy_type]["enemy_radius_around_portal"], enemy_angle_to_walk * (2.0 * PI /  Globalsettings.enemy_param["common"]["count_segments_around_portal"]))
+			enemy_angle_to_walk = randf_range(1,  Globalsettings.enemy_param["common"]["count_segments_around_portal"])
 
 func _get_point_on_circle_around_player() -> Vector3:
 	var angle = deg_to_rad(randf_range(0.0, 180.0))
@@ -135,7 +113,7 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
 	if portal:
-		enemy_angle_to_walk = angle * count_segments_around_portal / 360
+		enemy_angle_to_walk = angle *  Globalsettings.enemy_param["common"]["count_segments_around_portal"] / 360
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	elif state == enemystate.WALKING_PORTAL:
 		target_position = player.global_position
@@ -147,12 +125,12 @@ func _set_state_enemy(value)->void:
 		enemystate.RUNNING_TO_PLAYER:
 			state = enemystate.RUNNING_TO_PLAYER
 			animation_player.play("run")
-			enemy_speed = enemy_speed_run
+			enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
 			timer_run_to_player.start()
 		enemystate.WALKING_PORTAL:
 			state = enemystate.WALKING_PORTAL
 			animation_player.play("walk")
-			enemy_speed = enemy_speed_walk
+			enemy_speed =  Globalsettings.enemy_param[enemy_type]["enemy_speed_walk"]
 		enemystate.BEATING:
 			state = enemystate.BEATING
 			animation_player.play("melee")
@@ -161,14 +139,14 @@ func _set_state_enemy(value)->void:
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
-			enemy_speed = enemy_speed_run
+			enemy_speed =  Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")
 
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
-		player.take_damage(zombie_damage)	
+		player.take_damage( Globalsettings.enemy_param[enemy_type]["zombie_damage"])	
 
 func _on_timer_run_to_player_timeout() -> void:
 	if target_position.distance_to(player.global_position) > 0.5:

@@ -16,26 +16,16 @@ enum enemystate {
 	POOLING_TO_POINT,	# state pooling to point
 	DEATHING	# state deathing
 }
-# enemy's speed run or run
-var enemy_speed = 1.0
-var boss_damage = 1.0
+
 var target_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	super._ready()
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		enemy_speed = config.get_value("enemy_boss", "enemy_speed", enemy_speed)
-		timer_beat.wait_time = config.get_value("enemy_boss", "time_to_beat", timer_beat.wait_time)
-		probability_card =  config.get_value("enemy_boss", "probability_card", probability_card)
-		probability_modificator =  config.get_value("enemy_boss", "probability_modificator", probability_modificator)
-		boss_damage = config.get_value("enemy_boss", "boss_damage", 1)
-		collision_areaseeing.radius = config.get_value("enemy_boss", "enemy_area_scan_player", 1.0)		
-		var var_scale = config.get_value("enemy_boss", "enemy_transform_scale",  1.0)
-		scale = Vector3(var_scale, var_scale, var_scale)
-		navigation_agent.path_height_offset = -var_scale
-		#config.save("res://settings.cfg")
-	config = null
+	enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed"]
+	timer_beat.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_beat"]
+	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
+	scale = Vector3(var_scale, var_scale, var_scale)
+	navigation_agent.path_height_offset = -var_scale
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("run").loop = true
 	
@@ -128,7 +118,7 @@ func _set_state_enemy(value)->void:
 
 func _on_timer_beat_timeout() -> void:
 	if player_in_area:
-		player.take_damage(boss_damage)	
+		player.take_damage(Globalsettings.enemy_param[enemy_type]["boss_damage"])	
 
 func _on_timer_run_to_player_timeout() -> void:
 	if target_position.distance_to(player.global_position) > 0.5:

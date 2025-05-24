@@ -1,6 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://s5d11j0cvofr"]
+[gd_scene load_steps=5 format=3 uid="uid://s5d11j0cvofr"]
+
+[ext_resource type="Shader" uid="uid://c52b7dcxep5c1" path="res://shaders/fog.gdshader" id="1_0r0oy"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fjy3w"]
+render_priority = 0
+shader = ExtResource("1_0r0oy")
+shader_parameter/octave_count = 5
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_jhx03"]
+material = SubResource("ShaderMaterial_fjy3w")
 size = Vector2(1, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_0bhwp"]

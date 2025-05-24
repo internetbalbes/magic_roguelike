@@ -17,26 +17,16 @@ enum enemystate {
 	DEATHING	# state deathing
 }
 
- # enemy's walk
-var enemy_speed = 0.55
- # distance from portal
-var enemy_distance_from_portal = 10.0
 # enemy pray's point
 var target_point_pray = Vector3.ZERO
 
 func _ready() -> void:	
 	super._ready()
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		enemy_speed = config.get_value("enemy_skymage", "enemy_speed", enemy_speed)
-		enemy_distance_from_portal = config.get_value("enemy_skymage", "enemy_distance_from_portal", enemy_distance_from_portal)
-		timer_throw.wait_time = config.get_value("enemy_skymage", "time_to_throw", 5.0)
-		probability_card =  config.get_value("enemy_skymage", "probability_card", probability_card)		
-		var var_scale = config.get_value("enemy_skymage", "enemy_transform_scale",  1.0)
-		scale = Vector3(var_scale, var_scale, var_scale)
-		navigation_agent.path_height_offset = -var_scale		
-		#config.save("res://settings.cfg")
-	config = null
+	enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed"]
+	timer_throw.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_throw"]
+	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
+	scale = Vector3(var_scale, var_scale, var_scale)
+	navigation_agent.path_height_offset = -var_scale		
 	sphere_guard.player = player
 	animation_player.animation_finished.connect(_on_animation_finished)
 	animation_player.get_animation("walk").loop = true
@@ -120,7 +110,7 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
 	if portal:
-		var radius = enemy_distance_from_portal + randf_range(1, 10)
+		var radius = Globalsettings.enemy_param[enemy_type]["enemy_distance_from_portal"] + randf_range(1, 10)
 		var x = radius * cos(deg_to_rad(angle))
 		var z = radius * sin(deg_to_rad(angle))
 		target_point_pray = global_transform.origin + Vector3(x, 0, z)

@@ -23,18 +23,12 @@ var time_rest_create_new_enemy = time_create_new_enemy
 var portal_create_new_enemy_count = 1
 #groupe's size new enemies
 var portal_create_new_enemy_groupe_count = 2
-# modificators value's probability
-var probability_modificator = 50.0
-# modificators value's maximum probability
-var probability_modificator_maximum=50
-# modificators value's increase= probability
-var probability_modificator_increase=1
 # list enemy's prefab
-var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies/imp/enemy_imp.tscn"), "spawn_rate": 0, "enemy_config": "enemy_imp"},
-						{"name": "skymage", "prefab": preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"), "spawn_rate": 0, "enemy_config": "enemy_skymage"},
-						{"name": "zombie", "prefab": preload("res://prefabs/enemies/zombie/enemy_zombie.tscn"), "spawn_rate": 0, "enemy_config": "enemy_zombie"}
+var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies/imp/enemy_imp.tscn"), "spawn_rate": 0},
+						{"name": "skymage", "prefab": preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"), "spawn_rate": 0},
+						{"name": "zombie", "prefab": preload("res://prefabs/enemies/zombie/enemy_zombie.tscn"), "spawn_rate": 0}
 						]
-var boss_prefab = {"name": "boss", "prefab": preload("res://prefabs/enemies/boss/enemy_boss.tscn"), "spawn_rate": 0, "enemy_config": "enemy_boss"}
+var boss_prefab = {"name": "boss", "prefab": preload("res://prefabs/enemies/boss/enemy_boss.tscn"), "spawn_rate": 0}
 var player_in_area: bool = false
 
 signal portal_before_destroyed()
@@ -48,9 +42,6 @@ func _ready() -> void:
 		portal_create_new_enemy_count = config.get_value("portal", "portal_create_new_enemy_count", portal_create_new_enemy_count)
 		time_create_new_enemy = config.get_value("portal", "portal_create_new_enemy_time", 5)
 		portal_create_new_enemy_groupe_count = config.get_value("portal", "portal_create_new_enemy_groupe_count", portal_create_new_enemy_groupe_count)
-		probability_modificator =  config.get_value("portal", "probability_modificator", probability_modificator)
-		probability_modificator_maximum =  config.get_value("portal", "probability_modificator_maximum", probability_modificator_maximum)
-		probability_modificator_increase =  config.get_value("portal", "probability_modificator_increase", probability_modificator_increase)
 		area_observe_collision.radius =  config.get_value("portal", "area_observe_radius", 10.0)
 		for obj in list_prefabenemy:
 			obj.spawn_rate = config.get_value("enemy_spawn_rate", obj.name, obj.spawn_rate)	
@@ -75,8 +66,6 @@ func create_enemy(enemy_param)->Node:
 	enemy.player = player
 	enemy.world = world
 	enemy.enemy_type = enemy_param.name
-	enemy.enemy_config = enemy_param.enemy_config
-	enemy.probability_modificator = probability_modificator
 	return enemy
 
 func create_enemies(count) -> void:
@@ -114,7 +103,7 @@ func portal_free() -> void:
 	emit_signal("enemy_appear_spawn", count_enemy_appear_spawn)
 	if is_instance_valid(player):		
 		player.portal_free()
-	probability_modificator = min(probability_modificator + probability_modificator_increase, probability_modificator_maximum)
+	Globalsettings.enemy_param["common"]["probability_modificator"] = min(Globalsettings.enemy_param["common"]["probability_modificator"] + Globalsettings.enemy_param["common"]["probability_modificator_increase"], Globalsettings.enemy_param["common"]["probability_modificator_maximum"])
 	area_observe.monitoring = false	
 	var boss_enemy = create_enemy(boss_prefab)
 	world.add_child(boss_enemy)

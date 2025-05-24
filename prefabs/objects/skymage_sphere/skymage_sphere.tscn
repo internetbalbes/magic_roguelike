@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cjv8bi7lh0qkl"]
+[gd_scene load_steps=11 format=3 uid="uid://cjv8bi7lh0qkl"]
 
 [ext_resource type="Script" uid="uid://dhamoh8xc2db2" path="res://prefabs/objects/skymage_sphere/skymage_sphere.gd" id="1_jb1su"]
 [ext_resource type="Texture2D" uid="uid://b5dd7513r6xxv" path="res://sprites/trap.png" id="2_jb1su"]
@@ -13,6 +13,38 @@ material = SubResource("StandardMaterial3D_3yhly")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_tfd3p"]
 height = 1.0
+
+[sub_resource type="Curve" id="Curve_jb1su"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ad3cw"]
+curve = SubResource("Curve_jb1su")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3yhly"]
+particle_flag_align_y = true
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = 10.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_ad3cw")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jb1su"]
+albedo_color = Color(1, 0, 0, 1)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 2.0
+rim = 0.1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3yhly"]
+material = SubResource("StandardMaterial3D_jb1su")
+top_radius = 0.1
+bottom_radius = 0.0
+cap_top = false
+cap_bottom = false
 
 [node name="sphere" type="Area3D"]
 collision_layer = 8192
@@ -29,5 +61,14 @@ shape = SubResource("CylinderShape3D_tfd3p")
 [node name="timer_remove_object" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
+
+[node name="explosing" type="GPUParticles3D" parent="."]
+amount = 50
+lifetime = 0.5
+explosiveness = 1.0
+randomness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_3yhly")
+draw_pass_1 = SubResource("CylinderMesh_3yhly")
 
 [connection signal="timeout" from="timer_remove_object" to="." method="_on_timer_remove_object_timeout"]

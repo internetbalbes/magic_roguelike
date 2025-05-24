@@ -16,12 +16,12 @@ func _ready() -> void:
 	if config.load("res://settings.cfg") == OK:
 		map_generator.SCALE_SIZE_MAP = config.get_value("world", "scale_size_map", 50)
 		portal_create_enemy_count = config.get_value("world", "portal_create_enemy_count", portal_create_enemy_count)
-		portal_reload_enemy_increase = config.get_value("world", "portal_reload_enemy_increase", portal_reload_enemy_increase)			
+		portal_reload_enemy_increase = config.get_value("world", "portal_reload_enemy_increase", portal_reload_enemy_increase)
 		#config.save("res://settings.cfg")
 	config = null
 	map_generator.create_chunk()
 	var player_coordinate = map_generator.find_block_free()
-	#splayer_coordinate = map_generator.created_portal.global_position + Vector3(1, 0, 10)
+	#player_coordinate = map_generator.created_portal.global_position + Vector3(1, 0, 10)
 	player.set_deferred("global_position", Vector3(player_coordinate.x, player_coordinate.y + player.collision_shape.height/2, player_coordinate.z))	
 	portal_update()	
 

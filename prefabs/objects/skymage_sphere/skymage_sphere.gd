@@ -3,6 +3,7 @@ extends Area3D
 @onready var meshinstance : MeshInstance3D = $MeshInstance3D
 @onready var collision : CollisionShape3D = $CollisionShape3D
 @onready var timer_remove_object : Timer = $timer_remove_object
+@onready var explosing : GPUParticles3D = $explosing
 @export var player : CharacterBody3D
 
 # damage skymage sphere for player
@@ -24,7 +25,9 @@ func _ready() -> void:
 		skymage_sphere_damage = config.get_value("enemy_skymage_sphere", "skymage_sphere_damage", skymage_sphere_damage)
 		skymage_sphere_reload_time = config.get_value("enemy_skymage_sphere", "skymage_sphere_reload_time", skymage_sphere_reload_time)
 		#config.save("res://settings.cfg")
-	config = null		
+	config = null
+	explosing.emitting = false
+	explosing.one_shot = true
 	meshinstance.mesh.size = Vector2.ONE * 2 * collision.shape.radius
 	timer_remove_object.wait_time = skymage_sphere_time_life
 	connect("body_exited", _on_body_exited)
@@ -54,10 +57,15 @@ func _on_timer_remove_object_timeout() -> void:
 			meshinstance.visible = false
 			timer_remove_object.wait_time = skymage_sphere_reload_time
 			timer_remove_object.start()
+			explosing.restart()
 		elif player_in_area:
 			_on_body_entered(player)
 	else:
 		if player_in_area:
 			player.take_damage(skymage_sphere_damage)
 		monitoring = false
+		meshinstance.visible = false
+		explosing.restart()
+		await get_tree().create_timer(explosing.lifetime).timeout
 		call_deferred("queue_free")
+	

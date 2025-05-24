@@ -18,36 +18,27 @@ var player_in_area: bool = false
 var enemy_pooling_to_point: Vector3 = Vector3.ZERO
 # array of Buf
 var list_buf: Array
-# modificators value's probability
-var probability_modificator = 50.0
 # array of enemy modificators
 var enemy_list_modificators: Array
-# cards value's probability
-var probability_card = 50.0
 # object portal spawn
 var portal: Node3D
-var size_blood_on_floor : Vector3 = Vector3.ONE
-var enemy_config = ""
 var enemy_type = ""
 var enemy_effect : Node3D
 var label_health_value = 0
+var enemy_speed = 0.0
 
 func _ready() -> void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:		
-		size_blood_on_floor.x = config.get_value(enemy_config, "size_blood_on_floor_x", size_blood_on_floor.x)
-		size_blood_on_floor.y = config.get_value(enemy_config, "size_blood_on_floor_y", size_blood_on_floor.y)
-		size_blood_on_floor.z = config.get_value(enemy_config, "size_blood_on_floor_z", size_blood_on_floor.z)
 	if has_node("area_seeing"):
 		area = get_node("area_seeing")
 		collision_areaseeing = area.get_node("CollisionShape3D").shape
+		collision_areaseeing.radius = Globalsettings.enemy_param[enemy_type]["enemy_area_scan_player"]
 		area.body_entered.connect(_on_area_3d_body_entered)
 		area.body_exited.connect(_on_area_3d_body_exited)	
 	collision_shape = collision.shape
 	label_health_value = Globalsettings.enemy_param[enemy_type]["label_health_max_value"]
 	#_add_modificator_to_list("water_resist")
 	#_add_buf_to_list("wet")
-	if randi_range(1, 100) < probability_modificator:
+	if randi_range(1, 100) <  Globalsettings.enemy_param["common"]["probability_modificator"]:
 		var keys = Globalsettings.enemy_list_modificators.keys()
 		_add_modificator_to_list(keys[randi_range(0, keys.size()-1)])
 
@@ -76,8 +67,6 @@ func get_enemy_effect():
 	if !enemy_effect:
 		enemy_effect = load("res://prefabs/enemies/base/enemy_effect.tscn").instantiate()
 		add_child(enemy_effect)
-		enemy_effect.deathing.emitting = false
-		enemy_effect.deathing.one_shot = true
 		enemy_effect.blood_drop.emitting = false
 		enemy_effect.blood_drop.one_shot = true
 	return enemy_effect
@@ -109,9 +98,8 @@ func take_damage(spell, buf, amount: int):
 			if !is_alive():
 				if enemy_pivot_modificator:
 					enemy_pivot_modificator.get_parent().visible = false
-				call_deferred("action_effect_deathing")
 				collision.set_deferred("disabled", true)
-				if randi_range(1, 100) < probability_card:
+				if randi_range(1, 100) <  Globalsettings.enemy_param[enemy_type]["probability_card"]:
 					player.add_card()
 				if area:
 					area.monitoring = false
@@ -119,14 +107,8 @@ func take_damage(spell, buf, amount: int):
 					portal.list_enemy.erase(self)
 					portal.list_new_enemy.erase(self)
 			elif buf:
-				_add_buf_to_list(buf)
- 
-func action_effect_deathing():
-	get_enemy_effect().deathing.reparent(world)
-	enemy_effect.deathing.emitting = true
-	await get_tree().create_timer(enemy_effect.deathing.lifetime).timeout
-	enemy_effect.deathing.queue_free()
-	
+				_add_buf_to_list(buf) 
+
 func _set_portal(object: Node3D, _angle: float) ->void:
 	portal = object
 	if portal:
@@ -185,7 +167,7 @@ func _on_area_seeing_body_exited(_body: Node3D) -> void:
 func spawn_blood_on_floor():
 	var decal = enemy_effect.blood_spot.duplicate()		
 	# Ustaw rozmiar decal'a
-	decal.size = size_blood_on_floor
+	decal.size = Vector3(Globalsettings.enemy_param[enemy_type]["size_blood_on_floor"])
 	decal.modulate.a = 1.0
 	# Dodaj do sceny
 	world.add_child(decal)

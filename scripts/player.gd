@@ -18,6 +18,7 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @onready var parent_hboxcontainer_card = $interface/Control
 @onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
 @onready var texturerect_card: TextureRect = $interface/texturerect_card
+@onready var card_hint: Label = $interface/card_hint
 @onready var coldsteel: Node3D = $coldsteel
 @onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
@@ -66,17 +67,17 @@ var spell_tornado = preload("res://sprites/tornado_icon.png")
 var spell_trap = preload("res://sprites/trap_icon.png")
 var texturerect_card_set = Vector2.ZERO
 #list file cards
-var card_all_list_enemy: Array = ["card_mana_potion", "card_hp_potion", "card_mana_max_increase", "card_hp_to_mana_sacrifice"]
+var card_all_list_enemy: Array = ["card_mana_potion", "card_hp_potion", "card_mana_max_increase", "card_hp_to_mana_sacrifice", "card_mine_spell"]
 var card_mana_potion = preload("res://sprites/card_mana_potion.png") 
 var card_hp_potion = preload("res://sprites/card_hp_potion.png")
 var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
 var card_mana_max = preload("res://sprites/card_mana_max.png")
 var card_hp_to_mana_sacrifice = preload("res://sprites/card_hp_to_mana_sacrifice.png")
+var card_mine_spell = preload("res://sprites/card_mine_spell.png")
 var card_scale = 2
 var card_size = card_scale * Vector2(32, 48)
 var card_currently_index = -1
 var card_list : Array
-var card_list_animation : Array
 var card_mana_potion_mana_increase = 2
 var card_hp_potion_hp_increase = 2
 var card_hp_to_mana_sacrifice_exchange = 2
@@ -132,6 +133,7 @@ func _ready() -> void:
 		#config.save("res://settings.cfg")
 	config = null
 	sword_splash_animation_time = 1.16 / animation_player.speed_scale
+	card_hint.visible = false
 	texturerect_card.visible = false
 	texturerect_card.size = Vector2(card_size.x, card_size.y)
 	var rect = Vector2(8 * card_size.x, card_size.y)
@@ -139,10 +141,6 @@ func _ready() -> void:
 	var top = camera.get_viewport().get_visible_rect().size.y - rect.y
 	var left = (camera.get_viewport().get_visible_rect().size.x - rect.x) / 2.0	
 	parent_hboxcontainer_card.position = Vector2(left, top)	
-	for card in hboxcontainer_card.get_children():
-		card.custom_minimum_size = card_size
-		card.expand = true
-		card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 	texturerect_card.position = parent_hboxcontainer_card.position	
 	texturerect_card.custom_minimum_size = card_size
 	texturerect_card.expand = true
@@ -194,15 +192,14 @@ func _input(event: InputEvent) -> void:
 					hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
 				texturerect_card.texture = null
 				texturerect_card.visible = false
+				card_hint.visible = false
 			elif card_list.size() > 0:
 				texturerect_card.visible = true
+				card_hint.visible = true
 				card_currently_index = 0
 				set_card_new_position(card_currently_index)
-		elif  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
-			if texturerect_card.visible:
-				if texturerect_card.texture:
-					remove_card()
-			elif timer_reload_spell.is_stopped():
+		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+			if timer_reload_spell.is_stopped():
 				var spell = spells[spell_currently_index]
 				if player_currently_mana - spell.mana_cost < 0:
 					pass
@@ -216,10 +213,14 @@ func _input(event: InputEvent) -> void:
 					create_spell(prefabtornado.instantiate())
 				elif state != playerstate.JUMPING && spell.spell_name.to_lower() == "trap":
 					create_trap()
-		elif  event.button_index == MOUSE_BUTTON_RIGHT && event.pressed && timer_reload_coldsteel.is_stopped():
-			timer_reload_coldsteel.start()
-			progressbar_reload_coldsteel.value = 0
-			animation_player.play("melee")
+		elif  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
+			if texturerect_card.visible:
+				if texturerect_card.texture:
+					remove_card()
+			elif timer_reload_coldsteel.is_stopped():
+				timer_reload_coldsteel.start()
+				progressbar_reload_coldsteel.value = 0
+				animation_player.play("melee")
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
 
@@ -262,6 +263,7 @@ func create_spell(prefab: Node3D):
 	prefab.set_collider(raycast.get_collider(), raycast.get_collision_point(), abs(raycast.target_position.z))
 	world.add_child(prefab)
 	prefab._set_global_transform(raycast.global_transform)
+	animation_player.play("cast")
 	reload_spell()
 	
 func create_trap():
@@ -276,11 +278,14 @@ func reload_spell():
 	timer_reload_spell.start()
 	take_mana(-spells[spell_currently_index].mana_cost)	
 
+func action_damage(amount: int):
+	player_current_health -= amount
+	player_current_health = clamp(player_current_health, 0, player_max_health)
+	emit_signal("health_changed", player_current_health)
+
 func take_damage(amount: int):
 	if player_current_health > 0:
-		player_current_health -= amount
-		player_current_health = clamp(player_current_health, 0, player_max_health)
-		emit_signal("health_changed", player_current_health)
+		action_damage(amount)
 		if !is_alive():
 			animation_player.stop()
 			get_tree().call_deferred("reload_current_scene")
@@ -323,7 +328,18 @@ func get_card_texture(card_name: String)->Texture2D:
 		"card_mana_max_increase": return card_mana_max_increase
 		"card_mana_max": return card_mana_max
 		"card_hp_to_mana_sacrifice": return card_hp_to_mana_sacrifice
-		_: return null		
+		"card_mine_spell": return card_mine_spell
+		_: return null
+		
+func get_card_hint(card_name: String):
+	match card_name:
+		"card_mana_potion": return "mana potion's card" 
+		"card_hp_potion": return "hp potion's card"
+		"card_mana_max_increase": return "mana max increase's card"
+		"card_mana_max": return "mana max's card"
+		"card_hp_to_mana_sacrifice": return "hp to mana sacrifice's card"
+		"card_mine_spell": return "mine spell's card"
+		_: return null
 		
 func get_spell_texture(sell_name: String)->Texture2D:
 	match sell_name:
@@ -331,12 +347,14 @@ func get_spell_texture(sell_name: String)->Texture2D:
 		"tornado": return spell_tornado
 		"waterball": return spell_waterball
 		"trap": return spell_trap
-		_: return null		
+		_: return null
 	
 func set_card_new_position(index)->void:
 	var card = hboxcontainer_card.get_child(index)
 	texturerect_card.position = Vector2(parent_hboxcontainer_card.position.x + clamp(card.position.x, 0, parent_hboxcontainer_card.size.x - texturerect_card.size.x), parent_hboxcontainer_card.position.y - texturerect_card.size.y)
-	texturerect_card.texture = card.texture	
+	texturerect_card.texture = card.texture
+	card_hint.text = get_card_hint(card_list[index])
+	card_hint.position = Vector2(texturerect_card.position.x + texturerect_card.size.x + 10, texturerect_card.position.y + (texturerect_card.size.y - card_hint.size.y) / 2)  
 	card.texture = null
 	card.custom_minimum_size = card_size
 						
@@ -386,9 +404,11 @@ func remove_card()->void:
 				if player_currently_mana + exchange > player_max_mana:
 					exchange = player_max_mana - player_currently_mana
 				take_mana(exchange)
-				take_damage(exchange)
+				action_damage(exchange)				
 			else:
 				return
+		"card_mine_spell":
+			create_trap()
 	card_list.remove_at(card_currently_index)
 	hboxcontainer_card.remove_child(hboxcontainer_card.get_child(card_currently_index))
 	texturerect_card.texture = null	
@@ -399,6 +419,7 @@ func remove_card()->void:
 		call_deferred("set_card_new_position", card_currently_index)
 	else:
 		texturerect_card.visible = false
+		card_hint.visible = false
 
 func _on_timer_reload_coldsteel_timeout() -> void:
 	var value = progressbar_reload_coldsteel.value + timer_reload_coldsteel.wait_time

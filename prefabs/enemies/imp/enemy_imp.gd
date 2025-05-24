@@ -19,20 +19,6 @@ enum enemystate {
 	TRAPING,	# state set trap
 	DEATHING	# state deathing
 }
-# enemy's run
-var enemy_speed_walk = 0.55
- # enemy's walk
-var enemy_speed_run = 2.5
- # circle's radius where patrol enemy
-var enemy_radius_around_portal = 10.0
- # count segmentów in cirkle where patrol enemy
-var count_segments_around_portal = 36 
-# time in animation when enemy throw fireball
-var time_to_throw: float = 1
-# time in animation when enemy needs to set trap
-var time_to_set_trap: float = 2
-# time walk enemy from portal
-var time_after_exit_portal: float = 1
 # Node fireball
 var fireball: Area3D
 # Node tram
@@ -43,8 +29,6 @@ var timer_after_exit_portal: Timer = Timer.new()
 var timer_wait_set_trap: Timer = Timer.new()
 # object timeer in animation when enemy needs to set trap
 var timer_set_trap: Timer = Timer.new()
-# enemy's speed walk or run
-var enemy_speed = enemy_speed_walk
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
 
@@ -52,26 +36,18 @@ func _ready() -> void:
 	super._ready()
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
-		enemy_speed_walk = config.get_value("enemy_imp", "enemy_speed_walk", enemy_speed_walk)
-		enemy_speed_run = config.get_value("enemy_imp", "enemy_speed_run", enemy_speed_run)
-		enemy_radius_around_portal = config.get_value("enemy_imp", "enemy_radius_around_portal", enemy_radius_around_portal)
-		count_segments_around_portal = config.get_value("enemy_imp", "count_segments_around_portal", count_segments_around_portal)
-		time_to_throw = config.get_value("enemy_imp", "time_to_throw", time_to_throw)
-		time_to_set_trap = config.get_value("enemy_imp", "time_to_set_trap", time_to_set_trap)		
-		time_after_exit_portal = config.get_value("enemy_imp", "time_after_exit_portal", time_after_exit_portal)
-		collision_areaseeing.radius = config.get_value("enemy_imp", "enemy_area_scan_player", enemy_radius_around_portal)
-		probability_card =  config.get_value("enemy_imp", "probability_card", probability_card)
-		var var_scale = config.get_value("enemy_imp", "enemy_transform_scale",  1.0)
+		collision_areaseeing.radius = Globalsettings.enemy_param[enemy_type]["enemy_area_scan_player"]
+		var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
 		scale = Vector3(var_scale, var_scale, var_scale)
 		navigation_agent.path_height_offset = -var_scale
 		#config.save("res://settings.cfg")
 	config = null
 	skeleton_bone_hand.bone_name = "mixamorig_RightHand"
 	area.monitoring = false
-	timer_throw.wait_time = time_to_throw
+	timer_throw.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_throw"]
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	#set timer set trap
-	timer_set_trap.wait_time = time_to_set_trap
+	timer_set_trap.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_set_trap"]
 	timer_set_trap.one_shot = true
 	timer_set_trap.timeout.connect(_on_timer_set_trap_timeout)
 	add_child(timer_set_trap)
@@ -81,7 +57,7 @@ func _ready() -> void:
 	timer_wait_set_trap.timeout.connect(_on_timer_wait_set_trap_timeout)
 	add_child(timer_wait_set_trap)
 	#set timer wait trap	
-	timer_after_exit_portal.wait_time = time_after_exit_portal
+	timer_after_exit_portal.wait_time = Globalsettings.enemy_param[enemy_type]["time_after_exit_portal"]
 	timer_after_exit_portal.one_shot = true
 	timer_after_exit_portal.timeout.connect(_on_timer_after_exit_portal_timeout)
 	add_child(timer_after_exit_portal)
@@ -119,8 +95,8 @@ func _physics_process(delta: float) -> void:
 			if state in [enemystate.WALKING_PORTAL]:
 				if portal && (navigation_agent.is_navigation_finished()):
 					# Zaktualizowanie pozycji agenta nawigacji, aby poruszał się w kierunku celu
-					navigation_agent.target_position = _get_point_on_circle(enemy_angle_to_walk * (2.0 * PI / count_segments_around_portal))
-					enemy_angle_to_walk = randf_range(1, count_segments_around_portal)
+					navigation_agent.target_position = _get_point_on_circle(enemy_angle_to_walk * (2.0 * PI / Globalsettings.enemy_param["common"]["count_segments_around_portal"]))
+					enemy_angle_to_walk = randf_range(1, Globalsettings.enemy_param["common"]["count_segments_around_portal"])
 			else:
 				navigation_agent.target_position = _get_point_on_circle_around_player()
 
@@ -131,8 +107,8 @@ func _get_point_on_circle_around_player() -> Vector3:
 	return player.global_position - Vector3(x, 0, z)
 	
 func _get_point_on_circle(angle) -> Vector3:
-	var x = enemy_radius_around_portal * cos(angle)
-	var z = enemy_radius_around_portal * sin(angle)		
+	var x = Globalsettings.enemy_param[enemy_type]["enemy_radius_around_portal"] * cos(angle)
+	var z = Globalsettings.enemy_param[enemy_type]["enemy_radius_around_portal"] * sin(angle)		
 	return portal.global_transform.origin + Vector3(x, 0, z)
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
@@ -229,7 +205,7 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
 	if portal:
-		enemy_angle_to_walk = angle * count_segments_around_portal / 360		
+		enemy_angle_to_walk = angle * Globalsettings.enemy_param["common"]["count_segments_around_portal"] / 360
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
 		area.monitoring = true
@@ -243,18 +219,18 @@ func _set_state_enemy(value)->void:
 		enemystate.RUNNING_TO_PLAYER:
 			state = enemystate.RUNNING_TO_PLAYER
 			animation_player.play("run")
-			enemy_speed = enemy_speed_run
+			enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
 		enemystate.WALKING_PORTAL:
 			state = enemystate.WALKING_PORTAL
 			animation_player.play("walk")
-			enemy_speed = enemy_speed_walk
+			enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed_walk"]
 		enemystate.THROWING:
 			state = enemystate.THROWING
 			animation_player.play("throw")
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
-			enemy_speed = enemy_speed_run
+			enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
 		enemystate.TRAPING:
 			state = enemystate.TRAPING
 			animation_player.play("putdown")
