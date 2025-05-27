@@ -10,9 +10,11 @@ config_version=5
 
 [application]
 
-config/name="magic roguelike"
+config/name="Dunkelkampf"
+config/version="1.0.0"
 run/main_scene="uid://bncskj8iqk8ki"
 config/features=PackedStringArray("4.4", "Forward Plus")
+config/icon="uid://d2up6age3to1w"
 
 [autoload]
 

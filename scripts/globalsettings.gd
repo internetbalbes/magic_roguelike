@@ -66,11 +66,19 @@ var enemy_param = {
 	}	
 }
 
+var cards_hint = {
+	"card_mana_potion": "hint empty",
+	"card_hp_potion": "hint empty",
+	"card_mana_max_increase": "hint empty",
+	"card_mana_max": "hint empty",
+	"card_hp_to_mana_sacrifice": "hint empty",
+	"card_mine_spell": "hint empty"
+}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var config = ConfigFile.new()
 	if config.load("res://settings.cfg") == OK:
-		
 		enemy_param["common"]["probability_modificator"] =  config.get_value("enemy_common", "probability_modificator", enemy_param["common"]["probability_modificator"])
 		enemy_param["common"]["probability_modificator_maximum"] =  config.get_value("enemy_common", "probability_modificator_maximum", enemy_param["common"]["probability_modificator_maximum"])
 		enemy_param["common"]["probability_modificator_increase"] =  config.get_value("enemy_common", "probability_modificator_increase", enemy_param["common"]["probability_modificator_increase"])
@@ -127,4 +135,12 @@ func _ready() -> void:
 		enemy_param["skymage"]["probability_card"] =  config.get_value("enemy_skymage", "probability_card", enemy_param["skymage"]["probability_card"])	
 		enemy_param["skymage"]["enemy_transform_scale"] = config.get_value("enemy_skymage", "enemy_transform_scale",  enemy_param["skymage"]["enemy_transform_scale"])
 		
+		cards_hint["card_mana_potion"] = config.get_value("cards_hint", "card_mana_potion", cards_hint["card_mana_potion"])
+		cards_hint["card_hp_potion"] = config.get_value("cards_hint", "card_hp_potion", cards_hint["card_mana_potion"])
+		cards_hint["card_mana_max_increase"] = config.get_value("cards_hint", "card_mana_max_increase", cards_hint["card_mana_potion"])
+		cards_hint["card_mana_max"] = config.get_value("cards_hint", "card_mana_max", cards_hint["card_mana_potion"])
+		cards_hint["card_hp_to_mana_sacrifice"] = config.get_value("cards_hint", "card_hp_to_mana_sacrifice", cards_hint["card_mana_potion"])
+		cards_hint["card_mine_spell"] = config.get_value("cards_hint", "card_mine_spell", cards_hint["card_mana_potion"])
+	else:
+		print("error loading file settings.cfg")	
 	config = null

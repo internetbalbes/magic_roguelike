@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3 uid="uid://bjjcx7k22hmpc"]
+
+[ext_resource type="Shader" uid="uid://cd6rvr0hudo2n" path="res://prefabs/objects/sphere_magic/sphere_magic.gdshader" id="1_t6tif"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t6tif"]
+transparency = 1
+cull_mode = 1
+albedo_color = Color(1, 1, 1, 0.196078)
+metallic = 1.0
+metallic_specular = 1.0
+roughness = 0.0
+clearcoat_enabled = true
+clearcoat_roughness = 0.0
+backlight = Color(1, 1, 1, 1)
+refraction_scale = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_rj586"]
+material = SubResource("StandardMaterial3D_t6tif")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kdubu"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_t6tif"]
+noise = SubResource("FastNoiseLite_kdubu")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rj586"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_t6tif")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_t6tif")
+shader_parameter/base_color = Color(1, 1, 1, 1)
+shader_parameter/edge_color = Color(0, 0, 0, 1)
+shader_parameter/power = 0.1
+shader_parameter/speed = Vector2(-0.02, -0.02)
+shader_parameter/fill = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_hqns4"]
+resource_local_to_scene = true
+radius = 0.49
+height = 0.98
+
+[node name="sphere_outside" type="MeshInstance3D"]
+mesh = SubResource("SphereMesh_rj586")
+
+[node name="sphere_inside" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_rj586")
+mesh = SubResource("SphereMesh_hqns4")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74236, -0.468712, -0.678615)
+light_energy = 2.0
+light_size = 0.1

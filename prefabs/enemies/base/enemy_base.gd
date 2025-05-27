@@ -36,8 +36,6 @@ func _ready() -> void:
 		area.body_exited.connect(_on_area_3d_body_exited)	
 	collision_shape = collision.shape
 	label_health_value = Globalsettings.enemy_param[enemy_type]["label_health_max_value"]
-	#_add_modificator_to_list("water_resist")
-	#_add_buf_to_list("wet")
 	if randi_range(1, 100) <  Globalsettings.enemy_param["common"]["probability_modificator"]:
 		var keys = Globalsettings.enemy_list_modificators.keys()
 		_add_modificator_to_list(keys[randi_range(0, keys.size()-1)])

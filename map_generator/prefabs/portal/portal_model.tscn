@@ -1,15 +1,5 @@
-[gd_scene load_steps=4 format=3 uid="uid://d34v32rs5ljno"]
+[gd_scene load_steps=2 format=3 uid="uid://d34v32rs5ljno"]
 
 [ext_resource type="PackedScene" uid="uid://dubgd3pspdfja" path="res://map_generator/prefabs/portal/portal.gltf" id="1_nheow"]
-[ext_resource type="Texture2D" uid="uid://chgjcbd8ga8kn" path="res://sprites/textures/stone.png" id="2_o87dy"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o87dy"]
-albedo_texture = ExtResource("2_o87dy")
-uv1_scale = Vector3(0.1, 0.1, 0.1)
-uv1_triplanar = true
-texture_filter = 4
 
 [node name="portal_model" instance=ExtResource("1_nheow")]
-
-[node name="portal_model" parent="." index="0"]
-material_override = SubResource("StandardMaterial3D_o87dy")

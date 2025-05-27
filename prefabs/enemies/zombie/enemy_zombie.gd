@@ -3,7 +3,6 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var zombi_model: Node3D = $zombie_model
 @onready var animation_player: AnimationPlayer = $zombie_model/AnimationPlayer
-@onready var skeleton_surface: MeshInstance3D = $zombie_model/zombie_model/Skeleton3D/zombie
 @onready var timer_beat: Timer = $timer_beat
 @onready var timer_run_to_player: Timer = $timer_run_to_player
 

@@ -23,9 +23,12 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
 @onready var label_enemy_appear_spawn = $interface/enemy_appear/enemy_spawn
-@onready var label_hp_bar = $interface/hp/hp_bar
 @onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
 @onready var timer_walk_slowing: Timer = $timer_walk_slowing
+@onready var label_hp_sphere = $interface/hp/health_sphere
+@onready var label_hp_sphere_fill = $interface/hp/health_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var label_mana_sphere = $interface/mana/mana_sphere
+@onready var label_mana_sphere_fill = $interface/mana/mana_sphere/SubViewport/sphere_outside/sphere_inside
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -83,11 +86,7 @@ var card_hp_potion_hp_increase = 2
 var card_hp_to_mana_sacrifice_exchange = 2
 var sword_splash_animation_time = 0.0
 var player_speed_walk_slowing = 1.0
-var player_label_hp = preload("res://sprites/hp_bar.png")
-var player_label_hp_damage = preload("res://sprites/hp_bar_damage.png")
-
-# Sygnalizacja zmiany zdrowia
-signal health_changed(new_health)
+var is_card_dissolve_tween: bool = false
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -129,31 +128,40 @@ func _ready() -> void:
 		#cards
 		card_mana_potion_mana_increase  = config.get_value("cards", "card_mana_potion_mana_increase", card_mana_potion_mana_increase)
 		card_hp_potion_hp_increase  = config.get_value("cards", "card_hp_potion_hp_increase", card_hp_potion_hp_increase)
-		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)
+		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)	
 		#config.save("res://settings.cfg")
-	config = null
+	config = null	
 	sword_splash_animation_time = 1.16 / animation_player.speed_scale
 	card_hint.visible = false
 	texturerect_card.visible = false
 	texturerect_card.size = Vector2(card_size.x, card_size.y)
 	var rect = Vector2(8 * card_size.x, card_size.y)
 	parent_hboxcontainer_card.set_deferred("size", rect) 
-	var top = camera.get_viewport().get_visible_rect().size.y - rect.y
-	var left = (camera.get_viewport().get_visible_rect().size.x - rect.x) / 2.0	
+	var window_size = camera.get_viewport().get_visible_rect().size
+	var top = window_size.y - rect.y
+	var left = (window_size.x - rect.x) / 2.0	
 	parent_hboxcontainer_card.position = Vector2(left, top)	
 	texturerect_card.position = parent_hboxcontainer_card.position	
 	texturerect_card.custom_minimum_size = card_size
 	texturerect_card.expand = true
-	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
-	player_current_health = player_max_health
+	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT	
+	var mat = label_hp_sphere_fill.get_material_override() 
+	mat.set_shader_parameter("base_color", Vector3(1.0, 0.0, 0.0))	
+	top = window_size.y - label_hp_sphere.size.y * label_hp_sphere.get_parent().scale.y
+	left = left - label_hp_sphere.size.x * label_hp_sphere.get_parent().scale.y	
+	label_hp_sphere.get_parent().position = Vector2(left, top)	
+	mat = label_mana_sphere_fill.get_material_override() 
+	mat.set_shader_parameter("base_color", Vector3(0.0, 0.0, 1.0))
+	left = parent_hboxcontainer_card.position.x + rect.x	
+	label_mana_sphere.get_parent().position = Vector2(left, top)
+	texturerect_card.material.set_shader_parameter("dissolve_value", 1.0)
+	take_health(player_max_health)
 	_set_spell_currently(spell_currently_index)
-	player_currently_mana = player_max_mana
 	take_mana(player_max_mana)
 	progressbar_reload_coldsteel.step = 0.05
 	progressbar_reload_coldsteel.value = time_reload_coldspeel
-	progressbar_reload_coldsteel.max_value = time_reload_coldspeel	
-	_on_health_changed(player_max_health)
-	connect("health_changed", _on_health_changed)
+	progressbar_reload_coldsteel.max_value = time_reload_coldspeel
+	label_health.text = str(int(player_current_health)) + "/" + str(int(player_max_health))
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
@@ -215,7 +223,7 @@ func _input(event: InputEvent) -> void:
 					create_trap()
 		elif  event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
 			if texturerect_card.visible:
-				if texturerect_card.texture:
+				if texturerect_card.texture && not is_card_dissolve_tween:
 					remove_card()
 			elif timer_reload_coldsteel.is_stopped():
 				timer_reload_coldsteel.start()
@@ -278,36 +286,30 @@ func reload_spell():
 	timer_reload_spell.start()
 	take_mana(-spells[spell_currently_index].mana_cost)	
 
-func action_damage(amount: int):
-	player_current_health -= amount
-	player_current_health = clamp(player_current_health, 0, player_max_health)
-	emit_signal("health_changed", player_current_health)
+func take_health(amount: int):
+	player_current_health = clamp(player_current_health + amount, 0, player_max_health)
+	label_health.text = str(int(player_current_health)) + "/" + str(int(player_max_health))	
+	var mat = label_hp_sphere_fill.get_material_override() 
+	mat.set_shader_parameter("fill", player_current_health / float(player_max_health))
 
 func take_damage(amount: int):
 	if player_current_health > 0:
-		action_damage(amount)
+		take_health(-amount)
 		if !is_alive():
 			animation_player.stop()
 			get_tree().call_deferred("reload_current_scene")
 		elif timer_walk_slowing.is_stopped():
 			player_speed_walk *= player_speed_walk_slowing
-			label_hp_bar.texture = player_label_hp_damage
 			timer_walk_slowing.start()	
 
-func take_heal(amount: int):
-	player_current_health += amount
-	player_current_health = clamp(player_current_health, 0, player_max_health)
-	emit_signal("health_changed", player_current_health)
-	
 func take_mana(amount: int):
 	player_currently_mana = clamp(player_currently_mana + amount, 0, player_max_mana)
 	label_mana.text = str(int(player_currently_mana)) + "/" + str(int(player_max_mana))
+	var mat = label_mana_sphere_fill.get_material_override() 
+	mat.set_shader_parameter("fill", player_currently_mana / float(player_max_mana))
 
 func is_alive() -> bool:
 	return player_current_health > 0
-
-func _on_health_changed(new_health: int):	
-	label_health.text = str(new_health)  # Skalowanie wartości na pasek zdrowia
 
 func portal_free() -> void:
 	create_card("card_mana_max")
@@ -333,12 +335,12 @@ func get_card_texture(card_name: String)->Texture2D:
 		
 func get_card_hint(card_name: String):
 	match card_name:
-		"card_mana_potion": return "mana potion's card" 
-		"card_hp_potion": return "hp potion's card"
-		"card_mana_max_increase": return "mana max increase's card"
-		"card_mana_max": return "mana max's card"
-		"card_hp_to_mana_sacrifice": return "hp to mana sacrifice's card"
-		"card_mine_spell": return "mine spell's card"
+		"card_mana_potion": return Globalsettings.cards_hint["card_mana_potion"]
+		"card_hp_potion": return Globalsettings.cards_hint["card_hp_potion"]
+		"card_mana_max_increase": return Globalsettings.cards_hint["card_mana_max_increase"]
+		"card_mana_max": return Globalsettings.cards_hint["card_mana_max"]
+		"card_hp_to_mana_sacrifice": return Globalsettings.cards_hint["card_hp_to_mana_sacrifice"]
+		"card_mine_spell": return Globalsettings.cards_hint["card_mine_spell"]
 		_: return null
 		
 func get_spell_texture(sell_name: String)->Texture2D:
@@ -387,7 +389,7 @@ func remove_card()->void:
 				return
 		"card_hp_potion": 
 			if player_max_health - player_current_health > 0.1:
-				take_heal(card_hp_potion_hp_increase)
+				take_health(card_hp_potion_hp_increase)
 			else:
 				return			
 		"card_mana_max_increase": 
@@ -404,11 +406,17 @@ func remove_card()->void:
 				if player_currently_mana + exchange > player_max_mana:
 					exchange = player_max_mana - player_currently_mana
 				take_mana(exchange)
-				action_damage(exchange)				
+				take_health(-exchange)
 			else:
 				return
 		"card_mine_spell":
-			create_trap()
+			create_trap()	
+	is_card_dissolve_tween = true
+	var card_tween = create_tween()
+	card_tween.tween_property(texturerect_card.material, "shader_parameter/dissolve_value", 0.0, .5)
+	await card_tween.finished
+	texturerect_card.material.set_shader_parameter("dissolve_value", 1.0)
+	is_card_dissolve_tween = false
 	card_list.remove_at(card_currently_index)
 	hboxcontainer_card.remove_child(hboxcontainer_card.get_child(card_currently_index))
 	texturerect_card.texture = null	
@@ -446,5 +454,4 @@ func enemy_appear_spawn(value):
 	label_enemy_appear_spawn.text = str(int(value))
 
 func _on_timer_walk_slowing_timeout() -> void:
-	label_hp_bar.texture = player_label_hp
 	player_speed_walk /= player_speed_walk_slowing
