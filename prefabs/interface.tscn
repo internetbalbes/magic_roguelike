@@ -1,10 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://cwiarthxnrnrq"]
+[gd_scene load_steps=12 format=3 uid="uid://cwiarthxnrnrq"]
 
 [ext_resource type="LabelSettings" uid="uid://r0okgjw03rxk" path="res://fonts/new_label_settings.tres" id="1_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://sprites/target.png" id="2_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://b80mj4r30tbw8" path="res://sprites/book.png" id="4_7spvn"]
 [ext_resource type="Shader" uid="uid://b6iiq8e7biaoi" path="res://shaders/dissolve.gdshader" id="4_d2vfn"]
 [ext_resource type="Theme" uid="uid://it6mrl3rvdob" path="res://fonts/new_theme.tres" id="4_hbh6n"]
+[ext_resource type="Texture2D" uid="uid://bamp3d7bkhcbk" path="res://sprites/interface/wallet.png" id="7_hbh6n"]
+[ext_resource type="Texture2D" uid="uid://dreadh86pwjcf" path="res://sprites/bar.png" id="8_d2vfn"]
 [ext_resource type="PackedScene" uid="uid://bjjcx7k22hmpc" path="res://prefabs/objects/sphere_magic/sphere_magic.tscn" id="10_0mywj"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_4mrx2"]
@@ -22,236 +24,198 @@ shader_parameter/burn_color = Color(1, 1, 0, 1)
 
 [node name="interface" type="CanvasLayer"]
 
-[node name="texturerect_card" type="TextureRect" parent="."]
-z_index = 1
-material = SubResource("ShaderMaterial_5nuor")
-offset_left = 218.0
-offset_top = 461.0
-offset_right = 1280.0
-offset_bottom = 591.0
-
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchor_left = 0.17
-anchor_top = 0.823
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.399994
-offset_top = -1.56
-offset_right = -83.0
-offset_bottom = -1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="hboxcontainer_card" type="HBoxContainer" parent="Control"]
-layout_mode = 1
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 608.0
+offset_top = 324.0
+offset_right = -608.0
+offset_bottom = -324.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_vertical = 10
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
-[node name="progressbar_reload_coldsteel" type="ProgressBar" parent="."]
+[node name="aim" type="TextureRect" parent="VBoxContainer"]
 z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_6qr8u")
+
+[node name="progressbar_reload_coldsteel" type="ProgressBar" parent="VBoxContainer"]
+z_index = 1
+layout_mode = 2
+show_percentage = false
+
+[node name="texturerect_card" type="TextureRect" parent="."]
+z_index = 1
+material = SubResource("ShaderMaterial_5nuor")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 920.0
-offset_top = 551.0
-offset_right = -936.0
-offset_bottom = -513.0
+offset_top = 346.0
+offset_bottom = -374.0
 grow_horizontal = 2
 grow_vertical = 2
-show_percentage = false
 
-[node name="spells" type="Control" parent="."]
-layout_mode = 3
-anchor_top = 0.642
-anchor_right = 0.1
-anchor_bottom = 0.819
-offset_left = 3.0
-offset_top = 259.64
-offset_right = 3.0
-offset_bottom = 190.48
+[node name="card_hint" type="Label" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 254.0
+offset_top = 407.0
+offset_right = -1025.0
+offset_bottom = -255.0
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = ExtResource("1_6qr8u")
 
-[node name="book" type="TextureRect" parent="spells"]
+[node name="HUD" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 464.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="book" type="TextureRect" parent="HUD"]
 layout_mode = 2
-offset_right = 128.0
-offset_bottom = 128.0
 texture = ExtResource("4_7spvn")
+expand_mode = 3
 
-[node name="spell_icon" type="TextureRect" parent="spells/book"]
+[node name="spell_icon" type="TextureRect" parent="HUD/book"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
 anchor_top = 0.25
 anchor_right = 0.75
 anchor_bottom = 0.758
-offset_bottom = -1.024
+offset_bottom = -2.048
 
-[node name="mana_cost" type="Label" parent="spells"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.625
-anchor_top = 0.18
-anchor_right = 0.891
-anchor_bottom = 0.641
-offset_left = -51.0
-offset_top = -0.509579
-offset_right = -51.048
-offset_bottom = -0.517509
+[node name="mana_cost" type="Label" parent="HUD/book"]
+layout_mode = 2
+anchor_left = 0.617
+anchor_top = 0.076
+anchor_right = 0.773
+anchor_bottom = 0.377
+offset_left = 0.0479889
+offset_top = -4.456
+offset_right = 0.111984
+offset_bottom = -4.512
+text = "0"
 label_settings = ExtResource("1_6qr8u")
 
-[node name="hp" type="PanelContainer" parent="."]
-anchors_preset = -1
-anchor_top = 0.91
-anchor_right = 0.063
-anchor_bottom = 1.0
-offset_left = 832.0
-offset_top = -53.8
-offset_right = 967.04
-offset_bottom = 105.0
-scale = Vector2(0.5, 0.5)
+[node name="mana_bar" type="PanelContainer" parent="HUD"]
+layout_mode = 2
 theme = ExtResource("4_hbh6n")
 
-[node name="hp" type="Label" parent="hp"]
+[node name="mana_sphere" type="SubViewportContainer" parent="HUD/mana_bar"]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="HUD/mana_bar/mana_sphere"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(256, 256)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="HUD/mana_bar/mana_sphere/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.993961, 0.109734, 0, -0.109734, 0.993961, 0, 0.307, 2.947)
+current = true
+fov = 20.0
+
+[node name="sphere_outside" parent="HUD/mana_bar/mana_sphere/SubViewport" instance=ExtResource("10_0mywj")]
+
+[node name="bar" type="TextureRect" parent="HUD/mana_bar"]
+layout_mode = 2
+texture = ExtResource("8_d2vfn")
+
+[node name="mana" type="Label" parent="HUD/mana_bar"]
+layout_mode = 2
+text = "mana"
+label_settings = ExtResource("1_6qr8u")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="wallet" type="NinePatchRect" parent="HUD"]
+layout_mode = 2
+size_flags_vertical = 8
+texture = ExtResource("7_hbh6n")
+region_rect = Rect2(0, 0, 192, 192)
+patch_margin_left = 64
+patch_margin_top = 64
+patch_margin_right = 64
+patch_margin_bottom = 64
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="hboxcontainer_card_parent" type="Control" parent="HUD"]
+layout_mode = 2
+
+[node name="hboxcontainer_card" type="HBoxContainer" parent="HUD/hboxcontainer_card_parent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -121.0
+offset_top = -116.0
+offset_right = 347.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 10
+
+[node name="hp_bar" type="PanelContainer" parent="HUD"]
+layout_mode = 2
+theme = ExtResource("4_hbh6n")
+
+[node name="health_sphere" type="SubViewportContainer" parent="HUD/hp_bar"]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="HUD/hp_bar/health_sphere"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(256, 256)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="HUD/hp_bar/health_sphere/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.994034, 0.109075, 0, -0.109075, 0.994034, 0, 0.30675, 2.9465)
+current = true
+fov = 20.0
+
+[node name="sphere_outside" parent="HUD/hp_bar/health_sphere/SubViewport" instance=ExtResource("10_0mywj")]
+
+[node name="hp" type="Label" parent="HUD/hp_bar"]
 z_index = 1
 layout_mode = 2
 text = "hp"
 label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
-
-[node name="health_sphere" type="SubViewportContainer" parent="hp"]
-layout_mode = 2
-
-[node name="SubViewport" type="SubViewport" parent="hp/health_sphere"]
-own_world_3d = true
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(256, 256)
-render_target_update_mode = 4
-
-[node name="Camera3D" type="Camera3D" parent="hp/health_sphere/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 0.994034, 0.109075, 0, -0.109075, 0.994034, 0, 0.30675, 2.9465)
-current = true
-fov = 20.0
-
-[node name="sphere_outside" parent="hp/health_sphere/SubViewport" instance=ExtResource("10_0mywj")]
-
-[node name="mana" type="PanelContainer" parent="."]
-anchors_preset = -1
-anchor_left = 0.075
-anchor_top = 0.867
-anchor_right = 0.15
-anchor_bottom = 1.0
-offset_left = 442.0
-offset_top = 1.64001
-offset_right = 554.0
-offset_bottom = 114.0
-scale = Vector2(0.5, 0.5)
-theme = ExtResource("4_hbh6n")
-
-[node name="mana_sphere" type="SubViewportContainer" parent="mana"]
-layout_mode = 2
-
-[node name="SubViewport" type="SubViewport" parent="mana/mana_sphere"]
-own_world_3d = true
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(256, 256)
-render_target_update_mode = 4
-
-[node name="Camera3D" type="Camera3D" parent="mana/mana_sphere/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 0.993961, 0.109734, 0, -0.109734, 0.993961, 0, 0.307, 2.947)
-current = true
-fov = 20.0
-
-[node name="sphere_outside" parent="mana/mana_sphere/SubViewport" instance=ExtResource("10_0mywj")]
-
-[node name="labelmana" type="Label" parent="mana"]
-layout_mode = 2
-text = "0"
-label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="aim" type="TextureRect" parent="."]
-z_index = 1
-anchors_preset = -1
-anchor_left = 0.472
-anchor_top = 0.45
-anchor_right = 0.528
-anchor_bottom = 0.55
-offset_left = -36.16
-offset_top = -36.0
-offset_right = 36.16
-offset_bottom = 36.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.5, 0.5)
-pivot_offset = Vector2(72, 72)
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture = ExtResource("2_6qr8u")
+[node name="bar" type="TextureRect" parent="HUD/hp_bar"]
+layout_mode = 2
+texture = ExtResource("8_d2vfn")
 
-[node name="enemy_appear" type="HBoxContainer" parent="."]
+[node name="enemy_appear" type="HBoxContainer" parent="HUD"]
 layout_direction = 3
-anchors_preset = -1
-anchor_left = 0.846
-anchor_top = 0.928
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1623.88
-offset_top = -0.23999
-offset_right = -1624.0
-offset_bottom = -0.0799561
-grow_horizontal = 0
-grow_vertical = 0
+layout_mode = 2
 theme = ExtResource("4_hbh6n")
 
-[node name="enemy_count" type="Label" parent="enemy_appear"]
+[node name="enemy_count" type="Label" parent="HUD/enemy_appear"]
 z_index = 1
 layout_mode = 2
 label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="enemy_spawn" type="Label" parent="enemy_appear"]
+[node name="enemy_spawn" type="Label" parent="HUD/enemy_appear"]
 z_index = 1
 layout_mode = 2
 label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="enemy_time" type="Label" parent="enemy_appear"]
+[node name="enemy_time" type="Label" parent="HUD/enemy_appear"]
 layout_mode = 2
-label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="tutorial" type="Label" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 6.0
-offset_top = -123.0
-offset_right = -474.0
-offset_bottom = -648.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "WASD - \"Movement\"
-RMB - \"Cast spell\" or \"Use card\"
-LMB - \"Melee attack\"
-Wheel click - \"Spell choice\" or \"Deck\"
-Wheel button - \"Change card from deck\"
-"
-label_settings = ExtResource("1_6qr8u")
-vertical_alignment = 1
-
-[node name="card_hint" type="Label" parent="."]
-offset_left = 217.0
-offset_top = 407.0
-offset_right = 218.0
-offset_bottom = 437.0
 label_settings = ExtResource("1_6qr8u")

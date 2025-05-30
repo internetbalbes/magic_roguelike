@@ -5,30 +5,31 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 
 @onready var camera = $Camera3D
 @onready var raycast = $Camera3D/RayCast3D
-@onready var image_pointcatch = $interface/aim
 @onready var timer_reload_spell: Timer = $timer_reload_spell
 @onready var timer_reload_coldsteel = $timer_reload_coldsteel
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
-@onready var label_health = $interface/hp/hp
-@onready var progressbar_reload_coldsteel = $interface/progressbar_reload_coldsteel
-@onready var label_mana = $interface/mana/labelmana
-@onready var texturerect_base = $interface/spells/book
-@onready var texturerect_overlay = $interface/spells/book/spell_icon
-@onready var label_mana_cost = $interface/spells/mana_cost
-@onready var parent_hboxcontainer_card = $interface/Control
-@onready var hboxcontainer_card = $interface/Control/hboxcontainer_card
-@onready var texturerect_card: TextureRect = $interface/texturerect_card
-@onready var card_hint: Label = $interface/card_hint
 @onready var coldsteel: Node3D = $coldsteel
-@onready var label_enemy_appear_count = $interface/enemy_appear/enemy_count
-@onready var label_enemy_appear_time = $interface/enemy_appear/enemy_time
-@onready var label_enemy_appear_spawn = $interface/enemy_appear/enemy_spawn
 @onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
 @onready var timer_walk_slowing: Timer = $timer_walk_slowing
-@onready var label_hp_sphere = $interface/hp/health_sphere
-@onready var label_hp_sphere_fill = $interface/hp/health_sphere/SubViewport/sphere_outside/sphere_inside
-@onready var label_mana_sphere = $interface/mana/mana_sphere
-@onready var label_mana_sphere_fill = $interface/mana/mana_sphere/SubViewport/sphere_outside/sphere_inside
+
+@onready var image_pointcatch = $interface/VBoxContainer/aim
+@onready var label_health = $interface/HUD/health_sphere/hp
+@onready var progressbar_reload_coldsteel = $interface/VBoxContainer/progressbar_reload_coldsteel
+@onready var label_mana = $interface/HUD/mana_sphere/mana
+@onready var texturerect_base = $interface/HUD/book
+@onready var texturerect_overlay = $interface/HUD/book/spell_icon
+@onready var label_mana_cost = $interface/HUD/book/mana_cost
+@onready var parent_hboxcontainer_card = $interface/HUD/wallet
+@onready var hboxcontainer_card = $interface/HUD/wallet/hboxcontainer_card
+@onready var texturerect_card: TextureRect = $interface/texturerect_card
+@onready var card_hint: Label = $interface/card_hint
+@onready var label_enemy_appear_count = $interface/HUD/enemy_appear/enemy_count
+@onready var label_enemy_appear_time = $interface/HUD/enemy_appear/enemy_time
+@onready var label_enemy_appear_spawn = $interface/HUD/enemy_appear/enemy_spawn
+@onready var label_hp_sphere = $interface/HUD/health_sphere
+@onready var label_hp_sphere_fill = $interface/HUD/health_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var label_mana_sphere = $interface/HUD/mana_sphere
+@onready var label_mana_sphere_fill =$interface/HUD/mana_sphere/SubViewport/sphere_outside/sphere_inside
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -77,7 +78,7 @@ var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
 var card_mana_max = preload("res://sprites/card_mana_max.png")
 var card_hp_to_mana_sacrifice = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 var card_mine_spell = preload("res://sprites/card_mine_spell.png")
-var card_scale = 2
+var card_scale = 3
 var card_size = card_scale * Vector2(32, 48)
 var card_currently_index = -1
 var card_list : Array
