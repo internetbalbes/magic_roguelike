@@ -89,4 +89,3 @@ bone_idx = 22
 
 [node name="sword" parent="player_model/Skeleton3D/BoneAttachment3D" index="0" instance=ExtResource("2_lb3h5")]
 transform = Transform3D(5.08304, 149.602, -5.20805, -99.58, 6.99561, -7.87849, -7.61471, 8.37996, 99.553, -212.578, 80.0658, 0.633114)
-visible = false

@@ -1,14 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c0khaoa10ee84"]
+[gd_scene load_steps=2 format=3 uid="uid://c0khaoa10ee84"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7j6pl"]
-albedo_color = Color(1, 1, 0, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_xk6g2"]
-material = SubResource("StandardMaterial3D_7j6pl")
-size = Vector3(0.2, 2, 0.2)
+[ext_resource type="PackedScene" uid="uid://cqvbfvxn420jt" path="res://models/one_handed_axe/axe.gltf" id="1_xk6g2"]
 
 [node name="one_handed_axe" type="Node3D"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = SubResource("BoxMesh_xk6g2")
+[node name="axe" parent="." instance=ExtResource("1_xk6g2")]

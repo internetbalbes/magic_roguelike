@@ -81,14 +81,14 @@ var cold_steels = {
 		"damage"=0,
 		"target"="",
 		"cooldown"=0,
-		"texture" = load("res://sprites/book.png"),
+		"texture" = load("res://sprites/items/one_handed_sword.png"),
 		"prefab" = load("res://models/one_handed_sword/one_handed_sword.tscn") 
 	},
 	"one_handed_axe":{
 		"damage"=0,
 		"target"="",
 		"cooldown"=0,
-		"texture"= load("res://sprites/magic_resist_icon.png"),
+		"texture"= load("res://sprites/items/one_handed_axe.png"),
 		"prefab"= load("res://models/one_handed_axe/one_handed_axe.tscn")
 	}	
 }
@@ -98,7 +98,7 @@ var rune_param = {
 	"splash_targets_amount_increase" :{
 		"parametr": "",
 		"value": 0,
-		"texture": load("res://sprites/card_hp_to_mana_sacrifice.png")
+		"texture": load("res://sprites/runes/splash_rune.png")
 	}
 }
 
