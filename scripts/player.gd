@@ -5,31 +5,31 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 
 @onready var camera = $Camera3D
 @onready var raycast = $Camera3D/RayCast3D
+@onready var image_pointcatch = $interface/VBoxContainer/aim
 @onready var timer_reload_spell: Timer = $timer_reload_spell
 @onready var timer_reload_coldsteel = $timer_reload_coldsteel
+@onready var timer_kill_zone = $timer_kill_zone
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
-@onready var coldsteel: Node3D = $coldsteel
-@onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
-@onready var timer_walk_slowing: Timer = $timer_walk_slowing
-
-@onready var image_pointcatch = $interface/VBoxContainer/aim
-@onready var label_health = $interface/HUD/health_sphere/hp
+@onready var label_health = $interface/HUD/control_hud/hp_bar/hp
 @onready var progressbar_reload_coldsteel = $interface/VBoxContainer/progressbar_reload_coldsteel
-@onready var label_mana = $interface/HUD/mana_sphere/mana
+@onready var label_mana = $interface/HUD/control_hud/mana_bar/mana
 @onready var texturerect_base = $interface/HUD/book
 @onready var texturerect_overlay = $interface/HUD/book/spell_icon
 @onready var label_mana_cost = $interface/HUD/book/mana_cost
-@onready var parent_hboxcontainer_card = $interface/HUD/wallet
-@onready var hboxcontainer_card = $interface/HUD/wallet/hboxcontainer_card
-@onready var texturerect_card: TextureRect = $interface/texturerect_card
-@onready var card_hint: Label = $interface/card_hint
+@onready var hboxcontainer_card_parent = $interface/HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent
+@onready var hboxcontainer_card = $interface/HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent/hboxcontainer_card
+@onready var texturerect_card: TextureRect = $interface/HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control/texturerect_card
+@onready var card_hint: Label = $interface/HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control/card_hint
+@onready var coldsteel: Node3D = $coldsteel
 @onready var label_enemy_appear_count = $interface/HUD/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/HUD/enemy_appear/enemy_time
 @onready var label_enemy_appear_spawn = $interface/HUD/enemy_appear/enemy_spawn
-@onready var label_hp_sphere = $interface/HUD/health_sphere
-@onready var label_hp_sphere_fill = $interface/HUD/health_sphere/SubViewport/sphere_outside/sphere_inside
-@onready var label_mana_sphere = $interface/HUD/mana_sphere
-@onready var label_mana_sphere_fill =$interface/HUD/mana_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
+@onready var timer_walk_slowing: Timer = $timer_walk_slowing
+@onready var label_hp_sphere_fill = $interface/HUD/control_hud/hp_bar/health_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var label_mana_sphere_fill = $interface/HUD/control_hud/mana_bar/mana_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var bone_attachment = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D
+@onready var interaction_info = $interface/interaction_info
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -56,8 +56,6 @@ var player_jump_velocity = 3
 var player_rotate_sensitivity = 0.085
 # player's currently health
 var player_current_health: int = player_max_health
-# time reload coldspeel
-var time_reload_coldspeel = 1.0
 # speed scroll_container spells
 var spell_currently_index = 1
 # player's max mana 
@@ -78,7 +76,7 @@ var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
 var card_mana_max = preload("res://sprites/card_mana_max.png")
 var card_hp_to_mana_sacrifice = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 var card_mine_spell = preload("res://sprites/card_mine_spell.png")
-var card_scale = 3
+var card_scale = 2
 var card_size = card_scale * Vector2(32, 48)
 var card_currently_index = -1
 var card_list : Array
@@ -88,6 +86,15 @@ var card_hp_to_mana_sacrifice_exchange = 2
 var sword_splash_animation_time = 0.0
 var player_speed_walk_slowing = 1.0
 var is_card_dissolve_tween: bool = false
+var currently_coldsteel_name = ""
+var currently_coldsteel = {
+		"damage"=0,
+		"target"="",
+		"cooldown"=0
+	}
+var new_loot_pivot: Node3D = null
+# List rune
+var runes : Array
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -97,7 +104,6 @@ func _ready() -> void:
 		player_jump_velocity = config.get_value("player", "player_jump_velocity", player_jump_velocity)
 		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
 		timer_reload_spell.wait_time = config.get_value("player", "time_reload_spell", 1.0)
-		time_reload_coldspeel = config.get_value("player", "time_reload_coldspeel", time_reload_coldspeel)		
 		player_max_mana =  config.get_value("player", "player_max_mana", player_max_mana)
 		raycast.target_position.z =  -config.get_value("player", "player_scan_enemy", abs(raycast.target_position.z))
 		player_speed_walk_slowing = config.get_value("player", "player_speed_walk_slowing", player_speed_walk_slowing)
@@ -135,34 +141,27 @@ func _ready() -> void:
 	sword_splash_animation_time = 1.16 / animation_player.speed_scale
 	card_hint.visible = false
 	texturerect_card.visible = false
-	texturerect_card.size = Vector2(card_size.x, card_size.y)
-	var rect = Vector2(8 * card_size.x, card_size.y)
-	parent_hboxcontainer_card.set_deferred("size", rect) 
-	var window_size = camera.get_viewport().get_visible_rect().size
-	var top = window_size.y - rect.y
-	var left = (window_size.x - rect.x) / 2.0	
-	parent_hboxcontainer_card.position = Vector2(left, top)	
-	texturerect_card.position = parent_hboxcontainer_card.position	
 	texturerect_card.custom_minimum_size = card_size
-	texturerect_card.expand = true
-	texturerect_card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT	
+	texturerect_card.stretch_mode = TextureRect.STRETCH_SCALE	
 	var mat = label_hp_sphere_fill.get_material_override() 
 	mat.set_shader_parameter("base_color", Vector3(1.0, 0.0, 0.0))	
-	top = window_size.y - label_hp_sphere.size.y * label_hp_sphere.get_parent().scale.y
-	left = left - label_hp_sphere.size.x * label_hp_sphere.get_parent().scale.y	
-	label_hp_sphere.get_parent().position = Vector2(left, top)	
+	mat.set_shader_parameter("fill_color", Vector3(1.0, 0.1, 0.0))
 	mat = label_mana_sphere_fill.get_material_override() 
 	mat.set_shader_parameter("base_color", Vector3(0.0, 0.0, 1.0))
-	left = parent_hboxcontainer_card.position.x + rect.x	
-	label_mana_sphere.get_parent().position = Vector2(left, top)
+	mat.set_shader_parameter("fill_color", Vector3(0.0, 1.0, 0.1))
 	texturerect_card.material.set_shader_parameter("dissolve_value", 1.0)
 	take_health(player_max_health)
 	_set_spell_currently(spell_currently_index)
 	take_mana(player_max_mana)
+	currently_coldsteel_name = "one_handed_sword"
+	currently_coldsteel = Globalsettings.cold_steels[currently_coldsteel_name]
+	var prefab = Globalsettings.cold_steels[currently_coldsteel_name].prefab.instantiate()
+	bone_attachment.add_child(prefab)
+	prefab.transform = bone_attachment.get_child(0).transform	
 	progressbar_reload_coldsteel.step = 0.05
-	progressbar_reload_coldsteel.value = time_reload_coldspeel
-	progressbar_reload_coldsteel.max_value = time_reload_coldspeel
-	label_health.text = str(int(player_current_health)) + "/" + str(int(player_max_health))
+	progressbar_reload_coldsteel.value = currently_coldsteel.cooldown
+	progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown
+	label_health.text = str(int(player_current_health)) + "/" + str(int(player_max_health))	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
@@ -232,6 +231,8 @@ func _input(event: InputEvent) -> void:
 				animation_player.play("melee")
 	elif event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
+	elif event.is_action_pressed("choose_coldsteel") && new_loot_pivot:
+		take_new_loot_pivot()
 
 func _physics_process(delta: float) -> void:
 	# find collide with object
@@ -318,8 +319,8 @@ func portal_free() -> void:
 func card_list_update()->void:
 	var width = card_list.size() * card_size.x
 	hboxcontainer_card.remove_theme_constant_override("separation")
-	if width > parent_hboxcontainer_card.size.x:
-		var separation = (width - parent_hboxcontainer_card.size.x)/(card_list.size()-1)
+	if width > hboxcontainer_card_parent.size.x:
+		var separation = (width - hboxcontainer_card_parent.size.x)/(card_list.size()-1)
 		hboxcontainer_card.add_theme_constant_override("separation", -round(separation + 0.5))
 	else:
 		hboxcontainer_card.add_theme_constant_override("separation", 0)
@@ -354,10 +355,10 @@ func get_spell_texture(sell_name: String)->Texture2D:
 	
 func set_card_new_position(index)->void:
 	var card = hboxcontainer_card.get_child(index)
-	texturerect_card.position = Vector2(parent_hboxcontainer_card.position.x + clamp(card.position.x, 0, parent_hboxcontainer_card.size.x - texturerect_card.size.x), parent_hboxcontainer_card.position.y - texturerect_card.size.y)
+	texturerect_card.position.x =  clamp(card.position.x, 0, hboxcontainer_card_parent.size.x - texturerect_card.size.x)
 	texturerect_card.texture = card.texture
 	card_hint.text = get_card_hint(card_list[index])
-	card_hint.position = Vector2(texturerect_card.position.x + texturerect_card.size.x + 10, texturerect_card.position.y + (texturerect_card.size.y - card_hint.size.y) / 2)  
+	card_hint.position = Vector2(texturerect_card.position.x + texturerect_card.size.x + 10, texturerect_card.position.y + (texturerect_card.size.y - card_hint.size.y) / 2)
 	card.texture = null
 	card.custom_minimum_size = card_size
 						
@@ -369,8 +370,7 @@ func create_card(card_name)->void:
 	card_list.append(card_name)
 	var card = TextureRect.new()
 	card.custom_minimum_size = card_size
-	card.expand = true
-	card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	card.stretch_mode = TextureRect.STRETCH_SCALE
 	card.texture = get_card_texture(card_name)
 	card_list_update()	
 	if hboxcontainer_card.get_child_count() == 0:
@@ -439,7 +439,7 @@ func _on_timer_reload_coldsteel_timeout() -> void:
 	else:
 		if value > 0.5 / animation_player.speed_scale && value < 0.7 / animation_player.speed_scale:
 			if !coldsteel.is_action_cold_steel_cutoff():
-				coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), "single")
+				coldsteel.action_cold_steel(raycast.get_collider(), raycast.get_collision_point(), currently_coldsteel)
 		else:
 			coldsteel.action_cold_steel_cutoff_off(false)
 		progressbar_reload_coldsteel.value = value
@@ -456,3 +456,73 @@ func enemy_appear_spawn(value):
 
 func _on_timer_walk_slowing_timeout() -> void:
 	player_speed_walk /= player_speed_walk_slowing
+	
+func in_kill_zone():	
+	timer_kill_zone.start()
+	
+func out_kill_zone():
+	timer_kill_zone.stop()
+
+func _on_timer_kill_zone_timeout() -> void:
+	take_damage(1)
+	
+func in_new_loot(loot_pivot: Node3D):
+	new_loot_pivot = loot_pivot
+	interaction_info.text = Globalsettings.interaction_info["drop_interaction_hint_text"]
+	
+func out_new_loot(_coldsteel_pivot: Node3D):
+	interaction_info.text = ""
+	new_loot_pivot = null
+
+func _get_point_on_circle_around_owner(_global_position) -> Vector3:
+	var angle = deg_to_rad(randf_range(0.0, 359.0))
+	var x = cos(angle)
+	var z = sin(angle)
+	return _global_position + 5.0 * Vector3(x, 0, z)
+	
+func create_rune_pivot(owner_rune, rune_name):
+	var rune_pivot = load("res://prefabs/objects/coldsteel_pivot/coldsteel_pivot.tscn").instantiate()
+	rune_pivot.name = rune_name
+	var mesh = rune_pivot.get_node("MeshInstance3D")
+	mesh.mesh.material.albedo_texture =  Globalsettings.rune_param[rune_name].texture
+	mesh.mesh.material.emission_texture =  Globalsettings.rune_param[rune_name].texture	
+	world.add_child(rune_pivot)
+	rune_pivot.global_position =_get_point_on_circle_around_owner(owner_rune.global_position)
+	
+func create_coldsteel_pivot(owner_coldsteel, coldsteel_name):
+	var coldsteel_pivot = load("res://prefabs/objects/coldsteel_pivot/coldsteel_pivot.tscn").instantiate()
+	coldsteel_pivot.name = coldsteel_name
+	var mesh = coldsteel_pivot.get_node("MeshInstance3D")
+	mesh.mesh.material.albedo_texture =  Globalsettings.cold_steels[coldsteel_name].texture
+	mesh.mesh.material.emission_texture =  Globalsettings.cold_steels[coldsteel_name].texture	
+	world.add_child(coldsteel_pivot)
+	coldsteel_pivot.global_position = _get_point_on_circle_around_owner(owner_coldsteel.global_position)
+	var prefab = Globalsettings.cold_steels[coldsteel_name].prefab.instantiate()	
+	prefab.visible = false
+	coldsteel_pivot.add_child(prefab)
+	
+func take_new_loot_pivot():		
+	if new_loot_pivot.has_node(String(new_loot_pivot.name)):	
+		var _coldsteel = new_loot_pivot.get_node(String(new_loot_pivot.name))
+		create_coldsteel_pivot(self, currently_coldsteel_name)
+		currently_coldsteel_name = new_loot_pivot.name
+		currently_coldsteel = Globalsettings.cold_steels[currently_coldsteel_name]	
+		_coldsteel.reparent(bone_attachment)
+		_coldsteel.transform = bone_attachment.get_child(0).transform
+		_coldsteel.visible = true
+		progressbar_reload_coldsteel.value = currently_coldsteel.cooldown
+		progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown	
+		bone_attachment.get_child(1).call_deferred("queue_free")
+	else:
+		runes.append(new_loot_pivot.name)
+		var rune_pivot = load("res://prefabs/objects/rune_pivot/rune_pivot.tscn").instantiate()		
+		var node_rune = rune_pivot.get_node("mesh_rune_pivot").duplicate()
+		node_rune.mesh.material.albedo_texture =  Globalsettings.rune_param[new_loot_pivot.name]["texture"]
+		node_rune.mesh.material.emission_texture =  Globalsettings.rune_param[new_loot_pivot.name]["texture"]
+		node_rune.visible = true
+		rune_pivot.add_child(node_rune)
+		bone_attachment.get_child(1).add_child(rune_pivot)
+		match Globalsettings.rune_param[new_loot_pivot.name]["parametr"]:
+			"damage": currently_coldsteel.damage += Globalsettings.rune_param[new_loot_pivot.name]["value"]			
+	new_loot_pivot.call_deferred("queue_free")
+		

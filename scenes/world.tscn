@@ -76,6 +76,8 @@ grow_vertical = 2
 [node name="timer_walk_slowing" type="Timer" parent="player"]
 one_shot = true
 
+[node name="timer_kill_zone" type="Timer" parent="player"]
+
 [node name="map_generator" parent="." instance=ExtResource("12_q5onr")]
 
 [connection signal="timeout" from="player/timer_reload_coldsteel" to="player" method="_on_timer_reload_coldsteel_timeout"]

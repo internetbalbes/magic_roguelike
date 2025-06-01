@@ -28,6 +28,8 @@ func _ready() -> void:
 	navigation_agent.path_height_offset = -var_scale
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("run").loop = true
+	coldsteel_name = "one_handed_axe"
+	rune_name = "splash_targets_amount_increase"
 	
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	

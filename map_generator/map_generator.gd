@@ -1,5 +1,7 @@
 extends Node3D
 
+@onready var kill_zone: Area3D = $kill_zone
+
 const ENVIRONMENT_OBJECTS = {
 	"tree10" = {
 		"prefab_path" = "res://map_generator/prefabs/ground/tree/tree10/tree_10.tscn",
@@ -23,6 +25,8 @@ const ENVIRONMENT_OBJECTS = {
 
 const CHUNK_SIZE = 4
 
+var HALF_CHUNK_SIZE = CHUNK_SIZE / 2.0
+var SCALE_SIZE_MAP = 1
 var chunk_array = []
 
 class tile:
@@ -30,6 +34,7 @@ class tile:
 	var corner_y_rotate = 0
 
 func _ready() -> void:
+	kill_zone.visible = false
 	chunk_array_expansion()
 	
 func chunk_array_expansion():
@@ -39,18 +44,40 @@ func chunk_array_expansion():
 			chunk_array[i].append(tile.new())
 			chunk_array[i][j].relief = ""
 
-func create_chunk():
+func create_map():
+	create_portal()
+	create_chunk(created_portal, null, false)
+	create_chunk(null, create_kill_zone("kill_zone_forward"), true)	
+	
+func create_chunk(portal, zone, bake):
 	clear_chunk_array()
 	create_path()
 	create_corners()
 	visualize_chunk()
-	create_portal()
-	create_barrier()
-	chunks_clearing()	
-	call_deferred("bake_navigation_mesh")
+	if zone:
+		if zone.get_parent():
+			zone.reparent(chunk_list[-1])
+		else:
+			chunk_list[-1].add_child(zone)
+	if portal:
+		portal.position = Vector3(CHUNK_SIZE - 1, 0, last_y_list[-1])	
+		chunk_list[-1].add_child(portal)
 	transform_chunk()
-	chunks_created_amount += 1
-		
+	chunks_clearing()
+	if bake:
+		call_deferred("bake_navigation_mesh")
+
+func create_kill_zone(zone_name):
+	var _kill_zone = kill_zone.duplicate()
+	_kill_zone.position = Vector3(HALF_CHUNK_SIZE,  0.0,  HALF_CHUNK_SIZE)
+	_kill_zone.name = zone_name
+	var fog = _kill_zone.get_node("fog")
+	fog.size = Vector3(CHUNK_SIZE,  1.0,  CHUNK_SIZE)
+	_kill_zone.visible = true	
+	fog.material.set_shader_parameter("length_x", CHUNK_SIZE)
+	_kill_zone.get_node("CollisionShape3D").shape.size = fog.size
+	return _kill_zone
+
 func clear_chunk_array():
 	for x in range(CHUNK_SIZE):
 		for y in range(CHUNK_SIZE):
@@ -58,11 +85,10 @@ func clear_chunk_array():
 
 var random_index : int
 var painter_position = Vector2i()
-var chunks_created_amount : int = 0
 var last_y_list = []
 
 func create_path():
-	if chunks_created_amount == 0:
+	if chunk_list.size() == 0:
 		painter_position = Vector2i(1, 1)
 	else:
 		painter_position = Vector2i(1, last_y_list[-1])
@@ -123,8 +149,8 @@ func visualize_chunk():
 							
 func create_chunk_prefab():
 	created_prefab = chunk_prefab.instantiate()
+	created_prefab.name = "chunk_" + str(chunk_list.size())	
 	chunk_list.append(created_prefab)
-	created_prefab.name = "chunk_" + str(chunks_created_amount)
 	add_child(created_prefab)	
 
 func create_tile(id):
@@ -138,35 +164,42 @@ var random_tile_index : Vector2i
 var created_portal
 
 func create_portal():
-	created_prefab = portal_prefab.instantiate()
-	created_prefab.position = Vector3(CHUNK_SIZE - 1,0,last_y_list[-1])
-	created_prefab.name = "portal_" + str(CHUNK_SIZE - 1) + "_" + str(last_y_list[-1])
-	created_prefab.scale *=0.03
-	current_tile.add_child(created_prefab)
-	created_portal = created_prefab
-
-var SCALE_SIZE_MAP = 1
+	created_portal = portal_prefab.instantiate()
+	created_portal.name = "portal"
+	created_portal.scale *=0.03
 
 func transform_chunk():
-	chunk_list[-1].position.x = CHUNK_SIZE * chunks_created_amount * SCALE_SIZE_MAP
+	chunk_list[-1].position.x = CHUNK_SIZE * (chunk_list.size() - 1) * SCALE_SIZE_MAP
 	chunk_list[-1].scale *= SCALE_SIZE_MAP
 
 func chunks_clearing():
-	if chunks_created_amount > 2:
+	if chunk_list.size() > 4:
 		var old_chunk = chunk_list.pop_front()
 		if old_chunk:
 			old_chunk.queue_free()
 
-var HALF_CHUNK_SIZE = SCALE_SIZE_MAP / 2.0
-
 func find_block_free():
-	return Vector3((1 - HALF_CHUNK_SIZE + 0.5) * SCALE_SIZE_MAP,0,(1 - HALF_CHUNK_SIZE + 0.5) * SCALE_SIZE_MAP)
+	return Vector3((HALF_CHUNK_SIZE - 0.5) , 0, 1.0) * SCALE_SIZE_MAP
 
 func portal_destroyed():
-	created_portal.queue_free()
-	current_barrier.queue_free()
-	create_chunk()
-
+	var _transform = Transform3D.IDENTITY
+	var zone : Node3D
+	if chunk_list.size() == 4:
+		zone = chunk_list[0].get_node("kill_zone_back")
+		_transform = zone.transform
+		zone.reparent(chunk_list[1])
+		zone.transform = _transform
+	elif chunk_list.size() == 3:
+		chunk_list[0].add_child(create_kill_zone("kill_zone_back"))
+	_transform = created_portal.transform
+	created_portal.reparent(chunk_list[-1])
+	created_portal.transform = _transform
+	created_portal.position = Vector3(CHUNK_SIZE - 1, 0, last_y_list[-1])
+	zone = chunk_list[-1].get_node("kill_zone_forward")
+	_transform = zone.transform
+	create_chunk(null, zone, true)
+	zone.transform = _transform
+	
 var corner_prefab = load("res://map_generator/prefabs/corner/corner.tscn")
 
 func create_corners():
@@ -218,16 +251,17 @@ func create_environment(x,y):
 				created_prefab.position = Vector3(randf_range(x-0.5,x+0.5),0,randf_range(y-0.5,y+0.5))
 				created_prefab.name = object + "_" + str(created_prefab.position.x) + "_" + str(created_prefab.position.y)
 				created_prefab.scale *= object_data["scale"]
-				current_tile.add_child(created_prefab)		
+				current_tile.add_child(created_prefab)
+
+func set_collision_kill_zone(collision_layer):
+	var zone = chunk_list[-1].get_node("kill_zone_forward")
+	zone.collision_mask = zone.collision_mask * collision_layer	
+
+func _on_kill_zone_body_entered(body: Node3D) -> void:
+	if body.has_method("in_kill_zone"):
+		body.in_kill_zone()	
 
 
-var barrier_prefab = load("res://map_generator/prefabs/barrier/barrier.tscn")
-var current_barrier
-	
-func create_barrier():
-	created_prefab = barrier_prefab.instantiate()
-	created_prefab.position = Vector3(CHUNK_SIZE-1,0.5,last_y_list[-1])
-	created_prefab.name = "barrier"
-	current_barrier = created_prefab
-	current_tile.add_child(created_prefab)		
-	
+func _on_kill_zone_body_exited(body: Node3D) -> void:
+	if body.has_method("out_kill_zone"):
+		body.out_kill_zone()	

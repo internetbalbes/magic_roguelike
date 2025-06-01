@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bf7ukl85fy8hi"]
+[gd_scene load_steps=10 format=3 uid="uid://bf7ukl85fy8hi"]
 
 [ext_resource type="Script" uid="uid://bbmrlwrnbbul8" path="res://map_generator/map_generator.gd" id="1_1c4l0"]
 [ext_resource type="Texture2D" uid="uid://b6tfb1f5jhv5m" path="res://sprites/skybox/skybox.png" id="2_3n4u5"]
+[ext_resource type="Shader" uid="uid://csxeglncoq0e0" path="res://map_generator/kill_zone.gdshader" id="3_nchfj"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_0r6lh"]
 geometry_parsed_geometry_type = 1
@@ -20,6 +21,16 @@ sky = SubResource("Sky_3n4u5")
 sky_rotation = Vector3(0, 0.523599, 0)
 tonemap_mode = 4
 volumetric_fog_enabled = true
+volumetric_fog_density = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ckfgr"]
+shader = ExtResource("3_nchfj")
+shader_parameter/fog_color_start = Color(1, 1, 1, 1)
+shader_parameter/fog_color_end = Color(0, 0, 0, 1)
+shader_parameter/length_x = 0.0
+shader_parameter/density = 30.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nchfj"]
 
 [node name="map_generator" type="NavigationRegion3D"]
 navigation_mesh = SubResource("NavigationMesh_0r6lh")
@@ -32,3 +43,17 @@ environment = SubResource("Environment_nchfj")
 transform = Transform3D(-0.707107, -7.462e-08, -0.707107, -0.707107, -3.09086e-08, 0.707107, -7.462e-08, 1, -3.09086e-08, 0, 0, 0)
 light_energy = 0.5
 shadow_enabled = true
+
+[node name="kill_zone" type="Area3D" parent="."]
+
+[node name="fog" type="FogVolume" parent="kill_zone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+size = Vector3(4, 2, 4)
+material = SubResource("ShaderMaterial_ckfgr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="kill_zone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+shape = SubResource("BoxShape3D_nchfj")
+
+[connection signal="body_entered" from="kill_zone" to="." method="_on_kill_zone_body_entered"]
+[connection signal="body_exited" from="kill_zone" to="." method="_on_kill_zone_body_exited"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bwuna3hfok8r5"]
 
 [ext_resource type="PackedScene" uid="uid://c14fhkt6rj0qp" path="res://models/player_model/player_model.gltf" id="1_c8l5m"]
-[ext_resource type="PackedScene" uid="uid://bfg63cfh8yxlh" path="res://models/sword/sword.tscn" id="2_lb3h5"]
+[ext_resource type="PackedScene" uid="uid://bfg63cfh8yxlh" path="res://models/one_handed_sword/one_handed_sword.tscn" id="2_lb3h5"]
 
 [node name="player_model" instance=ExtResource("1_c8l5m")]
 
@@ -83,9 +83,10 @@ bones/39/rotation = Quaternion(0.265947, -0.205324, 0.0533051, 0.940358)
 bones/40/position = Vector3(4.00534e-05, 124.93, -2.86105e-05)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="player_model/Skeleton3D" index="1"]
-transform = Transform3D(0.337307, -0.600271, 0.725189, 0.281183, 0.799412, 0.530921, -0.898421, 0.024828, 0.438433, -507.849, 62.651, -1288.68)
+transform = Transform3D(0.337307, -0.60027, 0.72519, 0.281183, 0.799413, 0.53092, -0.898421, 0.024829, 0.438433, -507.848, 62.6519, -1288.67)
 bone_name = "mixamorig_RightHand"
 bone_idx = 22
 
 [node name="sword" parent="player_model/Skeleton3D/BoneAttachment3D" index="0" instance=ExtResource("2_lb3h5")]
 transform = Transform3D(5.08304, 149.602, -5.20805, -99.58, 6.99561, -7.87849, -7.61471, 8.37996, 99.553, -212.578, 80.0658, 0.633114)
+visible = false

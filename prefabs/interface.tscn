@@ -25,7 +25,7 @@ shader_parameter/burn_color = Color(1, 1, 0, 1)
 [node name="interface" type="CanvasLayer"]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 608.0
@@ -49,42 +49,20 @@ z_index = 1
 layout_mode = 2
 show_percentage = false
 
-[node name="texturerect_card" type="TextureRect" parent="."]
-z_index = 1
-material = SubResource("ShaderMaterial_5nuor")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 346.0
-offset_bottom = -374.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="card_hint" type="Label" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 254.0
-offset_top = 407.0
-offset_right = -1025.0
-offset_bottom = -255.0
-grow_horizontal = 2
-grow_vertical = 2
-label_settings = ExtResource("1_6qr8u")
-
 [node name="HUD" type="HBoxContainer" parent="."]
-anchors_preset = 15
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 464.0
+offset_top = -256.0
 grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_use_anchors_ = true
+grow_vertical = 0
 
 [node name="book" type="TextureRect" parent="HUD"]
+custom_minimum_size = Vector2(150, 150)
 layout_mode = 2
+size_flags_vertical = 8
 texture = ExtResource("4_7spvn")
-expand_mode = 3
 
 [node name="spell_icon" type="TextureRect" parent="HUD/book"]
 layout_mode = 1
@@ -101,96 +79,41 @@ anchor_left = 0.617
 anchor_top = 0.076
 anchor_right = 0.773
 anchor_bottom = 0.377
-offset_left = 0.0479889
-offset_top = -4.456
-offset_right = 0.111984
-offset_bottom = -4.512
+offset_left = 4.04799
+offset_top = 5.544
+offset_right = 4.11198
+offset_bottom = 5.488
 text = "0"
 label_settings = ExtResource("1_6qr8u")
 
-[node name="mana_bar" type="PanelContainer" parent="HUD"]
+[node name="control_hud" type="HBoxContainer" parent="HUD"]
 layout_mode = 2
-theme = ExtResource("4_hbh6n")
+size_flags_horizontal = 3
 
-[node name="mana_sphere" type="SubViewportContainer" parent="HUD/mana_bar"]
+[node name="hp_bar" type="PanelContainer" parent="HUD/control_hud"]
 layout_mode = 2
-
-[node name="SubViewport" type="SubViewport" parent="HUD/mana_bar/mana_sphere"]
-own_world_3d = true
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(256, 256)
-render_target_update_mode = 4
-
-[node name="Camera3D" type="Camera3D" parent="HUD/mana_bar/mana_sphere/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 0.993961, 0.109734, 0, -0.109734, 0.993961, 0, 0.307, 2.947)
-current = true
-fov = 20.0
-
-[node name="sphere_outside" parent="HUD/mana_bar/mana_sphere/SubViewport" instance=ExtResource("10_0mywj")]
-
-[node name="bar" type="TextureRect" parent="HUD/mana_bar"]
-layout_mode = 2
-texture = ExtResource("8_d2vfn")
-
-[node name="mana" type="Label" parent="HUD/mana_bar"]
-layout_mode = 2
-text = "mana"
-label_settings = ExtResource("1_6qr8u")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="wallet" type="NinePatchRect" parent="HUD"]
-layout_mode = 2
+size_flags_horizontal = 0
 size_flags_vertical = 8
-texture = ExtResource("7_hbh6n")
-region_rect = Rect2(0, 0, 192, 192)
-patch_margin_left = 64
-patch_margin_top = 64
-patch_margin_right = 64
-patch_margin_bottom = 64
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
-
-[node name="hboxcontainer_card_parent" type="Control" parent="HUD"]
-layout_mode = 2
-
-[node name="hboxcontainer_card" type="HBoxContainer" parent="HUD/hboxcontainer_card_parent"]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = -0.453
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -121.0
-offset_top = -0.0319977
-offset_right = 347.0
-offset_bottom = 5.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_vertical = 10
-
-[node name="hp_bar" type="PanelContainer" parent="HUD"]
-layout_mode = 2
 theme = ExtResource("4_hbh6n")
 
-[node name="health_sphere" type="SubViewportContainer" parent="HUD/hp_bar"]
+[node name="health_sphere" type="SubViewportContainer" parent="HUD/control_hud/hp_bar"]
 layout_mode = 2
 
-[node name="SubViewport" type="SubViewport" parent="HUD/hp_bar/health_sphere"]
+[node name="SubViewport" type="SubViewport" parent="HUD/control_hud/hp_bar/health_sphere"]
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(256, 256)
+size = Vector2i(128, 128)
 render_target_update_mode = 4
 
-[node name="Camera3D" type="Camera3D" parent="HUD/hp_bar/health_sphere/SubViewport"]
+[node name="Camera3D" type="Camera3D" parent="HUD/control_hud/hp_bar/health_sphere/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 0.994034, 0.109075, 0, -0.109075, 0.994034, 0, 0.30675, 2.9465)
 current = true
 fov = 20.0
 
-[node name="sphere_outside" parent="HUD/hp_bar/health_sphere/SubViewport" instance=ExtResource("10_0mywj")]
+[node name="sphere_outside" parent="HUD/control_hud/hp_bar/health_sphere/SubViewport" instance=ExtResource("10_0mywj")]
 
-[node name="hp" type="Label" parent="HUD/hp_bar"]
+[node name="hp" type="Label" parent="HUD/control_hud/hp_bar"]
 z_index = 1
 layout_mode = 2
 text = "hp"
@@ -198,18 +121,142 @@ label_settings = ExtResource("1_6qr8u")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="bar" type="TextureRect" parent="HUD/hp_bar"]
+[node name="bar" type="TextureRect" parent="HUD/control_hud/hp_bar"]
 layout_mode = 2
 texture = ExtResource("8_d2vfn")
 
-[node name="enemy_appear" type="HBoxContainer" parent="HUD"]
+[node name="vboxcontainer_card_parent" type="VBoxContainer" parent="HUD/control_hud"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="control_currently_card" type="Control" parent="HUD/control_hud/vboxcontainer_card_parent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/control_hud/vboxcontainer_card_parent/control_currently_card"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+
+[node name="Control" type="Control" parent="HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer"]
+layout_mode = 2
+
+[node name="texturerect_card" type="TextureRect" parent="HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control"]
+z_index = 1
+material = SubResource("ShaderMaterial_5nuor")
+custom_minimum_size = Vector2(64, 96)
+layout_mode = 2
+offset_right = 64.0
+offset_bottom = 106.0
+size_flags_horizontal = 0
+
+[node name="card_hint" type="Label" parent="HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control"]
+layout_mode = 2
+offset_top = 43.0
+offset_right = 1.0
+offset_bottom = 63.0
+size_flags_horizontal = 0
+label_settings = ExtResource("1_6qr8u")
+
+[node name="hboxcontainer_cards" type="Control" parent="HUD/control_hud/vboxcontainer_card_parent"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="wallet" type="NinePatchRect" parent="HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 8
+texture = ExtResource("7_hbh6n")
+patch_margin_left = 64
+patch_margin_top = 64
+patch_margin_right = 64
+patch_margin_bottom = 64
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="margincontainer_card" type="MarginContainer" parent="HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="hboxcontainer_card_parent" type="Control" parent="HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card"]
+layout_mode = 2
+
+[node name="hboxcontainer_card" type="HBoxContainer" parent="HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent"]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 10
+
+[node name="mana_bar" type="PanelContainer" parent="HUD/control_hud"]
+layout_mode = 2
+size_flags_vertical = 8
+theme = ExtResource("4_hbh6n")
+
+[node name="mana_sphere" type="SubViewportContainer" parent="HUD/control_hud/mana_bar"]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="HUD/control_hud/mana_bar/mana_sphere"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(128, 128)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="HUD/control_hud/mana_bar/mana_sphere/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.993961, 0.109734, 0, -0.109734, 0.993961, 0, 0.307, 2.947)
+current = true
+fov = 20.0
+
+[node name="sphere_outside" parent="HUD/control_hud/mana_bar/mana_sphere/SubViewport" instance=ExtResource("10_0mywj")]
+
+[node name="bar" type="TextureRect" parent="HUD/control_hud/mana_bar"]
+layout_mode = 2
+texture = ExtResource("8_d2vfn")
+
+[node name="mana" type="Label" parent="HUD/control_hud/mana_bar"]
+layout_mode = 2
+text = "mana"
+label_settings = ExtResource("1_6qr8u")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="enemy_appear" type="VBoxContainer" parent="HUD"]
+custom_minimum_size = Vector2(48, 0)
 layout_direction = 3
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
 theme = ExtResource("4_hbh6n")
 
 [node name="enemy_count" type="Label" parent="HUD/enemy_appear"]
 z_index = 1
 layout_mode = 2
+text = "999"
 label_settings = ExtResource("1_6qr8u")
 
 [node name="enemy_spawn" type="Label" parent="HUD/enemy_appear"]
@@ -219,4 +266,14 @@ label_settings = ExtResource("1_6qr8u")
 
 [node name="enemy_time" type="Label" parent="HUD/enemy_appear"]
 layout_mode = 2
+label_settings = ExtResource("1_6qr8u")
+
+[node name="interaction_info" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
 label_settings = ExtResource("1_6qr8u")

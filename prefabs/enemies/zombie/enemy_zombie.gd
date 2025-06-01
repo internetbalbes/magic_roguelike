@@ -29,7 +29,7 @@ func _ready() -> void:
 	navigation_agent.path_height_offset = -var_scale
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("walk").loop = true
-	animation_player.get_animation("run").loop = true
+	animation_player.get_animation("run").loop = true	
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	

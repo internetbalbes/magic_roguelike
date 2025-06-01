@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvmkwdmxbsua7"]
+
+[ext_resource type="Script" uid="uid://3nfwsmeeo15j" path="res://prefabs/objects/rune_pivot/rune_pivot.gd" id="1_3x53y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g7or2"]
+transparency = 1
+cull_mode = 2
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 5.0
+emission_operator = 1
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_kitrt"]
+material = SubResource("StandardMaterial3D_g7or2")
+size = Vector2(0.8, 0.8)
+
+[node name="rune_pivot" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+script = ExtResource("1_3x53y")
+
+[node name="mesh_rune_pivot" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, -2.62268e-08, -1, 0, 0.6, -4.37114e-08, 0, 0, -1)
+visible = false
+mesh = SubResource("PlaneMesh_kitrt")
+skeleton = NodePath("")

@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bka2ha4sm0s0a"]
 
 [ext_resource type="Script" uid="uid://ptf4jwipsol" path="res://prefabs/coldsteel.gd" id="1_1vhji"]
-[ext_resource type="Shader" uid="uid://bxuakru4d83xx" path="res://models/player_model/sword_splash.gdshader" id="2_0uvfx"]
+[ext_resource type="Shader" uid="uid://bxuakru4d83xx" path="res://shaders/sword_splash.gdshader" id="2_0uvfx"]
 [ext_resource type="Texture2D" uid="uid://dqvs4i3d2cdrk" path="res://sprites/sword_splash.png" id="3_7caji"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_kqxyw"]

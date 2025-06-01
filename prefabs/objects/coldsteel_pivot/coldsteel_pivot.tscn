@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://crkvq8xi3gwjs"]
+
+[ext_resource type="Script" uid="uid://doc1ylbjbral6" path="res://prefabs/objects/coldsteel_pivot/coldsteel_pivot.gd" id="1_qxycr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qxycr"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 5.0
+emission_operator = 1
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qxycr"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_qxycr")
+size = Vector2(0.8, 0.8)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_qxycr"]
+
+[node name="coldsteel_pivot" type="Area3D"]
+collision_layer = 32768
+collision_mask = 32
+script = ExtResource("1_qxycr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0, 0, -0.5)
+mesh = SubResource("PlaneMesh_qxycr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_qxycr")
+
+[node name="timer_remove" type="Timer" parent="."]
+wait_time = 1000.0
+one_shot = true
+autostart = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]
+[connection signal="timeout" from="timer_remove" to="." method="_on_timer_remove_timeout"]

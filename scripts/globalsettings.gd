@@ -75,16 +75,53 @@ var cards_hint = {
 	"card_mine_spell": "hint empty"
 }
 
+var cold_steels = {
+	"pivot_rotation_speed": 0,
+	"one_handed_sword":{
+		"damage"=0,
+		"target"="",
+		"cooldown"=0,
+		"texture" = load("res://sprites/book.png"),
+		"prefab" = load("res://models/one_handed_sword/one_handed_sword.tscn") 
+	},
+	"one_handed_axe":{
+		"damage"=0,
+		"target"="",
+		"cooldown"=0,
+		"texture"= load("res://sprites/magic_resist_icon.png"),
+		"prefab"= load("res://models/one_handed_axe/one_handed_axe.tscn")
+	}	
+}
+	
+var rune_param = {
+	"pivot_rotation_speed": 0,
+	"splash_targets_amount_increase" :{
+		"parametr": "",
+		"value": 0,
+		"texture": load("res://sprites/card_hp_to_mana_sacrifice.png")
+	}
+}
+
+var interaction_info = {
+		"drop_interaction_hint_text": ""
+	}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		enemy_param["common"]["probability_modificator"] =  config.get_value("enemy_common", "probability_modificator", enemy_param["common"]["probability_modificator"])
-		enemy_param["common"]["probability_modificator_maximum"] =  config.get_value("enemy_common", "probability_modificator_maximum", enemy_param["common"]["probability_modificator_maximum"])
-		enemy_param["common"]["probability_modificator_increase"] =  config.get_value("enemy_common", "probability_modificator_increase", enemy_param["common"]["probability_modificator_increase"])
+	if config.load("res://settings.cfg") == OK:	
 		
+		interaction_info["drop_interaction_hint_text"]=config.get_value("interaction_info", "drop_interaction_hint_text", interaction_info["drop_interaction_hint_text"])
+		
+		rune_param["splash_targets_amount_increase"]["parametr"]=config.get_value("splash_targets_amount_increase", "parametr", rune_param["splash_targets_amount_increase"]["parametr"])
+		rune_param["splash_targets_amount_increase"]["value"]=config.get_value("splash_targets_amount_increase", "value", rune_param["splash_targets_amount_increase"]["value"])
+		rune_param["pivot_rotation_speed"] =  config.get_value("object_common", "pivot_rotation_speed", rune_param["pivot_rotation_speed"])
+		
+		enemy_param["common"]["probability_modificator"] = config.get_value("enemy_common", "probability_modificator", enemy_param["common"]["probability_modificator"])
+		enemy_param["common"]["probability_modificator_maximum"] =  config.get_value("enemy_common", "probability_modificator_maximum", enemy_param["common"]["probability_modificator_maximum"])
+		enemy_param["common"]["probability_modificator_increase"] =  config.get_value("enemy_common", "probability_modificator_increase", enemy_param["common"]["probability_modificator_increase"])		
 		enemy_param["common"]["enemy_pivot_rotation_speed"] = config.get_value("enemy_common", "enemy_pivot_rotation_speed", enemy_param["common"]["enemy_pivot_rotation_speed"])
-		enemy_param["common"]["count_segments_around_portal"] = config.get_value("enemy_common", "count_segments_around_portal", enemy_param["common"]["count_segments_around_portal"])		
+		enemy_param["common"]["count_segments_around_portal"] = config.get_value("enemy_common", "count_segments_around_portal", enemy_param["common"]["count_segments_around_portal"])			
 		
 		enemy_param["zombie"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_zombie", "enemy_max_health", enemy_param["zombie"]["label_health_max_value"]))
 		enemy_param["zombie"]["size_blood_on_floor"] = Vector3(config.get_value("enemy_zombie", "size_blood_on_floor_x", enemy_param["zombie"]["size_blood_on_floor"].x),
@@ -141,6 +178,14 @@ func _ready() -> void:
 		cards_hint["card_mana_max"] = config.get_value("cards_hint", "card_mana_max", cards_hint["card_mana_potion"])
 		cards_hint["card_hp_to_mana_sacrifice"] = config.get_value("cards_hint", "card_hp_to_mana_sacrifice", cards_hint["card_mana_potion"])
 		cards_hint["card_mine_spell"] = config.get_value("cards_hint", "card_mine_spell", cards_hint["card_mana_potion"])
+		
+		cold_steels["pivot_rotation_speed"] =  config.get_value("object_common", "pivot_rotation_speed", cold_steels["pivot_rotation_speed"])		
+		cold_steels["one_handed_sword"]["damage"] = config.get_value("one_handed_sword", "damage", cold_steels["one_handed_sword"]["damage"])
+		cold_steels["one_handed_sword"]["target"] = config.get_value("one_handed_sword", "target", cold_steels["one_handed_sword"]["target"])
+		cold_steels["one_handed_sword"]["cooldown"] = config.get_value("one_handed_sword", "cooldown", cold_steels["one_handed_sword"]["cooldown"])
+		cold_steels["one_handed_axe"]["damage"] = config.get_value("one_handed_axe", "damage", cold_steels["one_handed_axe"]["damage"])
+		cold_steels["one_handed_axe"]["target"] = config.get_value("one_handed_axe", "target", cold_steels["one_handed_axe"]["target"])
+		cold_steels["one_handed_axe"]["cooldown"] = config.get_value("one_handed_axe", "cooldown", cold_steels["one_handed_axe"]["cooldown"])		
 	else:
-		print("error loading file settings.cfg")	
+		print("error loading file settings.cfg")
 	config = null
