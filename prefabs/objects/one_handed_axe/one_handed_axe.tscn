@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://bs35jdpck8sm2"]
+
+[ext_resource type="PackedScene" uid="uid://c0khaoa10ee84" path="res://models/one_handed_axe/one_handed_axe.tscn" id="1_oe6e5"]
+[ext_resource type="PackedScene" uid="uid://bvmkwdmxbsua7" path="res://prefabs/objects/rune_pivot/rune_pivot.tscn" id="2_itokh"]
+
+[node name="one_handed_axe" type="Node3D"]
+
+[node name="one_handed_axe" parent="." instance=ExtResource("1_oe6e5")]
+transform = Transform3D(-0.311415, 74.9988, 0.131499, 2.5098, -0.147949, 59.9474, 59.9467, 0.395804, -2.50914, -212.684, 97.4487, 48.4521)
+
+[node name="rune_pivot" parent="one_handed_axe" instance=ExtResource("2_itokh")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0.16476, 15, 1.03629)

@@ -28,6 +28,7 @@ var label_health_value = 0
 var enemy_speed = 0.0
 var coldsteel_name = ""
 var rune_name = ""
+var loot_cold_steels_list = ["one_handed_sword", "one_handed_axe"]
 
 func _ready() -> void:
 	if has_node("area_seeing"):
@@ -100,9 +101,9 @@ func take_damage(spell, buf, amount: int):
 					enemy_pivot_modificator.get_parent().visible = false
 				collision.set_deferred("disabled", true)
 				if coldsteel_name != "":
-					player.create_coldsteel_pivot(self, coldsteel_name)
+					player.create_coldsteel_pivot(self, coldsteel_name, 0)
 				if rune_name != "":
-					player.create_rune_pivot(self, rune_name)
+					player.create_rune_pivot(self, rune_name, 180)
 				if randi_range(1, 100) <  Globalsettings.enemy_param[enemy_type]["probability_card"]:
 					player.add_card()
 				if area:

@@ -93,6 +93,7 @@ func _set_state_enemy(value)->void:
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():
+		sphere_guard.monitoring = false	
 		timer_throw.stop()
 		_set_state_enemy(enemystate.DEATHING)
 	

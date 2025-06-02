@@ -79,31 +79,32 @@ var cold_steels = {
 	"pivot_rotation_speed": 0,
 	"one_handed_sword":{
 		"damage"=0,
-		"target"="",
+		"targets"=1,
 		"cooldown"=0,
 		"texture" = load("res://sprites/items/one_handed_sword.png"),
-		"prefab" = load("res://models/one_handed_sword/one_handed_sword.tscn") 
+		"prefab" = load("res://prefabs/objects/one_handed_sword/one_handed_sword.tscn") 
 	},
 	"one_handed_axe":{
 		"damage"=0,
-		"target"="",
+		"targets"=1,
 		"cooldown"=0,
 		"texture"= load("res://sprites/items/one_handed_axe.png"),
-		"prefab"= load("res://models/one_handed_axe/one_handed_axe.tscn")
+		"prefab"= load("res://prefabs/objects/one_handed_axe/one_handed_axe.tscn")
 	}	
 }
 	
 var rune_param = {
 	"pivot_rotation_speed": 0,
 	"splash_targets_amount_increase" :{
-		"parametr": "",
+		"parameter": "",
 		"value": 0,
 		"texture": load("res://sprites/runes/splash_rune.png")
 	}
 }
 
 var interaction_info = {
-		"drop_interaction_hint_text": ""
+		"drop_interaction_hint_text": "",
+		"warning_is_in_fog_hint_text": ""
 	}
 
 # Called when the node enters the scene tree for the first time.
@@ -112,8 +113,9 @@ func _ready() -> void:
 	if config.load("res://settings.cfg") == OK:	
 		
 		interaction_info["drop_interaction_hint_text"]=config.get_value("interaction_info", "drop_interaction_hint_text", interaction_info["drop_interaction_hint_text"])
+		interaction_info["warning_is_in_fog_hint_text"]=config.get_value("interaction_info", "warning_is_in_fog_hint_text", interaction_info["warning_is_in_fog_hint_text"])
 		
-		rune_param["splash_targets_amount_increase"]["parametr"]=config.get_value("splash_targets_amount_increase", "parametr", rune_param["splash_targets_amount_increase"]["parametr"])
+		rune_param["splash_targets_amount_increase"]["parameter"]=config.get_value("splash_targets_amount_increase", "parameter", rune_param["splash_targets_amount_increase"]["parameter"])
 		rune_param["splash_targets_amount_increase"]["value"]=config.get_value("splash_targets_amount_increase", "value", rune_param["splash_targets_amount_increase"]["value"])
 		rune_param["pivot_rotation_speed"] =  config.get_value("object_common", "pivot_rotation_speed", rune_param["pivot_rotation_speed"])
 		
@@ -181,10 +183,10 @@ func _ready() -> void:
 		
 		cold_steels["pivot_rotation_speed"] =  config.get_value("object_common", "pivot_rotation_speed", cold_steels["pivot_rotation_speed"])		
 		cold_steels["one_handed_sword"]["damage"] = config.get_value("one_handed_sword", "damage", cold_steels["one_handed_sword"]["damage"])
-		cold_steels["one_handed_sword"]["target"] = config.get_value("one_handed_sword", "target", cold_steels["one_handed_sword"]["target"])
+		cold_steels["one_handed_sword"]["targets"] = config.get_value("one_handed_sword", "targets", cold_steels["one_handed_sword"]["targets"])
 		cold_steels["one_handed_sword"]["cooldown"] = config.get_value("one_handed_sword", "cooldown", cold_steels["one_handed_sword"]["cooldown"])
 		cold_steels["one_handed_axe"]["damage"] = config.get_value("one_handed_axe", "damage", cold_steels["one_handed_axe"]["damage"])
-		cold_steels["one_handed_axe"]["target"] = config.get_value("one_handed_axe", "target", cold_steels["one_handed_axe"]["target"])
+		cold_steels["one_handed_axe"]["targets"] = config.get_value("one_handed_axe", "targets", cold_steels["one_handed_axe"]["targets"])
 		cold_steels["one_handed_axe"]["cooldown"] = config.get_value("one_handed_axe", "cooldown", cold_steels["one_handed_axe"]["cooldown"])		
 	else:
 		print("error loading file settings.cfg")

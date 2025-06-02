@@ -29,7 +29,7 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @onready var label_hp_sphere_fill = $interface/HUD/control_hud/hp_bar/health_sphere/SubViewport/sphere_outside/sphere_inside
 @onready var label_mana_sphere_fill = $interface/HUD/control_hud/mana_bar/mana_sphere/SubViewport/sphere_outside/sphere_inside
 @onready var bone_attachment = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D
-@onready var interaction_info = $interface/interaction_info
+@onready var interaction_info: Label = $interface/interaction_info
 
 @export var prefathunderbolt : PackedScene
 @export var prefabwaterball : PackedScene
@@ -89,7 +89,7 @@ var is_card_dissolve_tween: bool = false
 var currently_coldsteel_name = ""
 var currently_coldsteel = {
 		"damage"=0,
-		"target"="",
+		"targets"=0,
 		"cooldown"=0
 	}
 var new_loot_pivot: Node3D = null
@@ -157,7 +157,6 @@ func _ready() -> void:
 	currently_coldsteel = Globalsettings.cold_steels[currently_coldsteel_name]
 	var prefab = Globalsettings.cold_steels[currently_coldsteel_name].prefab.instantiate()
 	bone_attachment.add_child(prefab)
-	prefab.transform = bone_attachment.get_child(0).transform	
 	progressbar_reload_coldsteel.step = 0.05
 	progressbar_reload_coldsteel.value = currently_coldsteel.cooldown
 	progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown
@@ -168,7 +167,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_UP && event.pressed:
 			if texturerect_card.visible:
-				if card_list.size() > 1:
+				if card_list.size() > 1 && not is_card_dissolve_tween:
 					if texturerect_card.texture:
 						hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
 					card_currently_index -=1
@@ -182,7 +181,7 @@ func _input(event: InputEvent) -> void:
 				_set_spell_currently(spell_currently_index)
 		elif event.button_index == MouseButton.MOUSE_BUTTON_WHEEL_DOWN && event.pressed:
 			if texturerect_card.visible:
-				if card_list.size() > 1:
+				if card_list.size() > 1 && not is_card_dissolve_tween:
 					if texturerect_card.texture:
 						hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
 					card_currently_index +=1
@@ -194,7 +193,7 @@ func _input(event: InputEvent) -> void:
 				if spell_currently_index == spells.size():
 					spell_currently_index = 0
 				_set_spell_currently(spell_currently_index)
-		elif event.button_index ==MOUSE_BUTTON_MIDDLE && event.pressed:
+		elif event.button_index ==MOUSE_BUTTON_MIDDLE && event.pressed && not is_card_dissolve_tween:
 			if texturerect_card.visible:
 				if card_list.size() > 0:
 					hboxcontainer_card.get_child(card_currently_index).texture = texturerect_card.texture
@@ -457,10 +456,14 @@ func enemy_appear_spawn(value):
 func _on_timer_walk_slowing_timeout() -> void:
 	player_speed_walk /= player_speed_walk_slowing
 	
-func in_kill_zone():	
+func in_kill_zone():
+	interaction_info.text = Globalsettings.interaction_info["warning_is_in_fog_hint_text"]
+	interaction_info.modulate = Color.RED
 	timer_kill_zone.start()
 	
 func out_kill_zone():
+	interaction_info.text = ""
+	interaction_info.modulate = Color.WHITE
 	timer_kill_zone.stop()
 
 func _on_timer_kill_zone_timeout() -> void:
@@ -474,29 +477,28 @@ func out_new_loot(_coldsteel_pivot: Node3D):
 	interaction_info.text = ""
 	new_loot_pivot = null
 
-func _get_point_on_circle_around_owner(_global_position) -> Vector3:
-	var angle = deg_to_rad(randf_range(0.0, 359.0))
-	var x = cos(angle)
-	var z = sin(angle)
-	return _global_position + 5.0 * Vector3(x, 0, z)
+func _get_point_on_circle_around_owner(_global_position, angle) -> Vector3:
+	var x = 2 * cos(angle)
+	var z = 2 * sin(angle)
+	return Vector3(_global_position.x + x, 0.5, _global_position.z + z)
 	
-func create_rune_pivot(owner_rune, rune_name):
+func create_rune_pivot(owner_rune, rune_name, angle):
 	var rune_pivot = load("res://prefabs/objects/coldsteel_pivot/coldsteel_pivot.tscn").instantiate()
 	rune_pivot.name = rune_name
 	var mesh = rune_pivot.get_node("MeshInstance3D")
 	mesh.mesh.material.albedo_texture =  Globalsettings.rune_param[rune_name].texture
 	mesh.mesh.material.emission_texture =  Globalsettings.rune_param[rune_name].texture	
 	world.add_child(rune_pivot)
-	rune_pivot.global_position =_get_point_on_circle_around_owner(owner_rune.global_position)
+	rune_pivot.global_position =_get_point_on_circle_around_owner(owner_rune.global_position, angle)
 	
-func create_coldsteel_pivot(owner_coldsteel, coldsteel_name):
+func create_coldsteel_pivot(owner_coldsteel, coldsteel_name, angle):
 	var coldsteel_pivot = load("res://prefabs/objects/coldsteel_pivot/coldsteel_pivot.tscn").instantiate()
 	coldsteel_pivot.name = coldsteel_name
 	var mesh = coldsteel_pivot.get_node("MeshInstance3D")
 	mesh.mesh.material.albedo_texture =  Globalsettings.cold_steels[coldsteel_name].texture
 	mesh.mesh.material.emission_texture =  Globalsettings.cold_steels[coldsteel_name].texture	
 	world.add_child(coldsteel_pivot)
-	coldsteel_pivot.global_position = _get_point_on_circle_around_owner(owner_coldsteel.global_position)
+	coldsteel_pivot.global_position = _get_point_on_circle_around_owner(owner_coldsteel.global_position, angle)
 	var prefab = Globalsettings.cold_steels[coldsteel_name].prefab.instantiate()	
 	prefab.visible = false
 	coldsteel_pivot.add_child(prefab)
@@ -504,25 +506,22 @@ func create_coldsteel_pivot(owner_coldsteel, coldsteel_name):
 func take_new_loot_pivot():		
 	if new_loot_pivot.has_node(String(new_loot_pivot.name)):	
 		var _coldsteel = new_loot_pivot.get_node(String(new_loot_pivot.name))
-		create_coldsteel_pivot(self, currently_coldsteel_name)
+		create_coldsteel_pivot(self, currently_coldsteel_name, 0)
 		currently_coldsteel_name = new_loot_pivot.name
 		currently_coldsteel = Globalsettings.cold_steels[currently_coldsteel_name]	
-		_coldsteel.reparent(bone_attachment)
-		_coldsteel.transform = bone_attachment.get_child(0).transform
+		_coldsteel.reparent(bone_attachment, false)
 		_coldsteel.visible = true
 		progressbar_reload_coldsteel.value = currently_coldsteel.cooldown
 		progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown	
-		bone_attachment.get_child(1).call_deferred("queue_free")
+		bone_attachment.get_child(0).call_deferred("queue_free")
 	else:
 		runes.append(new_loot_pivot.name)
-		var rune_pivot = load("res://prefabs/objects/rune_pivot/rune_pivot.tscn").instantiate()		
-		var node_rune = rune_pivot.get_node("mesh_rune_pivot").duplicate()
+		var base_pivot = bone_attachment.get_child(0).get_child(0).get_node("rune_pivot").get_node("mesh_rune_pivot")
+		var node_rune = base_pivot.duplicate()
 		node_rune.mesh.material.albedo_texture =  Globalsettings.rune_param[new_loot_pivot.name]["texture"]
 		node_rune.mesh.material.emission_texture =  Globalsettings.rune_param[new_loot_pivot.name]["texture"]
 		node_rune.visible = true
-		rune_pivot.add_child(node_rune)
-		bone_attachment.get_child(1).add_child(rune_pivot)
-		match Globalsettings.rune_param[new_loot_pivot.name]["parametr"]:
-			"damage": currently_coldsteel.damage += Globalsettings.rune_param[new_loot_pivot.name]["value"]			
+		base_pivot.get_parent().add_child(node_rune)
+		match Globalsettings.rune_param[new_loot_pivot.name]["parameter"]:
+			"targets": currently_coldsteel.targets += Globalsettings.rune_param[new_loot_pivot.name]["value"]
 	new_loot_pivot.call_deferred("queue_free")
-		

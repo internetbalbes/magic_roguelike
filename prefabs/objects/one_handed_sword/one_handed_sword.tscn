@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://0olttb6xdh21"]
+
+[ext_resource type="PackedScene" uid="uid://bfg63cfh8yxlh" path="res://models/one_handed_sword/one_handed_sword.tscn" id="1_2jy27"]
+[ext_resource type="PackedScene" uid="uid://bvmkwdmxbsua7" path="res://prefabs/objects/rune_pivot/rune_pivot.tscn" id="2_iluko"]
+
+[node name="one_handed_sword" type="Node3D"]
+
+[node name="one_handed_sword" parent="." instance=ExtResource("1_2jy27")]
+transform = Transform3D(5.08305, 149.602, -5.20805, -99.58, 6.99561, -7.87849, -7.61471, 8.37996, 99.553, -212.578, 80.0658, 0.633114)
+
+[node name="rune_pivot" parent="one_handed_sword" instance=ExtResource("2_iluko")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
