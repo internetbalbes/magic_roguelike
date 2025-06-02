@@ -12,13 +12,9 @@ var list_teleport_enemy_after_portal_destroyed = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		map_generator.SCALE_SIZE_MAP = config.get_value("world", "scale_size_map", 50)
-		portal_create_enemy_count = config.get_value("world", "portal_create_enemy_count", portal_create_enemy_count)
-		portal_reload_enemy_increase = config.get_value("world", "portal_reload_enemy_increase", portal_reload_enemy_increase)
-		#config.save("res://settings.cfg")
-	config = null
+	map_generator.SCALE_SIZE_MAP = Globalsettings.world_param["scale_size_map"]
+	portal_create_enemy_count = Globalsettings.world_param["portal_create_enemy_count"]
+	portal_reload_enemy_increase = Globalsettings.world_param["portal_reload_enemy_increase"]
 	map_generator.create_map()
 	var player_coordinate = map_generator.find_block_free()
 	#player_coordinate = map_generator.created_portal.global_position + Vector3(-10, 0, -10)

@@ -9,7 +9,6 @@ extends CharacterBody3D
 @onready var timer_find_enemy_in_area = $timer_find_enemy_in_area
 @export var player : CharacterBody3D
 
-var player_waterball_speed = 20.0
 #thunderbolt's class name
 var spell: SpellClass
 #thunderbolt's collider
@@ -22,13 +21,8 @@ var min_distance_to_object = 0
 var max_distance_to_demage = 0
 
 func _ready()->void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		player_waterball_speed = config.get_value("player_waterball", "player_waterball_speed", player_waterball_speed)
-		timer_remove_object.wait_time = config.get_value("player_waterball", "player_waterball_time_life", 2)
-		collision_waterball_circle.shape.radius = config.get_value("player_waterball", "player_waterball_radius", 2)
-		#config.save("res://settings.cfg")
-	config = null
+	timer_remove_object.wait_time = Globalsettings.player_waterball["player_waterball_time_life"]
+	collision_waterball_circle.shape.radius = Globalsettings.player_waterball["player_waterball_radius"]
 	if collider && collider.get_groups().size() > 0:
 		if collider.is_in_group("portal") || collider.is_in_group("enemy"):
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
@@ -45,7 +39,7 @@ func _physics_process(delta: float) -> void:
 		timer_remove_object.stop()
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
-		global_position += direction * player_waterball_speed * delta
+		global_position += direction * Globalsettings.player_waterball["player_waterball_speed"] * delta
 		if global_position.distance_to(player.global_position) > max_distance_to_demage:
 			call_deferred("queue_free")
 

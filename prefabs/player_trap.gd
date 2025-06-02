@@ -11,11 +11,7 @@ extends Area3D
 var spell: SpellClass
 
 func _ready()->void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		collision_trap_circle.shape.radius = config.get_value("player_trap", "player_trap_radius", 2)
-		#config.save("res://settings.cfg")
-	config = null
+	collision_trap_circle.shape.radius = Globalsettings.player_trap["player_trap_radius"]
 	body_explosing.emitting = false
 	area3d_trap_circle.monitoring = false
 	

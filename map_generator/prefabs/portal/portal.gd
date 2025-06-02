@@ -15,14 +15,8 @@ var list_enemy : Array
 var list_new_enemy : Array
 # count enemy appear spawn
 var count_enemy_appear_spawn = 0
-# creating new enemy's time 
-var time_create_new_enemy = 1.0
 # creating new enemy's rest time 
-var time_rest_create_new_enemy = time_create_new_enemy
-#generation count new enemies on a map
-var portal_create_new_enemy_count = 1
-#groupe's size new enemies
-var portal_create_new_enemy_groupe_count = 2
+var time_rest_create_new_enemy
 # list enemy's prefab
 var list_prefabenemy = [{"name": "imp", "prefab": preload("res://prefabs/enemies/imp/enemy_imp.tscn"), "spawn_rate": 0},
 						{"name": "skymage", "prefab": preload("res://prefabs/enemies/skymage/enemy_skymage.tscn"), "spawn_rate": 0},
@@ -37,17 +31,10 @@ signal enemy_appear_time()
 signal enemy_appear_spawn()
 
 func _ready() -> void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:		
-		portal_create_new_enemy_count = config.get_value("portal", "portal_create_new_enemy_count", portal_create_new_enemy_count)
-		time_create_new_enemy = config.get_value("portal", "portal_create_new_enemy_time", 5)
-		portal_create_new_enemy_groupe_count = config.get_value("portal", "portal_create_new_enemy_groupe_count", portal_create_new_enemy_groupe_count)
-		area_observe_collision.radius =  config.get_value("portal", "area_observe_radius", 10.0)
-		for obj in list_prefabenemy:
-			obj.spawn_rate = config.get_value("enemy_spawn_rate", obj.name, obj.spawn_rate)	
-		#config.save("res://settings.cfg")
-	config = null
-	time_rest_create_new_enemy = time_create_new_enemy
+	area_observe_collision.radius = Globalsettings.portal["area_observe_radius"]
+	for obj in list_prefabenemy:
+		obj.spawn_rate = Globalsettings.enemy_spawn_rate[obj.name]
+	time_rest_create_new_enemy = Globalsettings.portal["portal_create_new_enemy_time"]
 
 func choose_enemy():
 	var total = 0
@@ -78,7 +65,8 @@ func create_enemies(count) -> void:
 		enemy._set_portal(self, angle)
 		angle += angle_shift
 	timer_create_new_enemy.start()
-	emit_signal("enemy_appear_spawn", count_enemy_appear_spawn)
+	count_enemy_appear_spawn = 0
+	emit_signal("enemy_appear_spawn",count_enemy_appear_spawn)
 	emit_signal("enemy_appear_time", time_rest_create_new_enemy)
 	
 func append_enemies(list) -> void:
@@ -108,7 +96,7 @@ func portal_free() -> void:
 	var boss_enemy = create_enemy(boss_prefab)
 	world.add_child(boss_enemy)
 	boss_enemy._set_portal(self, 0)	
-	boss_enemy._set_portal(null, 0)	
+	boss_enemy._set_portal(null, 0)		
 	emit_signal("portal_after_destroyed")
 	
 func _get_object_size() -> float:
@@ -117,9 +105,9 @@ func _get_object_size() -> float:
 func _on_timer_create_new_enemy_timeout() -> void:
 	time_rest_create_new_enemy -= timer_create_new_enemy.wait_time	
 	if time_rest_create_new_enemy  < 0.1:
-		var angle_shift = 330.0 / portal_create_new_enemy_count
+		var angle_shift = 330.0 / Globalsettings.portal["portal_create_new_enemy_count"]
 		var angle = randi_range(0, 359)
-		for i in range(0, portal_create_new_enemy_count, 1):
+		for i in range(0, Globalsettings.portal["portal_create_new_enemy_count"], 1):
 			var enemy = create_enemy(choose_enemy())
 			world.add_child(enemy)		
 			enemy._set_portal(self, angle)
@@ -130,12 +118,12 @@ func _on_timer_create_new_enemy_timeout() -> void:
 				list_enemy.append(enemy)
 				list_new_enemy.append(enemy)
 				# grups enemy go yo player
-				if list_new_enemy.size() == portal_create_new_enemy_groupe_count:
+				if list_new_enemy.size() == Globalsettings.portal["portal_create_new_enemy_groupe_count"]:
 					for obj in list_new_enemy:
 						list_enemy.erase(obj)
 						obj._set_portal(null, 0)
 					list_new_enemy.clear()	
-		time_rest_create_new_enemy = time_create_new_enemy
+		time_rest_create_new_enemy = Globalsettings.portal["portal_create_new_enemy_time"]
 		count_enemy_appear_spawn += 1
 		emit_signal("enemy_appear_spawn", count_enemy_appear_spawn)
 	emit_signal("enemy_appear_time", time_rest_create_new_enemy)

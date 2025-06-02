@@ -13,81 +13,80 @@ var enemy_list_bufs = {
 
 var enemy_param = {
 	"common":{
-		"enemy_pivot_rotation_speed": 1.0,
-		"count_segments_around_portal": 0,
-		"probability_modificator": 0,
-		"probability_modificator_maximum": 0,
-		"probability_modificator_increase": 0
+		"enemy_pivot_rotation_speed": 200.0,
+		"count_segments_around_portal": 36,
+		"probability_modificator": 25,
+		"probability_modificator_maximum": 75,
+		"probability_modificator_increase": 5
 	},
 	"zombie": {
-		"label_health_max_value": 0,
-		"size_blood_on_floor": Vector3.ZERO,
-		"enemy_radius_around_portal": 0.0,
-		"enemy_speed_walk": 0.0,
-		"enemy_speed_run": 0.0,
-		"time_to_beat": 0.0,
-		"probability_card": 0.0,
-		"damage": 0.0,
-		"enemy_area_scan_player": 0.0,
-		"enemy_transform_scale": 0.0	
+		"label_health_max_value": 3,
+		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
+		"enemy_radius_around_portal": 20.0,
+		"enemy_speed_walk": 1,
+		"enemy_speed_run": 10,
+		"time_to_beat": 0.45,
+		"probability_card": 100,
+		"damage": 1.0,
+		"enemy_area_scan_player": 2.25,
+		"enemy_transform_scale": 1.25
 	},
 	"imp": {
-		"label_health_max_value": 0,
-		"size_blood_on_floor": Vector3.ZERO,
-		"enemy_speed_walk": 0.0,
-		"enemy_speed_run": 0.0,
-		"enemy_radius_around_portal": 0.0,
-		"time_to_throw": 0.0,
-		"time_to_set_trap": 0.0,
-		"time_after_exit_portal": 0.0,
-		"enemy_area_scan_player": 0.0,
-		"probability_card": 0.0,
-		"enemy_transform_scale": 0.0
+		"label_health_max_value": 3,
+		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
+		"enemy_speed_walk": 1,
+		"enemy_speed_run": 10,
+		"enemy_radius_around_portal": 10.0,
+		"time_to_throw": 1.0,
+		"time_to_set_trap": 2.0,
+		"time_after_exit_portal": 3.0,
+		"enemy_area_scan_player": 45,
+		"probability_card": 100,
+		"enemy_transform_scale": 1.25
 	},
 	"boss": {
-		"label_health_max_value": 0,
-		"size_blood_on_floor": Vector3.ZERO,
-		"enemy_speed": 0,
-		"time_to_beat": 0,
-		"probability_card": 0,
-		"probability_modificator": 0,
-		"damage": 0,
-		"enemy_area_scan_player": 0,
-		"enemy_transform_scale": 0,
+		"label_health_max_value": 1,
+		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
+		"enemy_speed": 14,
+		"time_to_beat": 0.7,
+		"probability_card": 100,
+		"damage": 1.0,
+		"enemy_area_scan_player": 3,
+		"enemy_transform_scale": 1.5,
 	},
 	"skymage": {
-		"label_health_max_value": 0,
-		"size_blood_on_floor": Vector3.ZERO,
-		"enemy_speed": 0,
-		"enemy_distance_from_portal": 0,
-		"time_to_throw": 0,
-		"probability_card": 0,
-		"enemy_transform_scale": 0
+		"label_health_max_value": 3,
+		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
+		"enemy_speed": 2,
+		"enemy_distance_from_portal": 5,
+		"time_to_throw": 5.0,
+		"probability_card": 100,
+		"enemy_transform_scale": 1.5
 	}	
 }
 
 var cards_hint = {
-	"card_mana_potion": "hint empty",
-	"card_hp_potion": "hint empty",
-	"card_mana_max_increase": "hint empty",
-	"card_mana_max": "hint empty",
-	"card_hp_to_mana_sacrifice": "hint empty",
-	"card_mine_spell": "hint empty"
+	"card_mana_potion": "mana potion's card",
+	"card_hp_potion": "hp potion's card",
+	"card_mana_max_increase": "mana max increase's card",
+	"card_mana_max": "mana max's card",
+	"card_hp_to_mana_sacrifice": "hp to mana sacrifice's card",
+	"card_mine_spell": "mine spell's card"
 }
 
 var cold_steels = {
-	"pivot_rotation_speed": 0,
+	"pivot_rotation_speed": 200.0,
 	"one_handed_sword":{
-		"damage"=0,
+		"damage"=3,
 		"targets"=1,
-		"cooldown"=0,
+		"cooldown"=1.16,
 		"texture" = load("res://sprites/items/one_handed_sword.png"),
 		"prefab" = load("res://prefabs/objects/one_handed_sword/one_handed_sword.tscn") 
 	},
 	"one_handed_axe":{
-		"damage"=0,
+		"damage"=1,
 		"targets"=1,
-		"cooldown"=0,
+		"cooldown"=1.16,
 		"texture"= load("res://sprites/items/one_handed_axe.png"),
 		"prefab"= load("res://prefabs/objects/one_handed_axe/one_handed_axe.tscn")
 	}	
@@ -96,98 +95,108 @@ var cold_steels = {
 var rune_param = {
 	"pivot_rotation_speed": 0,
 	"splash_targets_amount_increase" :{
-		"parameter": "",
-		"value": 0,
+		"parameter": "targets",
+		"value": 1,
 		"texture": load("res://sprites/runes/splash_rune.png")
 	}
 }
 
 var interaction_info = {
-		"drop_interaction_hint_text": "",
-		"warning_is_in_fog_hint_text": ""
+		"drop_interaction_hint_text": "Press 'X' to pick up",
+		"warning_is_in_fog_hint_text": "You are in a fog. GO BACK !!!"
 	}
+	
+var player_param = {
+	"player_speed_walk": 8,
+	"player_max_health": 10,
+	"player_max_mana": 15,
+	"player_jump_velocity": 3,
+	"player_rotate_sensitivity": 0.085,
+	"player_scan_enemy": 30,
+	"time_reload_spell": 0.1,
+	"player_speed_walk_slowing": 0.1,
+	"player_speed_time_slowing": 0.6
+}
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:	
+var spells_param = {
+	"waterball_spell_mana_cost": 1,
+	"waterball_spell_damage": 1,
+	"waterball_spell_type": "sphere",
+	"thunderbolt_spell_mana_cost": 2,
+	"thunderbolt_spell_damage": 3,
+	"thunderbolt_spell_type": "single",
+	"tornado_spell_mana_cost": 1,
+	"tornado_spell_damage": 1,
+	"tornado_spell_type": "sphere",
+	"trap_spell_mana_cost": 3,
+	"trap_spell_damage": 2,
+	"trap_spell_type": "sphere",
+	"card_mana_potion_mana_increase": 5,
+	"card_hp_potion_hp_increase": 5,
+	"card_hp_to_mana_sacrifice_exchange": 5
+}
+
+var cards_param = {
+	"card_mana_potion_mana_increase": 5,
+	"card_hp_potion_hp_increase": 5,
+	"card_hp_to_mana_sacrifice_exchange": 5
+}
+
+var player_coldsteel = {
+	"detection_angle_deg_near_enemy": 60,
+	"detection_distance_near_enemy": 2.0
+}
+
+var enemy_imp_fireball = {
+	"enemy_fireball_speed": 50,
+	"enemy_fireball_time_life": 2,
+	"enemy_fireball_damage": 1
+}	
+
+var enemy_skymage_sphere = {
+	"skymage_sphere_time_life": 1.5,
+	"skymage_sphere_radius": 5,
+	"skymage_sphere_damage": 1,
+	"skymage_sphere_reload_time": 3.0
+}
+
+var player_waterball = {
+	"player_waterball_speed": 40,
+	"player_waterball_time_life": 1.0,
+	"player_waterball_radius": 5
+}
+
+var player_thunderbolt = {
+	"player_thunderbolt_time_life": 1.0,
+	"player_thunderbol_radius": 10
+}
+
+var player_tornado = {
+	"player_tornado_speed": 40,
+	"player_tornado_shoot_time_life": 1,
+	"player_tornado_time_life": 4,
+	"player_tornado_radius": 9
+}
+
+var player_trap = {
+	"player_trap_radius": 7
+}
+
+var portal = {
+	"portal_create_new_enemy_count": 2,
+	"portal_create_new_enemy_time": 15,
+	"portal_create_new_enemy_groupe_count": 6,
+	"area_observe_radius": 20.0
+}
 		
-		interaction_info["drop_interaction_hint_text"]=config.get_value("interaction_info", "drop_interaction_hint_text", interaction_info["drop_interaction_hint_text"])
-		interaction_info["warning_is_in_fog_hint_text"]=config.get_value("interaction_info", "warning_is_in_fog_hint_text", interaction_info["warning_is_in_fog_hint_text"])
-		
-		rune_param["splash_targets_amount_increase"]["parameter"]=config.get_value("splash_targets_amount_increase", "parameter", rune_param["splash_targets_amount_increase"]["parameter"])
-		rune_param["splash_targets_amount_increase"]["value"]=config.get_value("splash_targets_amount_increase", "value", rune_param["splash_targets_amount_increase"]["value"])
-		rune_param["pivot_rotation_speed"] =  config.get_value("object_common", "pivot_rotation_speed", rune_param["pivot_rotation_speed"])
-		
-		enemy_param["common"]["probability_modificator"] = config.get_value("enemy_common", "probability_modificator", enemy_param["common"]["probability_modificator"])
-		enemy_param["common"]["probability_modificator_maximum"] =  config.get_value("enemy_common", "probability_modificator_maximum", enemy_param["common"]["probability_modificator_maximum"])
-		enemy_param["common"]["probability_modificator_increase"] =  config.get_value("enemy_common", "probability_modificator_increase", enemy_param["common"]["probability_modificator_increase"])		
-		enemy_param["common"]["enemy_pivot_rotation_speed"] = config.get_value("enemy_common", "enemy_pivot_rotation_speed", enemy_param["common"]["enemy_pivot_rotation_speed"])
-		enemy_param["common"]["count_segments_around_portal"] = config.get_value("enemy_common", "count_segments_around_portal", enemy_param["common"]["count_segments_around_portal"])			
-		
-		enemy_param["zombie"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_zombie", "enemy_max_health", enemy_param["zombie"]["label_health_max_value"]))
-		enemy_param["zombie"]["size_blood_on_floor"] = Vector3(config.get_value("enemy_zombie", "size_blood_on_floor_x", enemy_param["zombie"]["size_blood_on_floor"].x),
-														config.get_value("enemy_zombie", "size_blood_on_floor_y", enemy_param["zombie"]["size_blood_on_floor"].y),
-														config.get_value("enemy_zombie", "size_blood_on_floor_z", enemy_param["zombie"]["size_blood_on_floor"].z))
-		enemy_param["zombie"]["enemy_radius_around_portal"] = config.get_value("enemy_zombie", "enemy_radius_around_portal", enemy_param["zombie"]["enemy_radius_around_portal"])
-														
-		enemy_param["zombie"]["enemy_speed_walk"] = config.get_value("enemy_zombie", "enemy_speed_walk", enemy_param["zombie"]["enemy_speed_walk"])
-		enemy_param["zombie"]["enemy_speed_run"] = config.get_value("enemy_zombie", "enemy_speed_run", enemy_param["zombie"]["enemy_speed_run"])
-		enemy_param["zombie"]["time_to_beat"] = config.get_value("enemy_zombie", "time_to_beat", enemy_param["zombie"]["time_to_beat"])
-		enemy_param["zombie"]["probability_card"] = config.get_value("enemy_zombie", "probability_card", enemy_param["zombie"]["probability_card"])
-		enemy_param["zombie"]["damage"] = config.get_value("enemy_zombie", "damage", enemy_param["zombie"]["damage"])
-		enemy_param["zombie"]["enemy_area_scan_player"] = config.get_value("enemy_zombie", "enemy_area_scan_player", enemy_param["zombie"]["enemy_area_scan_player"])
-		enemy_param["zombie"]["enemy_transform_scale"] = config.get_value("enemy_zombie", "enemy_transform_scale",  enemy_param["zombie"]["enemy_transform_scale"])
-		
-		enemy_param["imp"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_imp", "enemy_max_health", enemy_param["imp"]["label_health_max_value"]))
-		enemy_param["imp"]["size_blood_on_floor"] = Vector3(config.get_value("enemy_imp", "size_blood_on_floor_x", enemy_param["imp"]["size_blood_on_floor"].x),
-														config.get_value("enemy_imp", "size_blood_on_floor_y", enemy_param["imp"]["size_blood_on_floor"].y),
-														config.get_value("enemy_imp", "size_blood_on_floor_z", enemy_param["imp"]["size_blood_on_floor"].z))														
-		enemy_param["imp"]["enemy_speed_walk"] = config.get_value("enemy_imp", "enemy_speed_walk", enemy_param["imp"]["enemy_speed_walk"])
-		enemy_param["imp"]["enemy_speed_run"] = config.get_value("enemy_imp", "enemy_speed_run", enemy_param["imp"]["enemy_speed_run"])
-		enemy_param["imp"]["enemy_radius_around_portal"] = config.get_value("enemy_imp", "enemy_radius_around_portal", enemy_param["imp"]["enemy_radius_around_portal"])
-		enemy_param["imp"]["time_to_throw"] = config.get_value("enemy_imp", "time_to_throw", enemy_param["imp"]["time_to_throw"])
-		enemy_param["imp"]["time_to_set_trap"] = config.get_value("enemy_imp", "time_to_set_trap", enemy_param["imp"]["time_to_set_trap"])		
-		enemy_param["imp"]["time_after_exit_portal"] = config.get_value("enemy_imp", "time_after_exit_portal", enemy_param["imp"]["time_after_exit_portal"])
-		enemy_param["imp"]["enemy_area_scan_player"] = config.get_value("enemy_imp", "enemy_area_scan_player", enemy_param["imp"]["enemy_radius_around_portal"])
-		enemy_param["imp"]["probability_card"] =  config.get_value("enemy_imp", "probability_card", enemy_param["imp"]["probability_card"])
-		enemy_param["imp"]["enemy_transform_scale"] = config.get_value("enemy_imp", "enemy_transform_scale",  enemy_param["imp"]["enemy_transform_scale"])
-		
-		enemy_param["boss"]["label_health_max_value"] = config.get_value("enemy_boss", "enemy_max_health", enemy_param["boss"]["label_health_max_value"])
-		enemy_param["boss"]["size_blood_on_floor"] = Vector3(config.get_value("enemy_boss", "size_blood_on_floor_x", enemy_param["boss"]["size_blood_on_floor"].x),
-														config.get_value("enemy_boss", "size_blood_on_floor_y", enemy_param["boss"]["size_blood_on_floor"].y),
-														config.get_value("enemy_boss", "size_blood_on_floor_z", enemy_param["boss"]["size_blood_on_floor"].z))
-		enemy_param["boss"]["enemy_speed"] = config.get_value("enemy_boss", "enemy_speed", enemy_param["boss"]["enemy_speed"])
-		enemy_param["boss"]["time_to_beat"] = config.get_value("enemy_boss", "time_to_beat", enemy_param["boss"]["time_to_beat"])
-		enemy_param["boss"]["probability_card"] =  config.get_value("enemy_boss", "probability_card", enemy_param["boss"]["probability_card"])
-		enemy_param["boss"]["damage"] = config.get_value("enemy_boss", "damage", enemy_param["boss"]["damage"])
-		enemy_param["boss"]["enemy_area_scan_player"] = config.get_value("enemy_boss", "enemy_area_scan_player", enemy_param["boss"]["enemy_area_scan_player"])
-		enemy_param["boss"]["enemy_transform_scale"] = config.get_value("enemy_boss", "enemy_transform_scale", enemy_param["boss"]["enemy_transform_scale"])
-		
-		enemy_param["skymage"]["label_health_max_value"] = randi_range(1, config.get_value("enemy_skymage", "enemy_max_health", enemy_param["skymage"]["label_health_max_value"]))
-		enemy_param["skymage"]["size_blood_on_floor"] = Vector3(config.get_value("enemy_skymage", "size_blood_on_floor_x", enemy_param["skymage"]["size_blood_on_floor"].x),
-														config.get_value("enemy_skymage", "size_blood_on_floor_y", enemy_param["skymage"]["size_blood_on_floor"].y),
-														config.get_value("enemy_skymage", "size_blood_on_floor_z", enemy_param["skymage"]["size_blood_on_floor"].z))
-		enemy_param["skymage"]["enemy_speed"] = config.get_value("enemy_skymage", "enemy_speed", enemy_param["skymage"]["enemy_speed"])
-		enemy_param["skymage"]["enemy_distance_from_portal"] = config.get_value("enemy_skymage", "enemy_distance_from_portal", enemy_param["skymage"]["enemy_distance_from_portal"])
-		enemy_param["skymage"]["time_to_throw"] = config.get_value("enemy_skymage", "time_to_throw", enemy_param["skymage"]["time_to_throw"])
-		enemy_param["skymage"]["probability_card"] =  config.get_value("enemy_skymage", "probability_card", enemy_param["skymage"]["probability_card"])	
-		enemy_param["skymage"]["enemy_transform_scale"] = config.get_value("enemy_skymage", "enemy_transform_scale",  enemy_param["skymage"]["enemy_transform_scale"])
-		
-		cards_hint["card_mana_potion"] = config.get_value("cards_hint", "card_mana_potion", cards_hint["card_mana_potion"])
-		cards_hint["card_hp_potion"] = config.get_value("cards_hint", "card_hp_potion", cards_hint["card_mana_potion"])
-		cards_hint["card_mana_max_increase"] = config.get_value("cards_hint", "card_mana_max_increase", cards_hint["card_mana_potion"])
-		cards_hint["card_mana_max"] = config.get_value("cards_hint", "card_mana_max", cards_hint["card_mana_potion"])
-		cards_hint["card_hp_to_mana_sacrifice"] = config.get_value("cards_hint", "card_hp_to_mana_sacrifice", cards_hint["card_mana_potion"])
-		cards_hint["card_mine_spell"] = config.get_value("cards_hint", "card_mine_spell", cards_hint["card_mana_potion"])
-		
-		cold_steels["pivot_rotation_speed"] =  config.get_value("object_common", "pivot_rotation_speed", cold_steels["pivot_rotation_speed"])		
-		cold_steels["one_handed_sword"]["damage"] = config.get_value("one_handed_sword", "damage", cold_steels["one_handed_sword"]["damage"])
-		cold_steels["one_handed_sword"]["targets"] = config.get_value("one_handed_sword", "targets", cold_steels["one_handed_sword"]["targets"])
-		cold_steels["one_handed_sword"]["cooldown"] = config.get_value("one_handed_sword", "cooldown", cold_steels["one_handed_sword"]["cooldown"])
-		cold_steels["one_handed_axe"]["damage"] = config.get_value("one_handed_axe", "damage", cold_steels["one_handed_axe"]["damage"])
-		cold_steels["one_handed_axe"]["targets"] = config.get_value("one_handed_axe", "targets", cold_steels["one_handed_axe"]["targets"])
-		cold_steels["one_handed_axe"]["cooldown"] = config.get_value("one_handed_axe", "cooldown", cold_steels["one_handed_axe"]["cooldown"])		
-	else:
-		print("error loading file settings.cfg")
-	config = null
+var enemy_spawn_rate = {
+	"imp": 20,
+	"skymage": 20,
+	"zombie":  60
+}
+
+var world_param = {
+	"scale_size_map": 50,
+	"portal_create_enemy_count": 6,
+	"portal_reload_enemy_increase": 3
+}

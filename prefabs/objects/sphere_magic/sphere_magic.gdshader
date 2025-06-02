@@ -16,7 +16,7 @@ void vertex() {
 }
 
 void fragment() {
-	float fill_y = mix(-0.49, 0.49, fill);	
+	float fill_y = mix(-0.49, 0.49, fill);
 	if (world_position.y > fill_y) {
 		discard;
 	}

@@ -15,12 +15,8 @@ var collider : Node3D
 var collider_position : Vector3 = Vector3.ZERO
 
 func _ready()->void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		timer_remove_object.wait_time = config.get_value("player_thunderbolt", "player_thunderbolt_time_life", 2)
-		collision_thunderbolt_circle.shape.radius = config.get_value("player_thunderbolt", "player_thunderbol_radius", 2)
-		#config.save("res://settings.cfg")
-	config = null
+	timer_remove_object.wait_time = Globalsettings.player_thunderbolt["player_thunderbolt_time_life"]
+	collision_thunderbolt_circle.shape.radius = Globalsettings.player_thunderbolt["player_thunderbol_radius"]
 	global_position = collider.global_position
 	area3d_thunderbolt_circle.monitoring = true
 	lighting.visible = false

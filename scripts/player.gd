@@ -50,10 +50,6 @@ enum playerstate {
 var player_max_health: int = 5
 # player's speed normal
 var player_speed_walk = 3
-# player's speed jump
-var player_jump_velocity = 3
-# camer's sensitivity
-var player_rotate_sensitivity = 0.085
 # player's currently health
 var player_current_health: int = player_max_health
 # speed scroll_container spells
@@ -80,11 +76,6 @@ var card_scale = 2
 var card_size = card_scale * Vector2(32, 48)
 var card_currently_index = -1
 var card_list : Array
-var card_mana_potion_mana_increase = 2
-var card_hp_potion_hp_increase = 2
-var card_hp_to_mana_sacrifice_exchange = 2
-var sword_splash_animation_time = 0.0
-var player_speed_walk_slowing = 1.0
 var is_card_dissolve_tween: bool = false
 var currently_coldsteel_name = ""
 var currently_coldsteel = {
@@ -97,48 +88,37 @@ var new_loot_pivot: Node3D = null
 var runes : Array
 
 func _ready() -> void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		player_speed_walk = config.get_value("player", "player_speed_walk", player_speed_walk)
-		player_max_health = config.get_value("player", "player_max_health", player_max_health)
-		player_jump_velocity = config.get_value("player", "player_jump_velocity", player_jump_velocity)
-		player_rotate_sensitivity = config.get_value("player", "player_rotate_sensitivity", player_rotate_sensitivity)
-		timer_reload_spell.wait_time = config.get_value("player", "time_reload_spell", 1.0)
-		player_max_mana =  config.get_value("player", "player_max_mana", player_max_mana)
-		raycast.target_position.z =  -config.get_value("player", "player_scan_enemy", abs(raycast.target_position.z))
-		player_speed_walk_slowing = config.get_value("player", "player_speed_walk_slowing", player_speed_walk_slowing)
-		timer_walk_slowing.wait_time = config.get_value("player", "player_speed_time_slowing", timer_walk_slowing.wait_time)
-		# spell waterball
-		var mana_cost = config.get_value("spells", "waterball_spell_mana_cost", 1)
-		var damage = config.get_value("spells", "waterball_spell_damage", 1)
-		var type = config.get_value("spells", "waterball_spell_type", "sphere")
-		var spell = SpellClass.new("waterball", mana_cost, damage, type)
-		spells.append(spell)
-		# spell thunderbolt
-		mana_cost = config.get_value("spells", "thunderbolt_spell_mana_cost", 1)
-		damage = config.get_value("spells", "thunderbolt_spell_damage", 1)
-		type = config.get_value("spells", "thunderbolt_spell_type", "single")
-		spell = SpellClass.new("thunderbolt", mana_cost, damage, type)
-		spells.append(spell)
-		# spell tornado
-		mana_cost = config.get_value("spells", "tornado_spell_mana_cost", 1)
-		damage = config.get_value("spells", "tornado_spell_damage", 1)
-		type = config.get_value("spells", "tornado_spell_type", "sphere")
-		spell = SpellClass.new("tornado", mana_cost, damage, type)
-		spells.append(spell)
-		# spell tornado
-		mana_cost = config.get_value("spells", "trap_spell_mana_cost", 1)
-		damage = config.get_value("spells", "trap_spell_damage", 1)
-		type = config.get_value("spells", "trap_spell_type", "sphere")
-		spell = SpellClass.new("trap", mana_cost, damage, type)
-		spells.append(spell)		
-		#cards
-		card_mana_potion_mana_increase  = config.get_value("cards", "card_mana_potion_mana_increase", card_mana_potion_mana_increase)
-		card_hp_potion_hp_increase  = config.get_value("cards", "card_hp_potion_hp_increase", card_hp_potion_hp_increase)
-		card_hp_to_mana_sacrifice_exchange = config.get_value("cards", "card_hp_to_mana_sacrifice_exchange", card_hp_to_mana_sacrifice_exchange)	
-		#config.save("res://settings.cfg")
-	config = null	
-	sword_splash_animation_time = 1.16 / animation_player.speed_scale
+	player_max_health = Globalsettings.player_param["player_max_health"]
+	player_speed_walk = Globalsettings.player_param["player_speed_walk"]	
+	timer_reload_spell.wait_time = Globalsettings.player_param["time_reload_spell"]
+	player_max_mana =  Globalsettings.player_param["player_max_mana"]
+	raycast.target_position.z =  -Globalsettings.player_param["player_scan_enemy"]
+	timer_walk_slowing.wait_time = Globalsettings.player_param["player_speed_time_slowing"]
+	# spell waterball
+	var mana_cost = Globalsettings.spells_param["waterball_spell_mana_cost"]
+	var damage = Globalsettings.spells_param["waterball_spell_damage"]
+	var type = Globalsettings.spells_param["waterball_spell_type"]
+	var spell = SpellClass.new("waterball", mana_cost, damage, type)
+	spells.append(spell)
+	# spell thunderbolt
+	mana_cost = Globalsettings.spells_param["thunderbolt_spell_mana_cost"]
+	damage = Globalsettings.spells_param["thunderbolt_spell_damage"]
+	type = Globalsettings.spells_param["thunderbolt_spell_type"]
+	spell = SpellClass.new("thunderbolt", mana_cost, damage, type)
+	spells.append(spell)
+	# spell tornado
+	mana_cost = Globalsettings.spells_param["tornado_spell_mana_cost"]
+	damage = Globalsettings.spells_param["tornado_spell_damage"]
+	type = Globalsettings.spells_param["tornado_spell_type"]
+	spell = SpellClass.new("tornado", mana_cost, damage, type)
+	spells.append(spell)
+	# spell tornado
+	mana_cost = Globalsettings.spells_param["trap_spell_mana_cost"]
+	damage = Globalsettings.spells_param["trap_spell_damage"]
+	type = Globalsettings.spells_param["trap_spell_type"]
+	spell = SpellClass.new("trap", mana_cost, damage, type)
+	spells.append(spell)		
+	#cards
 	card_hint.visible = false
 	texturerect_card.visible = false
 	texturerect_card.custom_minimum_size = card_size
@@ -229,7 +209,7 @@ func _input(event: InputEvent) -> void:
 				progressbar_reload_coldsteel.value = 0
 				animation_player.play("melee")
 	elif event is InputEventMouseMotion:
-		rotate_y(deg_to_rad(-event.relative.x * player_rotate_sensitivity))
+		rotate_y(deg_to_rad(-event.relative.x * Globalsettings.player_param["player_rotate_sensitivity"]))
 	elif event.is_action_pressed("choose_coldsteel") && new_loot_pivot:
 		take_new_loot_pivot()
 
@@ -249,7 +229,7 @@ func _physics_process(delta: float) -> void:
 		state = playerstate.JUMPING		
 	else:		
 		if Input.is_action_pressed("jump"):
-			velocity.y = player_jump_velocity			
+			velocity.y = Globalsettings.player_param["player_jump_velocity"]
 		var input_dir = Input.get_vector("left", "right", "forward", "back")
 		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if direction:
@@ -300,7 +280,7 @@ func take_damage(amount: int):
 			animation_player.stop()
 			get_tree().call_deferred("reload_current_scene")
 		elif timer_walk_slowing.is_stopped():
-			player_speed_walk *= player_speed_walk_slowing
+			player_speed_walk *= Globalsettings.player_param["player_speed_walk_slowing"]
 			timer_walk_slowing.start()	
 
 func take_mana(amount: int):
@@ -384,12 +364,12 @@ func remove_card()->void:
 	match card_list[card_currently_index]:
 		"card_mana_potion": 
 			if player_max_mana - player_currently_mana > 0.1:
-				take_mana(card_mana_potion_mana_increase)
+				take_mana(Globalsettings.cards_param["card_mana_potion_mana_increase"])
 			else:
 				return
 		"card_hp_potion": 
 			if player_max_health - player_current_health > 0.1:
-				take_health(card_hp_potion_hp_increase)
+				take_health(Globalsettings.cards_param["card_hp_potion_hp_increase"])
 			else:
 				return			
 		"card_mana_max_increase": 
@@ -401,8 +381,8 @@ func remove_card()->void:
 			else:
 				return
 		"card_hp_to_mana_sacrifice":
-			if player_current_health - card_hp_to_mana_sacrifice_exchange > 1:
-				var exchange = card_hp_to_mana_sacrifice_exchange
+			if player_current_health - Globalsettings.cards_param["card_hp_to_mana_sacrifice_exchange"] > 1:
+				var exchange = Globalsettings.cards_param["card_hp_to_mana_sacrifice_exchange"]
 				if player_currently_mana + exchange > player_max_mana:
 					exchange = player_max_mana - player_currently_mana
 				take_mana(exchange)
@@ -454,7 +434,7 @@ func enemy_appear_spawn(value):
 	label_enemy_appear_spawn.text = str(int(value))
 
 func _on_timer_walk_slowing_timeout() -> void:
-	player_speed_walk /= player_speed_walk_slowing
+	player_speed_walk /=  Globalsettings.player_param["player_speed_walk_slowing"]
 	
 func in_kill_zone():
 	interaction_info.text = Globalsettings.interaction_info["warning_is_in_fog_hint_text"]

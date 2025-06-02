@@ -9,8 +9,6 @@ extends CharacterBody3D
 @onready var collision_tornado_circle  = $area3d_tornado_circle/CollisionShape3D
 @export var player : CharacterBody3D
 
-var player_tornado_speed = 20.0
-var player_tornado_time_life : float = 5.0
 #thunderbolt's class name
 var spell: SpellClass
 #thunderbolt's collider
@@ -24,13 +22,8 @@ var max_distance_to_demage = 0
 var enemies_in_tornado: Array
 
 func _ready()->void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		player_tornado_speed = config.get_value("player_tornado", "player_tornado_speed", player_tornado_speed)
-		timer_remove_object.wait_time = config.get_value("player_tornado", "player_tornado_shoot_time_life", 1.0)
-		collision_tornado_circle.shape.radius = config.get_value("player_tornado", "player_tornado_radius", 5)		
-		#config.save("res://settings.cfg")
-	config = null
+	timer_remove_object.wait_time = Globalsettings.player_tornado["player_tornado_shoot_time_life"]
+	collision_tornado_circle.shape.radius = Globalsettings.player_tornado["player_tornado_radius"]
 	if collider:
 		if collider.is_in_group("enemy"):
 			min_distance_to_object = collider._get_object_size() + collision_shape.radius
@@ -53,7 +46,7 @@ func _physics_process(delta: float) -> void:
 		timer_remove_object.stop()
 	else:		
 		var direction = (transform.basis * Vector3(0, 0, -1)).normalized()
-		global_position += direction * player_tornado_speed	* delta
+		global_position += direction * Globalsettings.player_tornado["player_tornado_speed"]	* delta
 		if global_position.distance_to(player.global_position) > max_distance_to_demage:
 			call_deferred("queue_free")
 
@@ -88,5 +81,5 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 					obj._set_position_freeze(_collider_position + Vector3(x, 0, z), true)
 				angle += angle_shift				
 	body_tornado.visible = true
-	timer_remove_object.wait_time = player_tornado_time_life
+	timer_remove_object.wait_time = Globalsettings.player_tornado["player_tornado_time_life"]
 	timer_remove_object.start()

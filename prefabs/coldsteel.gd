@@ -7,18 +7,11 @@ extends Node3D
 @onready var sprite_cutoff_air = $sprite_cutoff_air
 @export var player : CharacterBody3D
 
-# sektor wykrywania (np. 60 stopni)
-var detection_angle_deg_near_enemy = 40.0
 var param_coldsteel = {}
 var action_cold_steel_cutoff = false
 
 func _ready()->void:
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		detection_angle_deg_near_enemy =  config.get_value("player_coldsteel", "detection_angle_deg_near_enemy", detection_angle_deg_near_enemy)
-		collision_near_enemy.shape.radius = config.get_value("player_coldsteel", "detection_distance_near_enemy", 1.5)
-		#config.save("res://settings.cfg")
-	config = null
+	collision_near_enemy.shape.radius = Globalsettings.player_coldsteel["detection_distance_near_enemy"]
 	area3d_near_enemy.monitoring = false
 	sprite_cutoff_air.visible = false
 	
@@ -43,7 +36,7 @@ func _check_near_enemy(pos):
 		var direction_to_enemy = (pos - player.global_position).normalized()
 		var forward = player.global_transform.basis.z.normalized() * -1.0  # Z przód w Godot
 		var angle = rad_to_deg(forward.angle_to(direction_to_enemy))
-		return angle <= detection_angle_deg_near_enemy
+		return angle <= Globalsettings.player_coldsteel["detection_angle_deg_near_enemy"]
 	else:
 		return false
 			
