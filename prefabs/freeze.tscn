@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://bs1jxgaca36s3"]
+
+[ext_resource type="Script" uid="uid://dp7o2cebqpgf4" path="res://prefabs/freeze.gd" id="1_1jvqx"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ch331"]
+
+[node name="freeze" type="Node3D"]
+script = ExtResource("1_1jvqx")
+
+[node name="timer_remove_object" type="Timer" parent="."]
+one_shot = true
+
+[node name="area3d_freeze_circle" type="Area3D" parent="."]
+collision_layer = 256
+collision_mask = 64
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area3d_freeze_circle"]
+shape = SubResource("CylinderShape3D_ch331")
+
+[node name="timer_find_enemy_in_area" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="timeout" from="timer_find_enemy_in_area" to="." method="_on_timer_find_enemy_in_area_timeout"]

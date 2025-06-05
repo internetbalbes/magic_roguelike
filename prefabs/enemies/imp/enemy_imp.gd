@@ -17,6 +17,7 @@ enum enemystate {
 	RUNNING_TO_PLAYER,	# state runnning
 	POOLING_TO_POINT,	# state pooling to point
 	TRAPING,	# state set trap
+	FREEZING,	# state freezing to point
 	DEATHING	# state deathing
 }
 # Node fireball
@@ -70,7 +71,11 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if !is_on_floor():
 		return
-	elif state in [enemystate.THROWING]:
+	elif state == enemystate.FREEZING:
+		rest_freezing_time -= delta
+		if rest_freezing_time < 0:
+			_set_state_freezing(null, false)
+	elif state == enemystate.THROWING:
 		# Obracanie wroga w stronę celu	
 		rotate_towards_target(player.global_transform.origin, delta)
 		#look_at(player.global_transform.origin, Vector3.UP)
@@ -173,11 +178,14 @@ func _on_timer_after_exit_portal_timeout():
 	area.monitoring = true
 	timer_wait_set_trap.start()
 
-func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
+func _set_freezing(_time):
+	super._set_freezing(_time)
+	_set_state_freezing(enemystate.FREEZING, true)
+
+func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
-			_set_state_enemy(enemystate.POOLING_TO_POINT)
-			enemy_pooling_to_point = pos
+			_set_state_enemy(_state)
 			if is_instance_valid(fireball):
 				fireball.call_deferred("queue_free")
 			timer_throw.stop()
@@ -201,6 +209,10 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 			else:
 				area.monitoring = true
 				_set_state_enemy(enemystate.RUNNING_TO_PLAYER)	
+	
+func _set_pooling_to_point(pos: Vector3, freeze: bool) -> void:
+	_set_state_freezing(enemystate.POOLING_TO_POINT, freeze)
+	enemy_pooling_to_point = pos
 
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
@@ -234,6 +246,9 @@ func _set_state_enemy(value)->void:
 		enemystate.TRAPING:
 			state = enemystate.TRAPING
 			animation_player.play("putdown")
+		enemystate.FREEZING:
+			state = enemystate.FREEZING
+			animation_player.pause()	
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")

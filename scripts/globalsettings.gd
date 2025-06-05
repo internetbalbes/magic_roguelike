@@ -17,7 +17,7 @@ var enemy_param = {
 		"count_segments_around_portal": 36,
 		"probability_modificator": 25,
 		"probability_modificator_maximum": 75,
-		"probability_modificator_increase": 5
+		"probability_modificator_increase": 5,
 	},
 	"zombie": {
 		"label_health_max_value": 3,
@@ -27,7 +27,7 @@ var enemy_param = {
 		"enemy_speed_run": 10,
 		"time_to_beat": 0.45,
 		"probability_card": 100,
-		"damage": 1.0,
+		"damage": 1,
 		"enemy_area_scan_player": 2.25,
 		"enemy_transform_scale": 1.25
 	},
@@ -50,9 +50,13 @@ var enemy_param = {
 		"enemy_speed": 14,
 		"time_to_beat": 0.7,
 		"probability_card": 100,
-		"damage": 1.0,
+		"damage": 1,
 		"enemy_area_scan_player": 3,
 		"enemy_transform_scale": 1.5,
+		"setor_damage": 45,
+		"count_direction_damage":4,
+		"radius_sector_damage_min": 3,
+		"radius_sector_damage_max": 6
 	},
 	"skymage": {
 		"label_health_max_value": 3,
@@ -131,6 +135,9 @@ var spells_param = {
 	"trap_spell_mana_cost": 3,
 	"trap_spell_damage": 2,
 	"trap_spell_type": "sphere",
+	"freeze_spell_mana_cost": 1,
+	"freeze_spell_damage": 0,
+	"freeze_spell_type": "single",
 	"card_mana_potion_mana_increase": 5,
 	"card_hp_potion_hp_increase": 5,
 	"card_hp_to_mana_sacrifice_exchange": 5
@@ -180,6 +187,12 @@ var player_tornado = {
 
 var player_trap = {
 	"player_trap_radius": 7
+}
+
+var player_freeze = {
+	"player_freeze_time_effect": 1.0,
+	"player_freeze_time_life": 5.0,
+	"player_freeze_radius": 10
 }
 
 var portal = {

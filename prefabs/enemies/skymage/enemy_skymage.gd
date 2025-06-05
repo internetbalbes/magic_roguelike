@@ -13,7 +13,8 @@ enum enemystate {
 	WALKING_PORTAL,	# state walking around portal
 	PRAYING,	# state praying
 	THROWING,	# state fthrowimg
-	POOLING_TO_POINT,	# state pooling to point	
+	POOLING_TO_POINT,	# state pooling to point
+	FREEZING,	# state freezing to point
 	DEATHING	# state deathing
 }
 
@@ -37,7 +38,11 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if !is_on_floor():
 		return
-	elif state in [enemystate.THROWING]:
+	elif state == enemystate.FREEZING:
+		rest_freezing_time -= delta
+		if rest_freezing_time < 0:
+			_set_state_freezing(null, false)	
+	elif state == enemystate.THROWING:
 		rotate_towards_target(player.global_transform.origin, delta)
 	elif state == enemystate.POOLING_TO_POINT:
 		var direction = (enemy_pooling_to_point - global_transform.origin).normalized()
@@ -86,6 +91,9 @@ func _set_state_enemy(value)->void:
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
+		enemystate.FREEZING:
+			state = enemystate.FREEZING
+			animation_player.pause()
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")
@@ -96,18 +104,25 @@ func take_damage(spell, buf, amount: int):
 		sphere_guard.monitoring = false	
 		timer_throw.stop()
 		_set_state_enemy(enemystate.DEATHING)
-	
-func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
+		
+func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
-			_set_state_enemy(enemystate.POOLING_TO_POINT)
-			enemy_pooling_to_point = pos
+			_set_state_enemy(_state)
 			timer_throw.stop()
 		elif target_point_pray == Vector3.ZERO:
 			_set_state_enemy(enemystate.PRAYING)
 		else:
 			_set_state_enemy(enemystate.WALKING_PORTAL)	
 	
+func _set_pooling_to_point(pos: Vector3, freeze: bool) -> void:
+	_set_state_freezing(enemystate.POOLING_TO_POINT, freeze)
+	enemy_pooling_to_point = pos
+
+func _set_freezing(_time):
+	super._set_freezing(_time)
+	_set_state_freezing(enemystate.FREEZING, true)
+		
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
 	if portal:

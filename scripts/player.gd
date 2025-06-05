@@ -10,24 +10,25 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @onready var timer_reload_coldsteel = $timer_reload_coldsteel
 @onready var timer_kill_zone = $timer_kill_zone
 @onready var collision_shape: Shape3D = $CollisionShape3D.shape
-@onready var label_health = $interface/HUD/control_hud/hp_bar/hp
+@onready var label_health = $interface/HUD/hp_bar/hp
 @onready var progressbar_reload_coldsteel = $interface/VBoxContainer/progressbar_reload_coldsteel
-@onready var label_mana = $interface/HUD/control_hud/mana_bar/mana
+@onready var label_mana = $interface/HUD/mana_bar/mana
 @onready var texturerect_base = $interface/HUD/book
 @onready var texturerect_overlay = $interface/HUD/book/spell_icon
+@onready var interface_runes = $interface/HUD/runes
 @onready var label_mana_cost = $interface/HUD/book/mana_cost
-@onready var hboxcontainer_card_parent = $interface/HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent
-@onready var hboxcontainer_card = $interface/HUD/control_hud/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent/hboxcontainer_card
-@onready var texturerect_card: TextureRect = $interface/HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control/texturerect_card
-@onready var card_hint: Label = $interface/HUD/control_hud/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control/card_hint
+@onready var hboxcontainer_card_parent = $interface/HUD/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent
+@onready var hboxcontainer_card = $interface/HUD/vboxcontainer_card_parent/hboxcontainer_cards/margincontainer_card/hboxcontainer_card_parent/hboxcontainer_card
+@onready var texturerect_card: TextureRect = $interface/HUD/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control/texturerect_card
+@onready var card_hint: Label = $interface/HUD/vboxcontainer_card_parent/control_currently_card/MarginContainer/Control/card_hint
 @onready var coldsteel: Node3D = $coldsteel
 @onready var label_enemy_appear_count = $interface/HUD/enemy_appear/enemy_count
 @onready var label_enemy_appear_time = $interface/HUD/enemy_appear/enemy_time
 @onready var label_enemy_appear_spawn = $interface/HUD/enemy_appear/enemy_spawn
 @onready var animation_player: AnimationPlayer = $Camera3D/player_model/AnimationPlayer
 @onready var timer_walk_slowing: Timer = $timer_walk_slowing
-@onready var label_hp_sphere_fill = $interface/HUD/control_hud/hp_bar/health_sphere/SubViewport/sphere_outside/sphere_inside
-@onready var label_mana_sphere_fill = $interface/HUD/control_hud/mana_bar/mana_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var label_hp_sphere_fill = $interface/HUD/hp_bar/health_sphere/SubViewport/sphere_outside/sphere_inside
+@onready var label_mana_sphere_fill = $interface/HUD/mana_bar/mana_sphere/SubViewport/sphere_outside/sphere_inside
 @onready var bone_attachment = $Camera3D/player_model/player_model/Skeleton3D/BoneAttachment3D
 @onready var interaction_info: Label = $interface/interaction_info
 
@@ -35,6 +36,7 @@ const SWORD_SPLASH_TRAIL_WIDTH = 0.15 * 200
 @export var prefabwaterball : PackedScene
 @export var prefabtornado : PackedScene
 @export var prefabtrap : PackedScene
+@export var prefabfreeze : PackedScene
 @export var world: Node3D
 
 # List spell
@@ -63,6 +65,7 @@ var spell_thunderbolt = preload("res://sprites/thunderbolt.png")
 var spell_waterball = preload("res://sprites/waterball_icon.png")
 var spell_tornado = preload("res://sprites/tornado_icon.png")
 var spell_trap = preload("res://sprites/trap_icon.png")
+var spell_freeze = preload("res://sprites/freeze_icon.png")
 var texturerect_card_set = Vector2.ZERO
 #list file cards
 var card_all_list_enemy: Array = ["card_mana_potion", "card_hp_potion", "card_mana_max_increase", "card_hp_to_mana_sacrifice", "card_mine_spell"]
@@ -117,7 +120,13 @@ func _ready() -> void:
 	damage = Globalsettings.spells_param["trap_spell_damage"]
 	type = Globalsettings.spells_param["trap_spell_type"]
 	spell = SpellClass.new("trap", mana_cost, damage, type)
-	spells.append(spell)		
+	spells.append(spell)
+	# spell freeze
+	mana_cost = Globalsettings.spells_param["freeze_spell_mana_cost"]
+	damage = Globalsettings.spells_param["freeze_spell_damage"]
+	type = Globalsettings.spells_param["freeze_spell_type"]
+	spell = SpellClass.new("freeze", mana_cost, damage, type)
+	spells.append(spell)
 	#cards
 	card_hint.visible = false
 	texturerect_card.visible = false
@@ -127,7 +136,7 @@ func _ready() -> void:
 	mat.set_shader_parameter("base_color", Vector3(1.0, 0.0, 0.0))	
 	mat.set_shader_parameter("fill_color", Vector3(1.0, 0.1, 0.0))
 	mat = label_mana_sphere_fill.get_material_override() 
-	mat.set_shader_parameter("base_color", Vector3(0.0,1.0, 1.0))
+	mat.set_shader_parameter("base_color", Vector3(0.0,0.0, 1.0))
 	mat.set_shader_parameter("fill_color", Vector3(0.0, 1.0, 0.1))
 	texturerect_card.material.set_shader_parameter("dissolve_value", 1.0)
 	take_health(player_max_health)
@@ -190,10 +199,13 @@ func _input(event: InputEvent) -> void:
 				var spell = spells[spell_currently_index]
 				if player_currently_mana - spell.mana_cost < 0:
 					pass
-				elif spell.spell_name.to_lower() == "thunderbolt":
+				elif spell.spell_name.to_lower() == "thunderbolt" || spell.spell_name.to_lower() == "freeze":
 					var collider = raycast.get_collider()
 					if collider && collider.is_in_group("enemy"):
-						create_spell(prefathunderbolt.instantiate())
+						if spell.spell_name.to_lower() == "thunderbolt":
+							create_spell(prefathunderbolt.instantiate())
+						else:
+							create_spell(prefabfreeze.instantiate())
 				elif spell.spell_name.to_lower() == "waterball":
 					create_spell(prefabwaterball.instantiate())
 				elif spell.spell_name.to_lower() == "tornado":
@@ -330,6 +342,7 @@ func get_spell_texture(sell_name: String)->Texture2D:
 		"tornado": return spell_tornado
 		"waterball": return spell_waterball
 		"trap": return spell_trap
+		"freeze": return spell_freeze
 		_: return null
 	
 func set_card_new_position(index)->void:
@@ -493,8 +506,14 @@ func take_new_loot_pivot():
 		_coldsteel.visible = true
 		progressbar_reload_coldsteel.value = currently_coldsteel.cooldown
 		progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown	
-		bone_attachment.get_child(0).call_deferred("queue_free")
+		bone_attachment.get_child(0).call_deferred("queue_free")		
+		for obj in interface_runes.get_children():
+			obj.queue_free()
+		runes.clear()
 	else:
+		var texture_rect = TextureRect.new()
+		texture_rect.texture = Globalsettings.rune_param[new_loot_pivot.name]["texture"]
+		interface_runes.add_child(texture_rect)
 		runes.append(new_loot_pivot.name)
 		var base_pivot = bone_attachment.get_child(0).get_child(0).get_node("rune_pivot").get_node("mesh_rune_pivot")
 		var node_rune = base_pivot.duplicate()

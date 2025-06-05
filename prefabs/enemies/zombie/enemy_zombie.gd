@@ -14,6 +14,7 @@ enum enemystate {
 	BEATING,	# state fthrowimg
 	RUNNING_TO_PLAYER,	# state runnning
 	POOLING_TO_POINT,	# state pooling to point
+	FREEZING,	# state freezing to point	
 	DEATHING	# state deathing
 }
 # angle enemy's to  walk
@@ -37,6 +38,10 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	
 	if !is_on_floor():
 		return		
+	elif state == enemystate.FREEZING:
+		rest_freezing_time -= delta
+		if rest_freezing_time < 0:
+			_set_state_freezing(null, false)
 	elif state in [enemystate.BEATING]:
 		# Obracanie wroga w stronę celu	
 		rotate_towards_target(player.global_transform.origin, delta)
@@ -96,11 +101,10 @@ func _on_animation_finished(_anim_name: String) -> void:
 	else:
 		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
 
-func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
+func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
-			_set_state_enemy(enemystate.POOLING_TO_POINT)
-			enemy_pooling_to_point = pos
+			_set_state_enemy(_state)
 			timer_beat.stop()
 			area.monitoring = false
 			timer_run_to_player.stop()
@@ -111,6 +115,14 @@ func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
 			else:
 				_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
 
+func _set_pooling_to_point(pos: Vector3, freeze: bool) -> void:
+	_set_state_freezing(enemystate.POOLING_TO_POINT, freeze)
+	enemy_pooling_to_point = pos
+
+func _set_freezing(_time):
+	super._set_freezing(_time)
+	_set_state_freezing(enemystate.FREEZING, true)
+	
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
 	if portal:
@@ -141,6 +153,9 @@ func _set_state_enemy(value)->void:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
 			enemy_speed =  Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
+		enemystate.FREEZING:
+			state = enemystate.FREEZING
+			animation_player.pause()	
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")

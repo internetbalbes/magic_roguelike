@@ -63,7 +63,7 @@ func set_collider(node: Node3D, pos: Vector3, max_distance: float):
 func _on_timer_remove_object_timeout() -> void:
 	for obj in enemies_in_tornado:
 		if is_instance_valid(obj):
-			obj._set_position_freeze(Vector3.ZERO, false)
+			obj._set_pooling_to_point(Vector3.ZERO, false)
 	call_deferred("queue_free")	
 	
 func _on_timer_find_enemy_in_area_timeout() -> void:
@@ -78,7 +78,7 @@ func _on_timer_find_enemy_in_area_timeout() -> void:
 				var x = cos(deg_to_rad(angle))
 				var z = sin(deg_to_rad(angle))
 				if is_instance_valid(obj):
-					obj._set_position_freeze(_collider_position + Vector3(x, 0, z), true)
+					obj._set_pooling_to_point(_collider_position + Vector3(x, 0, z), true)
 				angle += angle_shift				
 	body_tornado.visible = true
 	timer_remove_object.wait_time = Globalsettings.player_tornado["player_tornado_time_life"]

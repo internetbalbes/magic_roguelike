@@ -11,9 +11,9 @@ float circle(in vec2 pt, in float radius){
 						radius+(radius*0.01),
 						dot(dist,dist)*4.0);
 }
-						
+
 void fragment() {
-	
+
     // Kolor bazowy obiektu
     ALBEDO = albedo_color.rgb * emission_energy;
 	ALPHA = circle(UV,0.95) * (1.0 - circle(UV,0.8));

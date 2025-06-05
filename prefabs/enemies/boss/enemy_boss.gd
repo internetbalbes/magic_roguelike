@@ -6,6 +6,8 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var animation_player: AnimationPlayer = $kishi_model/AnimationPlayer
 @onready var timer_beat: Timer = $timer_beat
 @onready var timer_run_to_player: Timer = $timer_run_to_player
+@onready var area_damage: MeshInstance3D = $area_damage
+
 
 # enemy's initial state
 var state = enemystate.RUNNING_TO_PLAYER
@@ -14,9 +16,11 @@ enum enemystate {
 	BEATING,	# state fthrowimg
 	RUNNING_TO_PLAYER,	# state runnning
 	POOLING_TO_POINT,	# state pooling to point
+	FREEZING,	# state freezing to point
 	DEATHING	# state deathing
 }
 
+var count_direction_damage: int = 0
 var target_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
@@ -30,12 +34,17 @@ func _ready() -> void:
 	animation_player.get_animation("run").loop = true
 	coldsteel_name = loot_cold_steels_list[randi_range(0, 1)]
 	rune_name = "splash_targets_amount_increase"
+	_area_param_damage_param()
 	
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	
 	if !is_on_floor():
 		return		
-	elif state in [enemystate.BEATING]:
+	elif state == enemystate.FREEZING:
+		rest_freezing_time -= delta
+		if rest_freezing_time < 0:
+			_set_state_freezing(null, false)
+	elif state == enemystate.BEATING:
 		# Obracanie wroga w stronę celu	
 		rotate_towards_target(player.global_transform.origin, delta)
 		#look_at(player.global_transform.origin, Vector3.UP)
@@ -80,19 +89,26 @@ func _on_animation_finished(_anim_name: String) -> void:
 		_set_state_enemy(enemystate.BEATING)
 	else:
 		_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
-		
-func _set_position_freeze(pos: Vector3, freeze: bool) -> void:
+
+func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
-			_set_state_enemy(enemystate.POOLING_TO_POINT)
-			enemy_pooling_to_point = pos
+			_set_state_enemy(_state)
 			timer_beat.stop()
 			area.monitoring = false
 			timer_run_to_player.stop()
 		else:
 			area.monitoring = true
 			_set_state_enemy(enemystate.RUNNING_TO_PLAYER)
+					
+func _set_pooling_to_point(pos: Vector3, freeze: bool) -> void:
+	_set_state_freezing(enemystate.POOLING_TO_POINT, freeze)
+	enemy_pooling_to_point = pos
 
+func _set_freezing(_time):
+	super._set_freezing(_time)
+	_set_state_freezing(enemystate.FREEZING, true)
+	
 func _set_portal(object: Node3D, angle: float) ->void:
 	super._set_portal(object, angle)
 	if !object:
@@ -114,14 +130,31 @@ func _set_state_enemy(value)->void:
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
+		enemystate.FREEZING:
+			state = enemystate.FREEZING
+			animation_player.pause()
 		enemystate.DEATHING:
 			state = enemystate.DEATHING
 			animation_player.play("death")
 
 func _on_timer_beat_timeout() -> void:
-	if player_in_area:
-		player.take_damage(Globalsettings.enemy_param[enemy_type]["damage"])	
-
+	if player_in_area:		
+		var to_target = (global_position - player.global_position).normalized()
+		for i in range(0, count_direction_damage, 1):
+			var angle_between = rad_to_deg(global_transform.basis.z.rotated(Vector3.UP,  deg_to_rad(i * 360.0 / count_direction_damage)).angle_to(to_target))
+			if abs(angle_between) <= Globalsettings.enemy_param[enemy_type]["setor_damage"]:
+				player.take_damage(Globalsettings.enemy_param[enemy_type]["damage"])
+		_area_param_damage_param()
+		
+func _area_param_damage_param():
+		count_direction_damage = randi_range(1, Globalsettings.enemy_param[enemy_type]["count_direction_damage"])
+		var distance =	randf_range(Globalsettings.enemy_param[enemy_type]["radius_sector_damage_min"], Globalsettings.enemy_param[enemy_type]["radius_sector_damage_max"])
+		collision_areaseeing.radius = distance
+		(area_damage.mesh as PlaneMesh).size = Vector2.ONE * 2.0 * collision_areaseeing.radius
+		var mat = area_damage.get_material_override() 
+		mat.set_shader_parameter("sector_count", count_direction_damage)
+		mat.set_shader_parameter("sector_angle", Globalsettings.enemy_param[enemy_type]["setor_damage"])
+	
 func _on_timer_run_to_player_timeout() -> void:
 	if target_position.distance_to(player.global_position) > 0.5:
 		target_position = player.global_position

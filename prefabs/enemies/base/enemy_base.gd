@@ -29,6 +29,8 @@ var enemy_speed = 0.0
 var coldsteel_name = ""
 var rune_name = ""
 var loot_cold_steels_list = ["one_handed_sword", "one_handed_axe"]
+var freezing_time: float = 0.0
+var rest_freezing_time = freezing_time
 
 func _ready() -> void:
 	if has_node("area_seeing"):
@@ -84,7 +86,11 @@ func take_damage_beat(spell, buf, amount, _position):
 		enemy_effect.blood_spot.visible = false
 	)
 	spawn_blood_on_floor()
-		
+
+func _set_freezing(_time):
+	freezing_time = _time
+	rest_freezing_time = freezing_time
+
 func take_damage(spell, buf, amount: int):
 	if is_alive():
 		var is_demage = true
