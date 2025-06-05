@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cwiarthxnrnrq"]
+[gd_scene load_steps=15 format=3 uid="uid://cwiarthxnrnrq"]
 
 [ext_resource type="LabelSettings" uid="uid://r0okgjw03rxk" path="res://fonts/new_label_settings.tres" id="1_6qr8u"]
 [ext_resource type="Texture2D" uid="uid://cdxeajw1ygg7m" path="res://sprites/target.png" id="2_6qr8u"]
@@ -8,6 +8,22 @@
 [ext_resource type="Texture2D" uid="uid://bamp3d7bkhcbk" path="res://sprites/interface/wallet.png" id="7_hbh6n"]
 [ext_resource type="Texture2D" uid="uid://dreadh86pwjcf" path="res://sprites/bar.png" id="8_d2vfn"]
 [ext_resource type="PackedScene" uid="uid://bjjcx7k22hmpc" path="res://prefabs/objects/sphere_magic/sphere_magic.tscn" id="10_0mywj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t6tif"]
+transparency = 1
+cull_mode = 1
+albedo_color = Color(1, 1, 1, 0.196078)
+metallic = 1.0
+metallic_specular = 1.0
+roughness = 0.0
+clearcoat_enabled = true
+clearcoat_roughness = 0.0
+backlight = Color(1, 1, 1, 1)
+refraction_scale = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_d2vfn"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_t6tif")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_4mrx2"]
 frequency = 0.0028
@@ -21,6 +37,10 @@ shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_0mywj")
 shader_parameter/dissolve_value = 1.0
 shader_parameter/burn_size = 0.03
 shader_parameter/burn_color = Color(1, 1, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_4mrx2"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_t6tif")
 
 [node name="interface" type="CanvasLayer"]
 
@@ -112,6 +132,7 @@ current = true
 fov = 20.0
 
 [node name="sphere_outside" parent="HUD/control_hud/hp_bar/health_sphere/SubViewport" instance=ExtResource("10_0mywj")]
+mesh = SubResource("SphereMesh_d2vfn")
 
 [node name="hp" type="Label" parent="HUD/control_hud/hp_bar"]
 z_index = 1
@@ -233,6 +254,7 @@ current = true
 fov = 20.0
 
 [node name="sphere_outside" parent="HUD/control_hud/mana_bar/mana_sphere/SubViewport" instance=ExtResource("10_0mywj")]
+mesh = SubResource("SphereMesh_4mrx2")
 
 [node name="bar" type="TextureRect" parent="HUD/control_hud/mana_bar"]
 layout_mode = 2

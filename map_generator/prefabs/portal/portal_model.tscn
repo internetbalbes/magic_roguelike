@@ -1,5 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d34v32rs5ljno"]
-
-[ext_resource type="PackedScene" uid="uid://dubgd3pspdfja" path="res://map_generator/prefabs/portal/portal.gltf" id="1_nheow"]
-
-[node name="portal_model" instance=ExtResource("1_nheow")]

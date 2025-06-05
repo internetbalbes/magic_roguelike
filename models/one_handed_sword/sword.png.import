@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ct0xecw7csxc"
-path.s3tc="res://.godot/imported/portal.png-484d1a4b386601fdcc841a0ef04e11cd.s3tc.ctex"
+uid="uid://fe1w0cwkh8a7"
+path.s3tc="res://.godot/imported/sword.png-b1a8a59e810a9eba0345a44899ba56bf.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://map_generator/prefabs/portal/portal.png"
-dest_files=["res://.godot/imported/portal.png-484d1a4b386601fdcc841a0ef04e11cd.s3tc.ctex"]
+source_file="res://models/one_handed_sword/sword.png"
+dest_files=["res://.godot/imported/sword.png-b1a8a59e810a9eba0345a44899ba56bf.s3tc.ctex"]
 
 [params]
 

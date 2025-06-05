@@ -127,7 +127,7 @@ func _ready() -> void:
 	mat.set_shader_parameter("base_color", Vector3(1.0, 0.0, 0.0))	
 	mat.set_shader_parameter("fill_color", Vector3(1.0, 0.1, 0.0))
 	mat = label_mana_sphere_fill.get_material_override() 
-	mat.set_shader_parameter("base_color", Vector3(0.0, 0.0, 1.0))
+	mat.set_shader_parameter("base_color", Vector3(0.0,1.0, 1.0))
 	mat.set_shader_parameter("fill_color", Vector3(0.0, 1.0, 0.1))
 	texturerect_card.material.set_shader_parameter("dissolve_value", 1.0)
 	take_health(player_max_health)

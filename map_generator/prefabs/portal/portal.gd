@@ -80,7 +80,6 @@ func append_enemies(list) -> void:
 	
 func portal_free() -> void:
 	emit_signal("portal_before_destroyed")
-	collision.set_deferred("disabled", true)
 	for obj in list_enemy:
 		obj._set_portal(null, 0)
 	for obj in list_new_enemy:
@@ -92,7 +91,6 @@ func portal_free() -> void:
 	if is_instance_valid(player):		
 		player.portal_free()
 	Globalsettings.enemy_param["common"]["probability_modificator"] = min(Globalsettings.enemy_param["common"]["probability_modificator"] + Globalsettings.enemy_param["common"]["probability_modificator_increase"], Globalsettings.enemy_param["common"]["probability_modificator_maximum"])
-	area_observe.monitoring = false	
 	var boss_enemy = create_enemy(boss_prefab)
 	world.add_child(boss_enemy)
 	boss_enemy._set_portal(self, 0)	

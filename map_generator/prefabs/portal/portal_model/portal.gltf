@@ -18,19 +18,6 @@
 			"name":"portal"
 		}
 	],
-	"materials":[
-		{
-			"alphaMode":"BLEND",
-			"doubleSided":true,
-			"name":"portal",
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":0
-				},
-				"metallicFactor":0
-			}
-		}
-	],
 	"meshes":[
 		{
 			"name":"portal",
@@ -41,96 +28,76 @@
 						"NORMAL":1,
 						"TEXCOORD_0":2
 					},
-					"indices":3,
-					"material":0
+					"indices":3
 				}
 			]
-		}
-	],
-	"textures":[
-		{
-			"sampler":0,
-			"source":0
-		}
-	],
-	"images":[
-		{
-			"mimeType":"image/png",
-			"name":"portal",
-			"uri":"portal.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":888,
+			"count":236,
 			"max":[
-				23.939781188964844,
-				5.4102983474731445,
-				2.6306397914886475
+				2.863603115081787,
+				4.0535383224487305,
+				2.9596920013427734
 			],
 			"min":[
-				-23.939781188964844,
-				-37.3969841003418,
-				-14.413216590881348
+				-2.863603115081787,
+				-0.3330073356628418,
+				-2.6040902137756348
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":888,
+			"count":236,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":888,
+			"count":236,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":1332,
+			"count":480,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":10656,
+			"byteLength":2832,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":10656,
-			"byteOffset":10656,
+			"byteLength":2832,
+			"byteOffset":2832,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":7104,
-			"byteOffset":21312,
+			"byteLength":1888,
+			"byteOffset":5664,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2664,
-			"byteOffset":28416,
+			"byteLength":960,
+			"byteOffset":7552,
 			"target":34963
-		}
-	],
-	"samplers":[
-		{
-			"magFilter":9728,
-			"minFilter":9984
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":31080,
+			"byteLength":8512,
 			"uri":"portal.bin"
 		}
 	]

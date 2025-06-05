@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dubgd3pspdfja"
-path="res://.godot/imported/portal.gltf-d6b9e478b031dddb28d1a8e8e3fb044d.scn"
+uid="uid://qutqudjmm0tf"
+path="res://.godot/imported/portal.gltf-9b0eadd40eb1ef382963edec8582913c.scn"
 
 [deps]
 
-source_file="res://map_generator/prefabs/portal/portal.gltf"
-dest_files=["res://.godot/imported/portal.gltf-d6b9e478b031dddb28d1a8e8e3fb044d.scn"]
+source_file="res://map_generator/prefabs/portal/portal_model/portal.gltf"
+dest_files=["res://.godot/imported/portal.gltf-9b0eadd40eb1ef382963edec8582913c.scn"]
 
 [params]
 
