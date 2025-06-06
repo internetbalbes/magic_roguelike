@@ -24,7 +24,7 @@ var target_point_pray = Vector3.ZERO
 func _ready() -> void:	
 	super._ready()
 	enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed"]
-	timer_throw.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_throw"]
+	timer_throw.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_beat"]
 	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
 	scale = Vector3(var_scale, var_scale, var_scale)
 	navigation_agent.path_height_offset = -var_scale		

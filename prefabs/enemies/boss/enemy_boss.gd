@@ -4,7 +4,6 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var boss_model: Node3D = $kishi_model
 @onready var animation_player: AnimationPlayer = $kishi_model/AnimationPlayer
-@onready var timer_beat: Timer = $timer_beat
 @onready var timer_run_to_player: Timer = $timer_run_to_player
 @onready var area_damage: MeshInstance3D = $area_damage
 
@@ -22,11 +21,11 @@ enum enemystate {
 
 var count_direction_damage: int = 0
 var target_position: Vector3 = Vector3.ZERO
+var animation_melee_name = "melee_sword"
 
 func _ready() -> void:
 	super._ready()
 	enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed"]
-	timer_beat.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_beat"]
 	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
 	scale = Vector3(var_scale, var_scale, var_scale)
 	navigation_agent.path_height_offset = -var_scale
@@ -35,6 +34,7 @@ func _ready() -> void:
 	coldsteel_name = loot_cold_steels_list[randi_range(0, 1)]
 	rune_name = "splash_targets_amount_increase"
 	_area_param_damage_param()
+	_animation_player_frame_connect(animation_player, "melee", animation_melee_name, Globalsettings.enemy_param[enemy_type]["time_to_beat"], "_on_time_beat")	
 	
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	
@@ -45,9 +45,7 @@ func _physics_process(delta: float) -> void:
 		if rest_freezing_time < 0:
 			_set_state_freezing(null, false)
 	elif state == enemystate.BEATING:
-		# Obracanie wroga w stronę celu	
-		rotate_towards_target(player.global_transform.origin, delta)
-		#look_at(player.global_transform.origin, Vector3.UP)
+		pass	
 	elif state == enemystate.POOLING_TO_POINT:
 		var direction = (enemy_pooling_to_point - global_transform.origin).normalized()
 		# Poruszanie wroga w kierunku celu
@@ -73,12 +71,12 @@ func _get_point_on_circle_around_player() -> Vector3:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	super._on_area_3d_body_entered(body)
-	_set_state_enemy(enemystate.BEATING)
+	if state != enemystate.BEATING:
+		_set_state_enemy(enemystate.BEATING)
 
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():
-		timer_beat.stop()
 		timer_run_to_player.stop()
 		_set_state_enemy(enemystate.DEATHING)
 
@@ -94,7 +92,6 @@ func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
 			_set_state_enemy(_state)
-			timer_beat.stop()
 			area.monitoring = false
 			timer_run_to_player.stop()
 		else:
@@ -123,10 +120,11 @@ func _set_state_enemy(value)->void:
 			animation_player.play("run")
 			timer_run_to_player.start()
 		enemystate.BEATING:
-			state = enemystate.BEATING
-			animation_player.play("melee")
-			timer_beat.start()
+			state = enemystate.BEATING			
+			animation_player.play(animation_melee_name)
 			timer_run_to_player.stop()
+			# Obracanie wroga w stronę celu	
+			rotate_towards_target(player.global_transform.origin, 0.01)
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")
@@ -137,14 +135,14 @@ func _set_state_enemy(value)->void:
 			state = enemystate.DEATHING
 			animation_player.play("death")
 
-func _on_timer_beat_timeout() -> void:
+func _on_time_beat() -> void:
 	if player_in_area:		
 		var to_target = (global_position - player.global_position).normalized()
 		for i in range(0, count_direction_damage, 1):
 			var angle_between = rad_to_deg(global_transform.basis.z.rotated(Vector3.UP,  deg_to_rad(i * 360.0 / count_direction_damage)).angle_to(to_target))
 			if abs(angle_between) <= Globalsettings.enemy_param[enemy_type]["setor_damage"]:
 				player.take_damage(Globalsettings.enemy_param[enemy_type]["damage"])
-		_area_param_damage_param()
+	_area_param_damage_param()
 		
 func _area_param_damage_param():
 		count_direction_damage = randi_range(1, Globalsettings.enemy_param[enemy_type]["count_direction_damage"])

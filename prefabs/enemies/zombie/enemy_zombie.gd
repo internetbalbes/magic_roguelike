@@ -3,7 +3,6 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var zombi_model: Node3D = $zombie_model
 @onready var animation_player: AnimationPlayer = $zombie_model/AnimationPlayer
-@onready var timer_beat: Timer = $timer_beat
 @onready var timer_run_to_player: Timer = $timer_run_to_player
 
 # enemy's initial state
@@ -20,10 +19,10 @@ enum enemystate {
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
 var target_position: Vector3 = Vector3.ZERO
+var animation_melee_name = "melee_sword"
 
 func _ready() -> void:
 	super._ready()
-	timer_beat.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_beat"]
 	collision_areaseeing.radius = Globalsettings.enemy_param[enemy_type]["enemy_area_scan_player"]
 	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
 	scale = Vector3(var_scale, var_scale, var_scale)
@@ -31,6 +30,7 @@ func _ready() -> void:
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("run").loop = true
+	_animation_player_frame_connect(animation_player, "melee", animation_melee_name, Globalsettings.enemy_param[enemy_type]["time_to_beat"], "_on_time_beat")
 	#coldsteel_name = loot_cold_steels_list[randi_range(0, 1)]
 	#rune_name = "splash_targets_amount_increase"
 
@@ -87,7 +87,6 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():
-		timer_beat.stop()
 		timer_run_to_player.stop()
 		_set_state_enemy(enemystate.DEATHING)
 
@@ -105,7 +104,6 @@ func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
 			_set_state_enemy(_state)
-			timer_beat.stop()
 			area.monitoring = false
 			timer_run_to_player.stop()
 		else:
@@ -146,8 +144,7 @@ func _set_state_enemy(value)->void:
 			enemy_speed =  Globalsettings.enemy_param[enemy_type]["enemy_speed_walk"]
 		enemystate.BEATING:
 			state = enemystate.BEATING
-			animation_player.play("melee")
-			timer_beat.start()
+			animation_player.play(animation_melee_name)
 			timer_run_to_player.stop()
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
@@ -160,7 +157,7 @@ func _set_state_enemy(value)->void:
 			state = enemystate.DEATHING
 			animation_player.play("death")
 
-func _on_timer_beat_timeout() -> void:
+func _on_time_beat() -> void:
 	if player_in_area:
 		player.take_damage( Globalsettings.enemy_param[enemy_type]["damage"])	
 

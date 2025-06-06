@@ -4,7 +4,6 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 @onready var animation_player: AnimationPlayer = $imp_model/AnimationPlayer
 @onready var skeleton_bone_hand: BoneAttachment3D = $imp_model/imp_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $imp_model/imp_model/Skeleton3D/imp
-@onready var timer_throw: Timer = $timer_throw
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
 
@@ -20,8 +19,6 @@ enum enemystate {
 	FREEZING,	# state freezing to point
 	DEATHING	# state deathing
 }
-# Node fireball
-var fireball: Area3D
 # Node tram
 var trap : Node3D
 # object timer walk enemy from portal
@@ -32,20 +29,15 @@ var timer_wait_set_trap: Timer = Timer.new()
 var timer_set_trap: Timer = Timer.new()
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
+var animation_throw_name = "throw_ball"
 
 func _ready() -> void:
 	super._ready()
-	var config = ConfigFile.new()
-	if config.load("res://settings.cfg") == OK:
-		collision_areaseeing.radius = Globalsettings.enemy_param[enemy_type]["enemy_area_scan_player"]
-		var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
-		scale = Vector3(var_scale, var_scale, var_scale)
-		navigation_agent.path_height_offset = -var_scale
-		#config.save("res://settings.cfg")
-	config = null
+	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
+	scale = Vector3(var_scale, var_scale, var_scale)
+	navigation_agent.path_height_offset = -var_scale
 	skeleton_bone_hand.bone_name = "mixamorig_RightHand"
 	area.monitoring = false
-	timer_throw.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_throw"]
 	animation_player.animation_finished.connect(_on_animation_finished)	
 	#set timer set trap
 	timer_set_trap.wait_time = Globalsettings.enemy_param[enemy_type]["time_to_set_trap"]
@@ -66,6 +58,7 @@ func _ready() -> void:
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("run").loop = true
 	animation_player.get_animation("tornado").loop = true
+	_animation_player_frame_connect(animation_player, "throw", animation_throw_name, Globalsettings.enemy_param[enemy_type]["time_to_beat"], "_on_time_beat")	
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
@@ -119,31 +112,19 @@ func _get_point_on_circle(angle) -> Vector3:
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	super._on_area_3d_body_entered(body)
 	if state in [enemystate.WALKING_PORTAL, enemystate.RUNNING_TO_PLAYER]:	
-		fireball_create()		
+		_set_state_enemy(enemystate.THROWING)		
 
 func take_damage(spell, buf, amount: int):
 	super.take_damage(spell, buf, amount)
 	if !is_alive():
-		timer_throw.stop()			
-		if is_instance_valid(fireball):
-			fireball.call_deferred("queue_free")
 		_set_state_enemy(enemystate.DEATHING)
 		_timers_delete()		
-
-func fireball_create() -> void:
-	fireball = prefabfireball.instantiate()
-	skeleton_bone_hand.add_child(fireball)	
-	fireball.global_position = skeleton_bone_hand.global_position
-	fireball.scale *= 1000
-	fireball.player = player
-	timer_throw.start()
-	_set_state_enemy(enemystate.THROWING)	
 
 func _on_animation_finished(_anim_name: String) -> void:
 	if state == enemystate.DEATHING:
 		call_deferred("queue_free")
 	elif player_in_area:
-		fireball_create()
+		_set_state_enemy(enemystate.THROWING)		
 	elif portal:
 		_set_state_enemy(enemystate.WALKING_PORTAL)
 	else:
@@ -158,10 +139,13 @@ func _on_timer_set_trap_timeout() -> void:
 	var direction = Vector3(0, collision_shape.height / 2, 0.5).normalized()
 	trap.global_transform.origin = global_transform.origin - direction
 
-func _on_timer_throw_timeout() -> void:
-	fireball.reparent(world)	
-	fireball.global_transform.origin = skeleton_bone_hand.global_transform.origin	
-	fireball.look_at(player.global_transform.origin, Vector3.UP)		
+func _on_time_beat() -> void:
+	var fireball = prefabfireball.instantiate()
+	fireball.scale *= 2
+	fireball.player = player
+	world.add_child(fireball)	
+	fireball.global_transform.origin = skeleton_bone_hand.global_transform.origin
+	fireball.look_at(player.raycast.global_transform.origin - Vector3(0.0, 0.5, 0.0), Vector3.UP)		
 	fireball.collision_set_enabled()
 
 func _on_timer_wait_set_trap_timeout() -> void:
@@ -186,9 +170,6 @@ func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
 			_set_state_enemy(_state)
-			if is_instance_valid(fireball):
-				fireball.call_deferred("queue_free")
-			timer_throw.stop()
 			if is_instance_valid(timer_wait_set_trap):
 				timer_wait_set_trap.stop()
 			elif is_instance_valid(timer_set_trap):
@@ -238,7 +219,7 @@ func _set_state_enemy(value)->void:
 			enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed_walk"]
 		enemystate.THROWING:
 			state = enemystate.THROWING
-			animation_player.play("throw")
+			animation_player.play(animation_throw_name)
 		enemystate.POOLING_TO_POINT:
 			state = enemystate.POOLING_TO_POINT
 			animation_player.play("tornado")

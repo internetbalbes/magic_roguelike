@@ -1,8 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://bf7ukl85fy8hi"]
+[gd_scene load_steps=9 format=3 uid="uid://bf7ukl85fy8hi"]
 
 [ext_resource type="Script" uid="uid://bbmrlwrnbbul8" path="res://map_generator/map_generator.gd" id="1_1c4l0"]
 [ext_resource type="Texture2D" uid="uid://b6tfb1f5jhv5m" path="res://sprites/skybox/skybox.png" id="2_3n4u5"]
-[ext_resource type="Shader" uid="uid://csxeglncoq0e0" path="res://map_generator/kill_zone.gdshader" id="3_nchfj"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_0r6lh"]
 geometry_parsed_geometry_type = 1
@@ -25,12 +24,8 @@ volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 volumetric_fog_length = 200.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ckfgr"]
-shader = ExtResource("3_nchfj")
-shader_parameter/fog_color_start = Color(1, 1, 1, 1)
-shader_parameter/fog_color_end = Color(0, 0, 0, 1)
-shader_parameter/length_x = 0.0
-shader_parameter/density = 30.0
+[sub_resource type="FogMaterial" id="FogMaterial_3n4u5"]
+emission = Color(1, 1, 1, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nchfj"]
 
@@ -51,7 +46,7 @@ shadow_enabled = true
 [node name="fog" type="FogVolume" parent="kill_zone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
 size = Vector3(4, 2, 4)
-material = SubResource("ShaderMaterial_ckfgr")
+material = SubResource("FogMaterial_3n4u5")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="kill_zone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)

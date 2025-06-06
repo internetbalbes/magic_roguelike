@@ -74,7 +74,6 @@ func create_kill_zone(zone_name):
 	var fog = _kill_zone.get_node("fog")
 	fog.size = Vector3(CHUNK_SIZE,  1.0,  CHUNK_SIZE)
 	_kill_zone.visible = true	
-	fog.material.set_shader_parameter("length_x", CHUNK_SIZE)
 	_kill_zone.get_node("CollisionShape3D").shape.size = fog.size
 	return _kill_zone
 

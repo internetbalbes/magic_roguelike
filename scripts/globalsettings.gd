@@ -37,7 +37,7 @@ var enemy_param = {
 		"enemy_speed_walk": 1,
 		"enemy_speed_run": 10,
 		"enemy_radius_around_portal": 10.0,
-		"time_to_throw": 1.0,
+		"time_to_beat": 0.9,
 		"time_to_set_trap": 2.0,
 		"time_after_exit_portal": 3.0,
 		"enemy_area_scan_player": 45,
@@ -63,7 +63,7 @@ var enemy_param = {
 		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
 		"enemy_speed": 2,
 		"enemy_distance_from_portal": 5,
-		"time_to_throw": 5.0,
+		"time_to_beat": 5.0,
 		"probability_card": 100,
 		"enemy_transform_scale": 1.5
 	}	
@@ -210,6 +210,6 @@ var enemy_spawn_rate = {
 
 var world_param = {
 	"scale_size_map": 50,
-	"portal_create_enemy_count": 6,
+	"portal_create_enemy_count": 1,
 	"portal_reload_enemy_increase": 3
 }

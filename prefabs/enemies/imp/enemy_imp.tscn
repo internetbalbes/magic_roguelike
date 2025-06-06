@@ -31,10 +31,5 @@ collision_mask = 32
 [node name="CollisionShape3D" type="CollisionShape3D" parent="area_seeing"]
 shape = SubResource("CylinderShape3D_yfjof")
 
-[node name="timer_throw" type="Timer" parent="."]
-one_shot = true
-
 [node name="imp_model" parent="." instance=ExtResource("4_vqrmm")]
 transform = Transform3D(-0.2, 0, -3.01992e-08, 0, 0.2, 0, 3.01992e-08, 0, -0.2, -0.0355282, -1.12946, 0)
-
-[connection signal="timeout" from="timer_throw" to="." method="_on_timer_throw_timeout"]

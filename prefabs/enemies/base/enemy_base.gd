@@ -191,3 +191,10 @@ func spawn_blood_on_floor():
 	tween.tween_property(decal, "modulate:a", 0.0, 10.0).set_trans(Tween.TRANS_LINEAR)
 	tween.tween_callback(Callable(decal, "queue_free"))	
 		
+func _animation_player_frame_connect(anim_player, anim_name, new_anim_name, anim_time_at_frame, anim_callback):
+	var anim_lib = anim_player.get_animation_library("")
+	var anim = anim_player.get_animation(anim_name).duplicate(true)
+	anim_lib.add_animation(new_anim_name, anim)
+	var track_index = anim.add_track(Animation.TYPE_METHOD)
+	anim.track_set_path(track_index, get_path())
+	anim.track_insert_key(track_index, anim_time_at_frame, {"method": anim_callback, "args": []})
