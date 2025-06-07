@@ -18,10 +18,10 @@ refraction_scale = 1.0
 resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_t6tif")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_kdubu"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_t6tif"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_t6tif"]
-noise = SubResource("FastNoiseLite_kdubu")
+noise = SubResource("FastNoiseLite_t6tif")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rj586"]
 resource_local_to_scene = true

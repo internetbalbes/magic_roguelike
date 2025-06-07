@@ -1668,6 +1668,7 @@ tracks/46/loop_wrap = true
 tracks/46/keys = PackedFloat32Array(0, 1, 7.33138e-06, 128.382, -0.000256211)
 
 [resource]
+resource_local_to_scene = true
 _data = {
 &"death": SubResource("Animation_dj6gf"),
 &"melee": SubResource("Animation_w83gd"),

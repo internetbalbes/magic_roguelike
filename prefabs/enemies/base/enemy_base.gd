@@ -3,7 +3,23 @@ extends CharacterBody3D
 @onready var collision: CollisionShape3D = $CollisionShape3D
 @export var world: Node3D
 @export var player : CharacterBody3D
+@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 
+# enemy's initial state
+var state = enemystate.WALKING_PORTAL
+# enemy's state
+enum enemystate {
+	WALKING_PORTAL, # state walking_portal
+	BEATING,	# state fthrowimg
+	RUNNING_TO_PLAYER,	# state runnning
+	POOLING_TO_POINT,	# state pooling to point
+	FREEZING,	# state freezing to point
+	DEATHING	# state deathing
+}
+
+var timer_run_to_player: Timer = Timer.new()
+var animation_player: AnimationPlayer
+var animation_melee_name = ""
 var enemy_pivot: Node3D
 var enemy_pivot_modificator: Node3D
 var enemy_pivot_buf: Node3D
@@ -31,8 +47,12 @@ var rune_name = ""
 var loot_cold_steels_list = ["one_handed_sword", "one_handed_axe"]
 var freezing_time: float = 0.0
 var rest_freezing_time = freezing_time
+var target_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
+	timer_run_to_player.timeout.connect(_on_timer_run_to_player_timeout)
+	timer_run_to_player.wait_time = 0.1	
+	add_child(timer_run_to_player)
 	if has_node("area_seeing"):
 		area = get_node("area_seeing")
 		collision_areaseeing = area.get_node("CollisionShape3D").shape
@@ -44,12 +64,36 @@ func _ready() -> void:
 	if randi_range(1, 100) <  Globalsettings.enemy_param["common"]["probability_modificator"]:
 		var keys = Globalsettings.enemy_list_modificators.keys()
 		_add_modificator_to_list(keys[randi_range(0, keys.size()-1)])
+	var var_scale = Globalsettings.enemy_param[enemy_type]["enemy_transform_scale"]
+	scale = Vector3(var_scale, var_scale, var_scale)
+	navigation_agent.path_height_offset = -var_scale	
 
 func _physics_process(delta: float) -> void:
 	if  !is_on_floor():
 		## Ruch w powietrzu (np. grawitacja, opadanie)
 		velocity += get_gravity() * delta		
 		move_and_slide()
+	elif state == enemystate.FREEZING:
+		rest_freezing_time -= delta
+		if rest_freezing_time < 0:
+			_set_state_freezing(null, false)
+	elif state == enemystate.POOLING_TO_POINT:
+		var direction = (enemy_pooling_to_point - global_transform.origin).normalized()
+		# Poruszanie wroga w kierunku celu
+		velocity = direction * enemy_speed
+		move_and_slide()
+	elif state in [enemystate.WALKING_PORTAL,  enemystate.RUNNING_TO_PLAYER]:
+		# Sprawdzamy, czy agent ma jakąś ścieżkę do celu
+		if not navigation_agent.is_navigation_finished():
+			var next_position = navigation_agent.get_next_path_position()
+			# Obracanie wroga w stronę celu
+			rotate_towards_target(next_position, delta)
+			# Obliczanie wektora kierunku
+			var direction = (next_position - global_transform.origin).normalized()
+			# Poruszanie wroga w kierunku celu
+			velocity = direction * enemy_speed
+			move_and_slide()
+			navigation_agent.set_velocity_forced(velocity)
 
 func _on_area_3d_body_entered(_body: Node3D) -> void:
 	player_in_area = true
@@ -87,9 +131,21 @@ func take_damage_beat(spell, buf, amount, _position):
 	)
 	spawn_blood_on_floor()
 
+func _set_pooling_to_point(pos: Vector3, freeze: bool) -> void:
+	_set_state_freezing(enemystate.POOLING_TO_POINT, freeze)
+	enemy_pooling_to_point = pos
+	
+func _set_state_freezing(_state, freeze) -> void:
+	if state != enemystate.DEATHING:
+		if freeze:
+			_set_state_enemy(_state)
+			area.monitoring = false
+			timer_run_to_player.stop()		
+
 func _set_freezing(_time):
 	freezing_time = _time
 	rest_freezing_time = freezing_time
+	_set_state_freezing(enemystate.FREEZING, true)
 
 func take_damage(spell, buf, amount: int):
 	if is_alive():
@@ -117,6 +173,8 @@ func take_damage(spell, buf, amount: int):
 				if portal:
 					portal.list_enemy.erase(self)
 					portal.list_new_enemy.erase(self)
+				timer_run_to_player.stop()
+				_set_state_enemy(enemystate.DEATHING)		
 			elif buf:
 				_add_buf_to_list(buf) 
 
@@ -136,6 +194,7 @@ func rotate_towards_target(target_pos, delta):
 	var _scale = global_transform.basis.get_scale()
 	var _rotation = Basis().rotated(Vector3.UP, current.y)
 	global_transform.basis = _rotation.scaled(_scale)
+	return abs(current.y - target_yaw) < 0.01
 	
 func _get_object_size() -> float:
 	return collision_shape.radius
@@ -198,3 +257,43 @@ func _animation_player_frame_connect(anim_player, anim_name, new_anim_name, anim
 	var track_index = anim.add_track(Animation.TYPE_METHOD)
 	anim.track_set_path(track_index, get_path())
 	anim.track_insert_key(track_index, anim_time_at_frame, {"method": anim_callback, "args": []})
+
+func _set_state_enemy(value)->void:
+	match value:
+		enemystate.RUNNING_TO_PLAYER:
+			state = enemystate.RUNNING_TO_PLAYER
+			animation_player.play("run")
+			enemy_speed = Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
+			timer_run_to_player.start()
+		enemystate.WALKING_PORTAL:
+			state = enemystate.WALKING_PORTAL
+			animation_player.play("walk")
+			enemy_speed =  Globalsettings.enemy_param[enemy_type]["enemy_speed_walk"]
+		enemystate.BEATING:
+			state = enemystate.BEATING
+			animation_player.play(animation_melee_name)
+			timer_run_to_player.stop()
+		enemystate.POOLING_TO_POINT:
+			state = enemystate.POOLING_TO_POINT
+			animation_player.play("tornado")
+			enemy_speed =  Globalsettings.enemy_param[enemy_type]["enemy_speed_run"]
+		enemystate.FREEZING:
+			state = enemystate.FREEZING
+			animation_player.pause()	
+		enemystate.DEATHING:
+			state = enemystate.DEATHING
+			animation_player.play("death")
+
+func _get_point_on_circle_around_player() -> Vector3:
+	var angle = deg_to_rad(randf_range(0.0, 180.0))
+	var x = 1.5 * cos(angle)
+	var z = 1.5 * sin(angle)
+	return  Vector3(player.global_position.x - x, global_position.y, player.global_position.z - z)
+		
+func _on_timer_run_to_player_timeout() -> void:
+	if target_position.distance_to(player.global_position) > 0.5:
+		_set_new_point_to_run()
+
+func _set_new_point_to_run() -> void:
+	target_position = player.global_position
+	navigation_agent.target_position = _get_point_on_circle_around_player()

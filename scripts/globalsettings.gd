@@ -47,7 +47,7 @@ var enemy_param = {
 	"boss": {
 		"label_health_max_value": 1,
 		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
-		"enemy_speed": 14,
+		"enemy_speed_run": 14,
 		"time_to_beat": 0.7,
 		"probability_card": 100,
 		"damage": 1,
@@ -61,7 +61,7 @@ var enemy_param = {
 	"skymage": {
 		"label_health_max_value": 3,
 		"size_blood_on_floor": Vector3(3.0, 3.0, 3.0),
-		"enemy_speed": 2,
+		"enemy_speed_walk": 2,
 		"enemy_distance_from_portal": 5,
 		"time_to_beat": 5.0,
 		"probability_card": 100,
@@ -75,7 +75,8 @@ var cards_hint = {
 	"card_mana_max_increase": "mana max increase's card",
 	"card_mana_max": "mana max's card",
 	"card_hp_to_mana_sacrifice": "hp to mana sacrifice's card",
-	"card_mine_spell": "mine spell's card"
+	"card_mine_spell": "mine spell's card",
+	"card_freeze": "freeze spell's card"	
 }
 
 var cold_steels = {
@@ -210,6 +211,6 @@ var enemy_spawn_rate = {
 
 var world_param = {
 	"scale_size_map": 50,
-	"portal_create_enemy_count": 1,
+	"portal_create_enemy_count": 5,
 	"portal_reload_enemy_increase": 3
 }

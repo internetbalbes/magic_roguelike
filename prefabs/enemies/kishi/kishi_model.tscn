@@ -8,7 +8,7 @@
 
 [node name="Skeleton3D" parent="kishi_model" index="0"]
 bones/0/position = Vector3(14.7149, 18.6293, -1339.89)
-bones/0/rotation = Quaternion(-0.669095, -0.0996963, 0.0917451, 0.730722)
+bones/0/rotation = Quaternion(-0.669095, -0.0996964, 0.0917451, 0.730722)
 bones/1/position = Vector3(4.76837e-07, 144.655, -4.076)
 bones/1/rotation = Quaternion(0.186072, 0.037405, 0.00675639, 0.981801)
 bones/2/position = Vector3(1.61529e-05, 168.831, 5.45532e-05)
@@ -21,7 +21,7 @@ bones/5/position = Vector3(0, 145.659, 25.2362)
 bones/5/rotation = Quaternion(-0.124247, 0.0642148, -0.036875, 0.989484)
 bones/6/position = Vector3(3.09944e-06, 333.305, 57.7467)
 bones/7/position = Vector3(81.9348, 171.449, -0.282403)
-bones/7/rotation = Quaternion(-0.705342, -0.354352, 0.441347, -0.426777)
+bones/7/rotation = Quaternion(-0.705342, -0.354352, 0.441347, -0.426778)
 bones/8/position = Vector3(3.4256e-05, 186.626, 0.000276457)
 bones/8/rotation = Quaternion(0.455539, -0.0592659, 0.284542, 0.841432)
 bones/9/position = Vector3(1.58181e-06, 344.083, -3.42287e-06)
@@ -52,11 +52,11 @@ bones/21/rotation = Quaternion(-0.294646, 0.0577774, 0.0201638, 0.953645)
 bones/22/position = Vector3(1.37956e-05, 572.697, -2.19747e-05)
 bones/22/rotation = Quaternion(0.582531, -0.0737693, 0.112812, 0.801554)
 bones/23/position = Vector3(-3.26949e-05, 290.998, -2.95271e-05)
-bones/23/rotation = Quaternion(0.3592, -0.140013, 0.0568115, 0.920948)
+bones/23/rotation = Quaternion(0.3592, -0.140013, 0.0568115, 0.920947)
 bones/24/position = Vector3(6.93798e-05, 128.382, -0.000246763)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="kishi_model/Skeleton3D" index="1"]
-transform = Transform3D(0.468953, 0.350513, 0.810693, 0.360147, 0.762216, -0.537884, -0.806459, 0.544211, 0.231208, -145.076, 551.236, -1335.88)
+transform = Transform3D(0.468953, 0.350513, 0.810693, 0.360146, 0.762217, -0.537884, -0.80646, 0.54421, 0.231208, -145.076, 551.237, -1335.88)
 bone_name = "mixamorig_RightHand"
 bone_idx = 14
 

@@ -75,6 +75,7 @@ var card_mana_max_increase = preload("res://sprites/card_mana_max_increase.png")
 var card_mana_max = preload("res://sprites/card_mana_max.png")
 var card_hp_to_mana_sacrifice = preload("res://sprites/card_hp_to_mana_sacrifice.png")
 var card_mine_spell = preload("res://sprites/card_mine_spell.png")
+var card_freeze = preload("res://sprites/freeze_icon.png")
 var card_scale = 2
 var card_size = card_scale * Vector2(32, 48)
 var card_currently_index = -1
@@ -151,6 +152,7 @@ func _ready() -> void:
 	progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown
 	label_health.text = str(int(player_current_health)) + "/" + str(int(player_max_health))	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	create_card("card_freeze")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -324,6 +326,7 @@ func get_card_texture(card_name: String)->Texture2D:
 		"card_mana_max": return card_mana_max
 		"card_hp_to_mana_sacrifice": return card_hp_to_mana_sacrifice
 		"card_mine_spell": return card_mine_spell
+		"card_freeze": return card_freeze
 		_: return null
 		
 func get_card_hint(card_name: String):
@@ -334,6 +337,7 @@ func get_card_hint(card_name: String):
 		"card_mana_max": return Globalsettings.cards_hint["card_mana_max"]
 		"card_hp_to_mana_sacrifice": return Globalsettings.cards_hint["card_hp_to_mana_sacrifice"]
 		"card_mine_spell": return Globalsettings.cards_hint["card_mine_spell"]
+		"card_freeze": return Globalsettings.cards_hint["card_freeze"]
 		_: return null
 		
 func get_spell_texture(sell_name: String)->Texture2D:
@@ -403,7 +407,17 @@ func remove_card()->void:
 			else:
 				return
 		"card_mine_spell":
-			create_trap()	
+			create_trap()
+		"card_freeze":
+			var collider = raycast.get_collider()
+			if collider && collider.is_in_group("enemy"):
+				var prefab = prefabfreeze.instantiate()
+				prefab.player = self	
+				prefab.set_collider(raycast.get_collider(), raycast.get_collision_point(), abs(raycast.target_position.z))
+				world.add_child(prefab)
+				prefab._set_global_transform(raycast.global_transform)
+			else:
+				return
 	is_card_dissolve_tween = true
 	var card_tween = create_tween()
 	card_tween.tween_property(texturerect_card.material, "shader_parameter/dissolve_value", 0.0, .5)

@@ -13,5 +13,5 @@ float circle(in vec2 pt, in float radius){
 
 void fragment() {
 	ALBEDO = color * emission_energy;
-	ALPHA = circle(UV, 1.0) * 0.5;	
+	ALPHA = circle(UV, 1.0) * 0.5;
 }
