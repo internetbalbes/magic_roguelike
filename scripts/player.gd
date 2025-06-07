@@ -152,7 +152,6 @@ func _ready() -> void:
 	progressbar_reload_coldsteel.max_value = currently_coldsteel.cooldown
 	label_health.text = str(int(player_current_health)) + "/" + str(int(player_max_health))	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	create_card("card_freeze")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:

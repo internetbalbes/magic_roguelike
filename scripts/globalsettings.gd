@@ -215,6 +215,6 @@ var enemy_spawn_rate = {
 
 var world_param = {
 	"scale_size_map": 50,
-	"portal_create_enemy_count": 1,
+	"portal_create_enemy_count": 5,
 	"portal_reload_enemy_increase": 3
 }
