@@ -6,6 +6,8 @@ extends Node3D
 @onready var timer_find_enemy_in_area = $timer_find_enemy_in_area
 @export var player : CharacterBody3D
 
+#freeze's class name
+var spell: SpellClass
 #freeze's collider
 var collider : Node3D
 #freeze's collider position

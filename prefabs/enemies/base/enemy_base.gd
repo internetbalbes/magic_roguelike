@@ -48,6 +48,7 @@ var loot_cold_steels_list = ["one_handed_sword", "one_handed_axe"]
 var freezing_time: float = 0.0
 var rest_freezing_time = freezing_time
 var target_position: Vector3 = Vector3.ZERO
+var model_mesh: MeshInstance3D
 
 func _ready() -> void:
 	timer_run_to_player.timeout.connect(_on_timer_run_to_player_timeout)
@@ -139,12 +140,17 @@ func _set_state_freezing(_state, freeze) -> void:
 	if state != enemystate.DEATHING:
 		if freeze:
 			_set_state_enemy(_state)
-			area.monitoring = false
-			timer_run_to_player.stop()		
+			if area:
+				area.monitoring = false
+			timer_run_to_player.stop()
+		else:
+			model_mesh.material_override = null
 
 func _set_freezing(_time):
 	freezing_time = _time
-	rest_freezing_time = freezing_time
+	rest_freezing_time = freezing_time	
+	model_mesh.material_override = load("res://resource/freeze_shader_material.tres")
+	model_mesh.material_override.set_shader_parameter("albedo_texture", Globalsettings.enemy_param[enemy_type]["enemy_texture"])
 	_set_state_freezing(enemystate.FREEZING, true)
 
 func take_damage(spell, buf, amount: int):

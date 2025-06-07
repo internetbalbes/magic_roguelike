@@ -2,6 +2,7 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var sphere_guard: Area3D = $sphere
 @onready var timer_throw: Timer = $timer_throw
+@onready var sky_mage_model_mesh: MeshInstance3D = $sky_mage_model/sky_mage_model/Skeleton3D/sky_mage
 @export var skymag_sphere : PackedScene
 
 # enemy's state
@@ -22,6 +23,7 @@ func _ready() -> void:
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("tornado").loop = true
 	animation_player.get_animation("pray").loop = true
+	model_mesh = sky_mage_model_mesh
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)

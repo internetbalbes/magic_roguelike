@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://byq4nc3dkwl7r"]
+
+[ext_resource type="Shader" uid="uid://dknokgsjnm0vl" path="res://resource/freeze.gdshader" id="1_3jlev"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3jlev"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d8qop"]
+noise = SubResource("FastNoiseLite_3jlev")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_3jlev")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_d8qop")
+shader_parameter/freeze_amount = 0.5
+shader_parameter/noise_scale = 10.0
+shader_parameter/freeze_tint = Color(0.5, 0.8, 1, 1)

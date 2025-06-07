@@ -29,7 +29,8 @@ var enemy_param = {
 		"probability_card": 100,
 		"damage": 1,
 		"enemy_area_scan_player": 2.25,
-		"enemy_transform_scale": 1.25
+		"enemy_transform_scale": 1.25,
+		"enemy_texture": preload("res://prefabs/enemies/zombie/zombie_model-zombie_model.png")
 	},
 	"imp": {
 		"label_health_max_value": 3,
@@ -42,7 +43,8 @@ var enemy_param = {
 		"time_after_exit_portal": 3.0,
 		"enemy_area_scan_player": 45,
 		"probability_card": 100,
-		"enemy_transform_scale": 1.25
+		"enemy_transform_scale": 1.25,
+		"enemy_texture": preload("res://prefabs/enemies/imp/akaki-akaki.png")
 	},
 	"boss": {
 		"label_health_max_value": 1,
@@ -56,7 +58,8 @@ var enemy_param = {
 		"setor_damage": 45,
 		"count_direction_damage":4,
 		"radius_sector_damage_min": 3,
-		"radius_sector_damage_max": 6
+		"radius_sector_damage_max": 6,
+		"enemy_texture": preload("res://prefabs/enemies/kishi/kishi.png")
 	},
 	"skymage": {
 		"label_health_max_value": 3,
@@ -65,7 +68,8 @@ var enemy_param = {
 		"enemy_distance_from_portal": 5,
 		"time_to_beat": 5.0,
 		"probability_card": 100,
-		"enemy_transform_scale": 1.5
+		"enemy_transform_scale": 1.5,
+		"enemy_texture": preload("res://prefabs/enemies/skymage/sky_mage.png")
 	}	
 }
 
@@ -211,6 +215,6 @@ var enemy_spawn_rate = {
 
 var world_param = {
 	"scale_size_map": 50,
-	"portal_create_enemy_count": 5,
+	"portal_create_enemy_count": 1,
 	"portal_reload_enemy_increase": 3
 }

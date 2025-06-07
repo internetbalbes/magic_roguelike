@@ -1,6 +1,7 @@
 extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var zombi_model: Node3D = $zombie_model
+@onready var zombi_model_mesh: MeshInstance3D = $zombie_model/zombie_model/Skeleton3D/zombie
 
 # angle enemy's to  walk
 var enemy_angle_to_walk: float = 0
@@ -13,6 +14,7 @@ func _ready() -> void:
 	animation_player.get_animation("walk").loop = true
 	animation_player.get_animation("run").loop = true
 	_animation_player_frame_connect(animation_player, "melee", animation_melee_name, Globalsettings.enemy_param[enemy_type]["time_to_beat"], "_on_time_beat")
+	model_mesh = zombi_model_mesh
 	#coldsteel_name = loot_cold_steels_list[randi_range(0, 1)]
 	#rune_name = "splash_targets_amount_increase"
 

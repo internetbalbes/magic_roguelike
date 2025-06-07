@@ -3,6 +3,7 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var boss_model: Node3D = $kishi_model
 @onready var area_damage: MeshInstance3D = $area_damage
+@onready var boss_model_mesh: MeshInstance3D = $kishi_model/kishi_model/Skeleton3D/kishi
 
 # enemy's state
 enum local_enemystate {
@@ -21,6 +22,7 @@ func _ready() -> void:
 	rune_name = "splash_targets_amount_increase"
 	_area_param_damage_param()
 	_animation_player_frame_connect(animation_player, "melee", animation_melee_name, Globalsettings.enemy_param[enemy_type]["time_to_beat"], "_on_time_beat")	
+	model_mesh = boss_model_mesh
 	
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)	

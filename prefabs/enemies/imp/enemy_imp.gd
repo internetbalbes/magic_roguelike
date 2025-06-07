@@ -2,6 +2,7 @@ extends "res://prefabs/enemies/base/enemy_base.gd"
 
 @onready var skeleton_bone_hand: BoneAttachment3D = $imp_model/imp_model/Skeleton3D/BoneAttachment3D
 @onready var skeleton_surface: MeshInstance3D = $imp_model/imp_model/Skeleton3D/imp
+@onready var imp_model_mesh: MeshInstance3D = $imp_model/imp_model/Skeleton3D/imp
 @export var prefabtrap : PackedScene
 @export var prefabfireball : PackedScene
 
@@ -47,6 +48,7 @@ func _ready() -> void:
 	animation_player.get_animation("run").loop = true
 	animation_player.get_animation("tornado").loop = true
 	_animation_player_frame_connect(animation_player, "throw", animation_melee_name, Globalsettings.enemy_param[enemy_type]["time_to_beat"], "_on_time_beat")	
+	model_mesh = imp_model_mesh
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
